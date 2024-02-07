@@ -5,14 +5,17 @@ import (
 	"crypto/tls"
 	"regexp"
 	"strconv"
+	"strings"
 
-	"google.golang.org/grpc/credentials/insecure"
-
+	"github.com/cosmos/cosmos-sdk/codec"
 	"google.golang.org/grpc/credentials"
+	"google.golang.org/grpc/credentials/insecure"
 
 	grpctypes "github.com/cosmos/cosmos-sdk/types/grpc"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/metadata"
+
+	"github.com/forbole/juno/v5/gprc"
 )
 
 var (
@@ -29,8 +32,8 @@ func GetHeightRequestContext(context context.Context, height int64) context.Cont
 }
 
 // MustCreateGrpcConnection creates a new gRPC connection using the provided configuration and panics on error
-func MustCreateGrpcConnection(cfg *GRPCConfig) *grpc.ClientConn {
-	grpConnection, err := CreateGrpcConnection(cfg)
+func MustCreateGrpcConnection(cfg *Details, cdc codec.Codec) grpc.ClientConnInterface {
+	grpConnection, err := CreateGrpcConnection(cfg, cdc)
 	if err != nil {
 		panic(err)
 	}
@@ -38,9 +41,19 @@ func MustCreateGrpcConnection(cfg *GRPCConfig) *grpc.ClientConn {
 }
 
 // CreateGrpcConnection creates a new gRPC client connection from the given configuration
-func CreateGrpcConnection(cfg *GRPCConfig) (*grpc.ClientConn, error) {
+func CreateGrpcConnection(cfg *Details, cdc codec.Codec) (grpc.ClientConnInterface, error) {
+	// If the gRPC config is not specified, we can create a gRPC-over-RPC connection
+	if cfg.GRPC == nil {
+		grpcConnection, err := gprc.NewConnection(cfg.RPC.Address, cdc)
+		if err != nil {
+			return nil, err
+		}
+
+		return grpcConnection, nil
+	}
+
 	var grpcOpts []grpc.DialOption
-	if cfg.Insecure {
+	if !strings.Contains("cfg.GRPC.Address", "https://") {
 		grpcOpts = append(grpcOpts, grpc.WithTransportCredentials(insecure.NewCredentials()))
 	} else {
 		grpcOpts = append(grpcOpts, grpc.WithTransportCredentials(credentials.NewTLS(&tls.Config{
@@ -48,6 +61,6 @@ func CreateGrpcConnection(cfg *GRPCConfig) (*grpc.ClientConn, error) {
 		})))
 	}
 
-	address := HTTPProtocols.ReplaceAllString(cfg.Address, "")
+	address := HTTPProtocols.ReplaceAllString(cfg.GRPC.Address, "")
 	return grpc.Dial(address, grpcOpts...)
 }

@@ -10,12 +10,10 @@ import (
 
 	tmtypes "github.com/cometbft/cometbft/types"
 
-	"github.com/cosmos/cosmos-sdk/codec"
-	sdk "github.com/cosmos/cosmos-sdk/types"
-	"google.golang.org/grpc"
-
 	constypes "github.com/cometbft/cometbft/consensus/types"
 	tmjson "github.com/cometbft/cometbft/libs/json"
+	"github.com/cosmos/cosmos-sdk/codec"
+	sdk "github.com/cosmos/cosmos-sdk/types"
 
 	"github.com/forbole/juno/v5/node"
 
@@ -41,7 +39,6 @@ type Node struct {
 
 	client          *httpclient.HTTP
 	txServiceClient tx.ServiceClient
-	grpcConnection  *grpc.ClientConn
 }
 
 // NewNode allows to build a new Node instance
@@ -68,7 +65,7 @@ func NewNode(cfg *Details, accountAddressParser types.AccountAddressParser, code
 		return nil, err
 	}
 
-	grpcConnection, err := CreateGrpcConnection(cfg.GRPC)
+	grpcConnection, err := CreateGrpcConnection(cfg, codec)
 	if err != nil {
 		return nil, err
 	}
@@ -80,7 +77,6 @@ func NewNode(cfg *Details, accountAddressParser types.AccountAddressParser, code
 
 		client:          rpcClient,
 		txServiceClient: tx.NewServiceClient(grpcConnection),
-		grpcConnection:  grpcConnection,
 	}, nil
 }
 
@@ -265,10 +261,5 @@ func (cp *Node) Stop() {
 	err := cp.client.Stop()
 	if err != nil {
 		panic(fmt.Errorf("error while stopping proxy: %s", err))
-	}
-
-	err = cp.grpcConnection.Close()
-	if err != nil {
-		panic(fmt.Errorf("error while closing gRPC connection: %s", err))
 	}
 }

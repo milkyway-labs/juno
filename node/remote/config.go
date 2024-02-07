@@ -61,19 +61,17 @@ func DefaultRPCConfig() *RPCConfig {
 
 // GRPCConfig contains the configuration for the RPC endpoint
 type GRPCConfig struct {
-	Address  string `yaml:"address"`
-	Insecure bool   `yaml:"insecure"`
+	Address string `yaml:"address"`
 }
 
 // NewGrpcConfig allows to build a new GrpcConfig instance
-func NewGrpcConfig(address string, insecure bool) *GRPCConfig {
+func NewGrpcConfig(address string) *GRPCConfig {
 	return &GRPCConfig{
-		Address:  address,
-		Insecure: insecure,
+		Address: address,
 	}
 }
 
 // DefaultGrpcConfig returns the default instance of a GrpcConfig
 func DefaultGrpcConfig() *GRPCConfig {
-	return NewGrpcConfig("localhost:9090", true)
+	return NewGrpcConfig("localhost:9090")
 }
