@@ -1,7 +1,7 @@
 package postgresql_test
 
 import (
-	"io/ioutil"
+	"os"
 	"path"
 	"path/filepath"
 	"regexp"
@@ -33,10 +33,11 @@ func (suite *DbTestSuite) SetupTest() {
 
 	// Build the database config
 	dbCfg := databaseconfig.DefaultDatabaseConfig().
-		WithURL("postgres://bdjuno:password@localhost:6433/bdjuno?sslmode=disable&search_path=public")
+		WithURL("postgres://user:password@localhost:6433/juno?sslmode=disable&search_path=public")
 
 	// Build the database
-	db, err := postgres.Builder(database.NewContext(dbCfg, codec, logging.DefaultLogger()))
+	dbCtx := database.NewContext(dbCfg, codec, logging.DefaultLogger(), types.DefaultAddressParser())
+	db, err := postgres.Builder(dbCtx)
 	suite.Require().NoError(err)
 
 	bigDipperDb, ok := (db).(*postgres.Database)
@@ -51,7 +52,7 @@ func (suite *DbTestSuite) SetupTest() {
 	suite.Require().NoError(err)
 
 	dirPath := path.Join(".")
-	dir, err := ioutil.ReadDir(dirPath)
+	dir, err := os.ReadDir(dirPath)
 	suite.Require().NoError(err)
 
 	for _, fileInfo := range dir {
@@ -59,7 +60,7 @@ func (suite *DbTestSuite) SetupTest() {
 			continue
 		}
 
-		file, err := ioutil.ReadFile(filepath.Join(dirPath, fileInfo.Name()))
+		file, err := os.ReadFile(filepath.Join(dirPath, fileInfo.Name()))
 		suite.Require().NoError(err)
 
 		commentsRegExp := regexp.MustCompile(`/\*.*\*/`)
