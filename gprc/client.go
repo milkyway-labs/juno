@@ -4,12 +4,15 @@ import (
 	"context"
 	"fmt"
 	"net/http"
+	"strconv"
 	"time"
 
 	"github.com/cosmos/cosmos-sdk/codec"
+	grpctypes "github.com/cosmos/cosmos-sdk/types/grpc"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/encoding"
+	"google.golang.org/grpc/metadata"
 	"google.golang.org/grpc/status"
 
 	"github.com/forbole/juno/v5/jsonrpc2"
@@ -60,7 +63,9 @@ func (c *Connection) Invoke(ctx context.Context, method string, args, reply any,
 		return err
 	}
 
-	res, err := c.RunABCIQuery(ctx, method, req)
+	height, _ := BlockHeightFromOutgoingContext(ctx)
+
+	res, err := c.RunABCIQuery(ctx, method, req, height)
 	if err != nil {
 		return fmt.Errorf("abci query: %w", err)
 	}
@@ -78,12 +83,12 @@ func (c *Connection) Invoke(ctx context.Context, method string, args, reply any,
 }
 
 // RunABCIQuery runs a new query through the ABCI protocol
-func (c *Connection) RunABCIQuery(ctx context.Context, path string, data []byte) (*ABCIQueryResult, error) {
+func (c *Connection) RunABCIQuery(ctx context.Context, path string, data []byte, height int64) (*ABCIQueryResult, error) {
 	var res ABCIQueryResult
 	err := c.jsonrpcClient.Call(ctx, "abci_query", ABCIQueryRequest{
 		Path:   path,
 		Data:   data,
-		Height: 0,
+		Height: height,
 		Prove:  false,
 	}, &res)
 
@@ -97,4 +102,20 @@ func (c *Connection) RunABCIQuery(ctx context.Context, path string, data []byte)
 // NewStream implements the grpc.ClientConnInterface interface
 func (c *Connection) NewStream(_ context.Context, _ *grpc.StreamDesc, _ string, _ ...grpc.CallOption) (grpc.ClientStream, error) {
 	return nil, fmt.Errorf("not implemented")
+}
+
+func BlockHeightFromOutgoingContext(ctx context.Context) (int64, bool) {
+	md, ok := metadata.FromOutgoingContext(ctx)
+	if !ok {
+		return 0, false
+	}
+	vs := md.Get(grpctypes.GRPCBlockHeightHeader)
+	if len(vs) == 0 {
+		return 0, false
+	}
+	height, err := strconv.ParseInt(vs[0], 10, 64)
+	if err != nil {
+		return 0, false
+	}
+	return height, true
 }
