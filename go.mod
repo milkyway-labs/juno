@@ -1,6 +1,6 @@
 module github.com/forbole/juno/v5
 
-go 1.20
+go 1.21
 
 require (
 	github.com/cometbft/cometbft v0.37.2
@@ -99,7 +99,7 @@ require (
 	github.com/dgraph-io/ristretto v0.1.1 // indirect
 	github.com/dgryski/go-farm v0.0.0-20200201041132-a6ae2369ad13 // indirect
 	github.com/dustin/go-humanize v1.0.1 // indirect
-	github.com/dvsekhvalnov/jose2go v1.6.0 // indirect
+	github.com/dvsekhvalnov/jose2go v1.5.0 // indirect
 	github.com/esimonov/ifshort v1.0.4 // indirect
 	github.com/ettle/strcase v0.1.1 // indirect
 	github.com/fatih/color v1.15.0 // indirect
@@ -321,3 +321,6 @@ require (
 	pgregory.net/rapid v0.5.5 // indirect
 	sigs.k8s.io/yaml v1.3.0 // indirect
 )
+
+// Required to fix github.com/protocolbuffers/protobuf/issues/16163
+replace github.com/golang/protobuf => github.com/golang/protobuf v1.5.4
