@@ -36,7 +36,14 @@ func (suite *DbTestSuite) SetupTest() {
 		WithURL("postgres://user:password@localhost:6433/juno?sslmode=disable&search_path=public")
 
 	// Build the database
-	dbCtx := database.NewContext(dbCfg, codec, logging.DefaultLogger(), types.DefaultAddressParser())
+	dbCtx := database.NewContext(
+		dbCfg,
+		codec,
+		logging.DefaultLogger(),
+		types.DefaultAddressParser(),
+		types.DefaultTransactionFilter(),
+		types.DefaultMessageFilter(),
+	)
 	db, err := postgres.Builder(dbCtx)
 	suite.Require().NoError(err)
 
