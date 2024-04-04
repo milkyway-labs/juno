@@ -83,10 +83,17 @@ ON CONFLICT ON CONSTRAINT unique_message_per_tx DO UPDATE
 		return nil
 	}
 
+	// Create the partition if it does not exist
+	err = db.createPartitionIfNotExistsWithTx(tx, "message_involved_accounts", partitionID)
+	if err != nil {
+		return err
+	}
+
+	// Store the involved accounts
 	stmt = `
 INSERT INTO message_involved_accounts (user_address, message_index, transaction_hash, partition_id)
 VALUES (:user_address, :message_index, :transaction_hash, :partition_id)`
-
 	_, err = tx.NamedExec(stmt, rows)
+
 	return err
 }
