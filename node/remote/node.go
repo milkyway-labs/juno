@@ -35,15 +35,17 @@ var (
 // Node implements a wrapper around both a Tendermint RPCConfig client and a
 // chain SDK REST client that allows for essential data queries.
 type Node struct {
-	ctx             context.Context
-	codec           codec.Codec
+	ctx                  context.Context
+	codec                codec.Codec
+	accountAddressParser types.AccountAddressParser
+
 	client          *httpclient.HTTP
 	txServiceClient tx.ServiceClient
 	grpcConnection  *grpc.ClientConn
 }
 
 // NewNode allows to build a new Node instance
-func NewNode(cfg *Details, codec codec.Codec) (*Node, error) {
+func NewNode(cfg *Details, accountAddressParser types.AccountAddressParser, codec codec.Codec) (*Node, error) {
 	httpClient, err := jsonrpcclient.DefaultHTTPClient(cfg.RPC.Address)
 	if err != nil {
 		return nil, err
@@ -72,8 +74,9 @@ func NewNode(cfg *Details, codec codec.Codec) (*Node, error) {
 	}
 
 	return &Node{
-		ctx:   context.Background(),
-		codec: codec,
+		ctx:                  context.Background(),
+		codec:                codec,
+		accountAddressParser: accountAddressParser,
 
 		client:          rpcClient,
 		txServiceClient: tx.NewServiceClient(grpcConnection),
@@ -217,7 +220,7 @@ func (cp *Node) Tx(hash string) (*types.Tx, error) {
 		}
 	}
 
-	convTx, err := types.NewTx(res.TxResponse, res.Tx)
+	convTx, err := types.MapTransaction(res.TxResponse, res.Tx, cp.accountAddressParser, cp.codec)
 	if err != nil {
 		return nil, fmt.Errorf("error converting transaction: %s", err.Error())
 	}

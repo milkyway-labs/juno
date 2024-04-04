@@ -55,9 +55,10 @@ var (
 
 // Node represents the node implementation that uses a local node
 type Node struct {
-	ctx      context.Context
-	codec    codec.Codec
-	txConfig client.TxConfig
+	ctx           context.Context
+	codec         codec.Codec
+	txConfig      client.TxConfig
+	accountParser types.AccountAddressParser
 
 	// config
 	tmCfg      *cfg.Config
@@ -73,7 +74,7 @@ type Node struct {
 }
 
 // NewNode returns a new Node instance
-func NewNode(config *Details, txConfig client.TxConfig, codec codec.Codec) (*Node, error) {
+func NewNode(config *Details, txConfig client.TxConfig, accountAddressParser types.AccountAddressParser, codec codec.Codec) (*Node, error) {
 	// Load the config
 	viper.SetConfigFile(path.Join(config.Home, "config", "config.yaml"))
 	tmCfg, err := ParseConfig()
@@ -157,9 +158,10 @@ func NewNode(config *Details, txConfig client.TxConfig, codec codec.Codec) (*Nod
 	)
 
 	return &Node{
-		ctx:      context.Background(),
-		codec:    codec,
-		txConfig: txConfig,
+		ctx:           context.Background(),
+		codec:         codec,
+		txConfig:      txConfig,
+		accountParser: accountAddressParser,
 
 		tmCfg:      tmCfg,
 		genesisDoc: genDoc,
@@ -442,7 +444,7 @@ func (cp *Node) Tx(hash string) (*types.Tx, error) {
 		}
 	}
 
-	convTx, err := types.NewTx(txResponse, protoTx)
+	convTx, err := types.MapTransaction(txResponse, protoTx, cp.accountParser, cp.codec)
 	if err != nil {
 		return nil, fmt.Errorf("error converting transaction: %s", err.Error())
 	}

@@ -3,45 +3,45 @@ package registrar
 import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
-	"github.com/forbole/juno/v5/node"
-	"github.com/forbole/juno/v5/types/params"
-
-	"github.com/forbole/juno/v5/modules/telemetry"
-
-	"github.com/forbole/juno/v5/logging"
-
-	"github.com/forbole/juno/v5/types/config"
-
-	"github.com/forbole/juno/v5/modules/pruning"
-
-	"github.com/forbole/juno/v5/modules"
-	"github.com/forbole/juno/v5/modules/messages"
-
 	"github.com/forbole/juno/v5/database"
+	"github.com/forbole/juno/v5/logging"
+	"github.com/forbole/juno/v5/modules"
+	"github.com/forbole/juno/v5/modules/pruning"
+	"github.com/forbole/juno/v5/modules/telemetry"
+	"github.com/forbole/juno/v5/node"
+	"github.com/forbole/juno/v5/types"
+	"github.com/forbole/juno/v5/types/config"
 )
 
 // Context represents the context of the modules registrar
 type Context struct {
-	JunoConfig     config.Config
-	SDKConfig      *sdk.Config
-	EncodingConfig params.EncodingConfig
-	Database       database.Database
-	Proxy          node.Node
-	Logger         logging.Logger
+	JunoConfig           config.Config
+	SDKConfig            *sdk.Config
+	EncodingConfig       types.EncodingConfig
+	Database             database.Database
+	Proxy                node.Node
+	Logger               logging.Logger
+	AccountAddressParser types.AccountAddressParser
 }
 
 // NewContext allows to build a new Context instance
 func NewContext(
-	parsingConfig config.Config, sdkConfig *sdk.Config, encodingConfig params.EncodingConfig,
-	database database.Database, proxy node.Node, logger logging.Logger,
+	parsingConfig config.Config,
+	sdkConfig *sdk.Config,
+	encodingConfig types.EncodingConfig,
+	database database.Database,
+	proxy node.Node,
+	logger logging.Logger,
+	accountAddressParser types.AccountAddressParser,
 ) Context {
 	return Context{
-		JunoConfig:     parsingConfig,
-		SDKConfig:      sdkConfig,
-		EncodingConfig: encodingConfig,
-		Database:       database,
-		Proxy:          proxy,
-		Logger:         logger,
+		JunoConfig:           parsingConfig,
+		SDKConfig:            sdkConfig,
+		EncodingConfig:       encodingConfig,
+		Database:             database,
+		Proxy:                proxy,
+		Logger:               logger,
+		AccountAddressParser: accountAddressParser,
 	}
 }
 
@@ -73,21 +73,17 @@ var (
 
 // DefaultRegistrar represents a registrar that allows to handle the default Juno modules
 type DefaultRegistrar struct {
-	parser messages.MessageAddressesParser
 }
 
 // NewDefaultRegistrar builds a new DefaultRegistrar
-func NewDefaultRegistrar(parser messages.MessageAddressesParser) *DefaultRegistrar {
-	return &DefaultRegistrar{
-		parser: parser,
-	}
+func NewDefaultRegistrar() *DefaultRegistrar {
+	return &DefaultRegistrar{}
 }
 
 // BuildModules implements Registrar
 func (r *DefaultRegistrar) BuildModules(ctx Context) modules.Modules {
 	return modules.Modules{
 		pruning.NewModule(ctx.JunoConfig, ctx.Database, ctx.Logger),
-		messages.NewModule(r.parser, ctx.EncodingConfig.Codec, ctx.Database),
 		telemetry.NewModule(ctx.JunoConfig),
 	}
 }

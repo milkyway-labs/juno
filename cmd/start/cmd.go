@@ -9,7 +9,7 @@ import (
 
 	parsecmdtypes "github.com/forbole/juno/v5/cmd/parse/types"
 	"github.com/forbole/juno/v5/modules"
-	"github.com/forbole/juno/v5/types/utils"
+	"github.com/forbole/juno/v5/utils"
 
 	"github.com/forbole/juno/v5/logging"
 

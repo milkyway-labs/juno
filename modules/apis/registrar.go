@@ -27,8 +27,8 @@ type Registrar func(ctx Context, router *gin.Engine) error
 // CombinedRegistrar returns a new Registrar combining the given API registrars together
 func CombinedRegistrar(registrars ...Registrar) Registrar {
 	return func(ctx Context, router *gin.Engine) error {
-		for _, registar := range registrars {
-			err := registar(ctx, router)
+		for _, register := range registrars {
+			err := register(ctx, router)
 			if err != nil {
 				return err
 			}

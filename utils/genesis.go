@@ -3,9 +3,6 @@ package utils
 import (
 	"encoding/json"
 	"fmt"
-	"strings"
-
-	"github.com/forbole/juno/v5/node"
 
 	tmjson "github.com/cometbft/cometbft/libs/json"
 	tmos "github.com/cometbft/cometbft/libs/os"
@@ -36,30 +33,4 @@ func GetGenesisState(doc *tmtypes.GenesisDoc) (map[string]json.RawMessage, error
 		return nil, fmt.Errorf("failed to unmarshal genesis state: %s", err)
 	}
 	return genesisState, nil
-}
-
-// GetGenesisDocAndState reads the genesis from node or file and returns genesis doc and state
-func GetGenesisDocAndState(genesisPath string, node node.Node) (*tmtypes.GenesisDoc, map[string]json.RawMessage, error) {
-	var genesisDoc *tmtypes.GenesisDoc
-	if strings.TrimSpace(genesisPath) != "" {
-		genDoc, err := ReadGenesisFileGenesisDoc(genesisPath)
-		if err != nil {
-			return nil, nil, fmt.Errorf("error while reading genesis file: %s", err)
-		}
-		genesisDoc = genDoc
-
-	} else {
-		response, err := node.Genesis()
-		if err != nil {
-			return nil, nil, fmt.Errorf("failed to get genesis: %s", err)
-		}
-		genesisDoc = response.Genesis
-	}
-
-	genesisState, err := GetGenesisState(genesisDoc)
-	if err != nil {
-		return nil, nil, err
-	}
-
-	return genesisDoc, genesisState, nil
 }

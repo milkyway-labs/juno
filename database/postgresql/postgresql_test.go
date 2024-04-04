@@ -14,7 +14,7 @@ import (
 	databaseconfig "github.com/forbole/juno/v5/database/config"
 	postgres "github.com/forbole/juno/v5/database/postgresql"
 	"github.com/forbole/juno/v5/logging"
-	"github.com/forbole/juno/v5/types/params"
+	"github.com/forbole/juno/v5/types"
 )
 
 func TestDatabaseTestSuite(t *testing.T) {
@@ -29,7 +29,7 @@ type DbTestSuite struct {
 
 func (suite *DbTestSuite) SetupTest() {
 	// Create the codec
-	codec := params.MakeTestEncodingConfig()
+	codec := types.MakeTestEncodingConfig()
 
 	// Build the database config
 	dbCfg := databaseconfig.DefaultDatabaseConfig().
