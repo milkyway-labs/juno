@@ -26,9 +26,19 @@ func (db *Database) SaveMessages(messages []*types.Message) error {
 	}
 	defer tx.Rollback()
 
+	err = db.saveMessagesWithTx(tx, messages)
+	if err != nil {
+		return err
+	}
+
+	return tx.Commit()
+}
+
+// saveMessagesWithTx stores the given messages inside the database.
+func (db *Database) saveMessagesWithTx(tx *sqlx.Tx, messages []*types.Message) error {
 	for _, msg := range messages {
 		partitionID := msg.Height / db.partitionSize
-		err = db.createPartitionIfNotExistsWithTx(tx, "messages", partitionID)
+		err := db.createPartitionIfNotExistsWithTx(tx, "messages", partitionID)
 		if err != nil {
 			return err
 		}
@@ -39,7 +49,7 @@ func (db *Database) SaveMessages(messages []*types.Message) error {
 		}
 	}
 
-	return tx.Commit()
+	return nil
 }
 
 // saveMessageInsidePartition stores the given message inside the partition having the provided id.
@@ -67,6 +77,10 @@ ON CONFLICT ON CONSTRAINT unique_message_per_tx DO UPDATE
 			TransactionHash: msg.TxHash,
 			PartitionID:     partitionID,
 		}
+	}
+
+	if len(rows) == 0 {
+		return nil
 	}
 
 	stmt = `

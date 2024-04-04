@@ -25,6 +25,14 @@ func (db *Database) SaveTx(tx *types.Tx) error {
 
 // saveTxInsidePartition stores the given transaction inside the partition having the given id
 func (db *Database) saveTxInsidePartition(tx *types.Tx, partitionID int64) error {
+	// Start a transaction
+	dbTx, err := db.SQL.Beginx()
+	if err != nil {
+		return err
+	}
+	defer dbTx.Rollback()
+
+	// Store the transaction
 	stmt := `
 INSERT INTO transactions 
 (hash, height, success, memo, signatures, signer_infos, fee, gas_wanted, gas_used, raw_log, logs, partition_id) 
@@ -66,7 +74,7 @@ ON CONFLICT (hash, partition_id) DO UPDATE
 		return err
 	}
 
-	_, err = db.SQL.Exec(stmt,
+	_, err = dbTx.Exec(stmt,
 		tx.TxHash,
 		tx.Height,
 		tx.Successful(),
@@ -80,5 +88,16 @@ ON CONFLICT (hash, partition_id) DO UPDATE
 		string(logsBz),
 		partitionID,
 	)
-	return err
+	if err != nil {
+		return err
+	}
+
+	// Store the messages
+	err = db.saveMessagesWithTx(dbTx, tx.Messages)
+	if err != nil {
+		return err
+	}
+
+	// Commit the transaction
+	return dbTx.Commit()
 }
