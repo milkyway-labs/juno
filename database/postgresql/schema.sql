@@ -10,13 +10,13 @@ CREATE TABLE blocks
     hash             TEXT                        NOT NULL UNIQUE,
     num_txs          INTEGER DEFAULT 0,
     total_gas        BIGINT  DEFAULT 0,
-    proposer_address TEXT REFERENCES validators (consensus_address),
+    proposer_address TEXT,
     timestamp        TIMESTAMP WITHOUT TIME ZONE NOT NULL
 );
 
 CREATE TABLE pre_commits
 (
-    validator_address TEXT                        NOT NULL REFERENCES validators (consensus_address),
+    validator_address TEXT                        NOT NULL,
     height            BIGINT                      NOT NULL,
     timestamp         TIMESTAMP WITHOUT TIME ZONE NOT NULL,
     voting_power      BIGINT                      NOT NULL,
