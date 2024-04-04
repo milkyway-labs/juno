@@ -214,9 +214,9 @@ func extractAccountAddresses(messageBz []byte, isAccountAddress AccountAddressPa
 	}
 
 	var addresses []string
-	for key, value := range messageData {
+	for _, value := range messageData {
 		if stringValue, ok := value.(string); ok {
-			if isAccountAddress(key) {
+			if isAccountAddress(stringValue) {
 				addresses = append(addresses, stringValue)
 			}
 		}
