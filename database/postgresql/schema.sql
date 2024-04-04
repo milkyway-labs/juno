@@ -56,11 +56,9 @@ CREATE TABLE messages
     type             TEXT   NOT NULL,
     value            JSONB  NOT NULL,
 
-    /* External references to the transaction table */
+    -- reference to the transaction table
     transaction_hash TEXT   NOT NULL,
     partition_id     BIGINT NOT NULL DEFAULT 0,
-
-    -- reference to the transaction table
     FOREIGN KEY (transaction_hash, partition_id) REFERENCES transactions (hash, partition_id),
 
     CONSTRAINT unique_message_per_tx UNIQUE (transaction_hash, index, partition_id)
@@ -71,10 +69,10 @@ CREATE TABLE message_involved_accounts
 (
     user_address     TEXT   NOT NULL,
 
+    -- reference to the messages table
     message_index    BIGINT NOT NULL,
     transaction_hash TEXT   NOT NULL,
     partition_id     BIGINT NOT NULL DEFAULT 0,
-
     FOREIGN KEY (transaction_hash, message_index, partition_id) REFERENCES messages (transaction_hash, index, partition_id),
 
     CONSTRAINT unique_message_account UNIQUE (message_index, transaction_hash, user_address, partition_id)
