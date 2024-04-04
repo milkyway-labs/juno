@@ -9,7 +9,6 @@ import (
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/tx"
-	"github.com/cosmos/gogoproto/proto"
 	channeltypes "github.com/cosmos/ibc-go/v7/modules/core/04-channel/types"
 
 	"github.com/forbole/juno/v5/utils"
@@ -198,7 +197,7 @@ func MapMessage(txHash string, txHeight int64, index int, msg sdk.Msg, accountPa
 	return NewMessage(
 		txHash,
 		index,
-		proto.MessageName(msg),
+		sdk.MsgTypeURL(msg),
 		messageValue,
 		accountAddresses,
 		txHeight,
