@@ -25,6 +25,11 @@ func (db *Database) SaveTx(tx *types.Tx) error {
 
 // saveTxInsidePartition stores the given transaction inside the partition having the given id
 func (db *Database) saveTxInsidePartition(tx *types.Tx, partitionID int64) error {
+	// Do not store transactions that we do not want to store
+	if !db.ShouldStoreTransaction(tx) {
+		return nil
+	}
+
 	// Start a transaction
 	dbTx, err := db.SQL.Beginx()
 	if err != nil {

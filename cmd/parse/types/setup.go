@@ -18,6 +18,11 @@ import (
 
 // GetParserContext setups all the things that can be used to later parse the chain state
 func GetParserContext(cfg config.Config, parseConfig *Config) (*parser.Context, error) {
+	accountAddressParser := parseConfig.GetAccountAddressParser()
+	transactionFilter := parseConfig.GetTransactionFilter()
+	messageFilter := parseConfig.GetMessageFilterBuilder()(cfg)
+	logger := parseConfig.GetLogger()
+
 	// Build the codec
 	encodingConfig := parseConfig.GetEncodingConfigBuilder()()
 
@@ -32,8 +37,10 @@ func GetParserContext(cfg config.Config, parseConfig *Config) (*parser.Context, 
 	databaseCtx := database.NewContext(
 		cfg.Database,
 		encodingConfig,
-		parseConfig.GetLogger(),
-		parseConfig.GetAccountAddressParser(),
+		logger,
+		accountAddressParser,
+		transactionFilter,
+		messageFilter,
 	)
 	db, err := parseConfig.GetDBBuilder()(databaseCtx)
 	if err != nil {
@@ -41,19 +48,19 @@ func GetParserContext(cfg config.Config, parseConfig *Config) (*parser.Context, 
 	}
 
 	// Init the client
-	nodeCtx := nodebuilder.NewContext(encodingConfig, parseConfig.GetAccountAddressParser())
+	nodeCtx := nodebuilder.NewContext(encodingConfig, accountAddressParser)
 	node, err := nodebuilder.BuildNode(cfg.Node, nodeCtx)
 	if err != nil {
 		return nil, fmt.Errorf("failed to start client: %s", err)
 	}
 
 	// Setup the logging
-	err = parseConfig.GetLogger().SetLogFormat(cfg.Logging.LogFormat)
+	err = logger.SetLogFormat(cfg.Logging.LogFormat)
 	if err != nil {
 		return nil, fmt.Errorf("error while setting logging format: %s", err)
 	}
 
-	err = parseConfig.GetLogger().SetLogLevel(cfg.Logging.LogLevel)
+	err = logger.SetLogLevel(cfg.Logging.LogLevel)
 	if err != nil {
 		return nil, fmt.Errorf("error while setting logging level: %s", err)
 	}
@@ -65,13 +72,13 @@ func GetParserContext(cfg config.Config, parseConfig *Config) (*parser.Context, 
 		encodingConfig,
 		db,
 		node,
-		parseConfig.GetLogger(),
-		parseConfig.GetAccountAddressParser(),
+		logger,
+		accountAddressParser,
 	)
 	mods := parseConfig.GetRegistrar().BuildModules(context)
-	registeredModules := modsregistrar.GetModules(mods, cfg.Chain.Modules, parseConfig.GetLogger())
+	registeredModules := modsregistrar.GetModules(mods, cfg.Chain.Modules, logger)
 
-	return parser.NewContext(encodingConfig, node, db, parseConfig.GetLogger(), registeredModules), nil
+	return parser.NewContext(encodingConfig, node, db, logger, registeredModules), nil
 }
 
 // getConfig returns the SDK Config instance as well as if it's sealed or not

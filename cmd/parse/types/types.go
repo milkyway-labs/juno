@@ -20,6 +20,9 @@ type Config struct {
 	buildDb               database.Builder
 	logger                logging.Logger
 	accountAddressParser  types.AccountAddressParser
+
+	transactionFilter    types.TransactionFilter
+	messageFilterBuilder MessageFilterBuilder
 }
 
 // NewConfig allows to build a new Config instance
@@ -130,4 +133,37 @@ func (cfg *Config) GetAccountAddressParser() types.AccountAddressParser {
 		return types.DefaultAddressParser()
 	}
 	return cfg.accountAddressParser
+}
+
+// MessageFilterBuilder represents a function that takes as input the configuration and returns a message filter
+type MessageFilterBuilder func(cfg config.Config) types.MessageFilter
+
+// WithMessageFilterBuilder sets the message filter to be used
+func (cfg *Config) WithMessageFilterBuilder(builder MessageFilterBuilder) *Config {
+	cfg.messageFilterBuilder = builder
+	return cfg
+}
+
+// GetMessageFilterBuilder returns the message filter builder to be used
+func (cfg *Config) GetMessageFilterBuilder() MessageFilterBuilder {
+	if cfg.messageFilterBuilder == nil {
+		return func(cfg config.Config) types.MessageFilter {
+			return types.DefaultMessageFilter()
+		}
+	}
+	return cfg.messageFilterBuilder
+}
+
+// WithTransactionFilter sets the transaction filter to be used
+func (cfg *Config) WithTransactionFilter(filter types.TransactionFilter) *Config {
+	cfg.transactionFilter = filter
+	return cfg
+}
+
+// GetTransactionFilter returns the transaction filter to be used
+func (cfg *Config) GetTransactionFilter() types.TransactionFilter {
+	if cfg.transactionFilter == nil {
+		return types.DefaultTransactionFilter()
+	}
+	return cfg.transactionFilter
 }

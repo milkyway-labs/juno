@@ -27,6 +27,9 @@ type Database struct {
 	SQL                  *sqlx.DB
 	Logger               logging.Logger
 	AccountAddressParser types.AccountAddressParser
+
+	ShouldStoreTransaction types.TransactionFilter
+	ShouldStoreMessage     types.MessageFilter
 }
 
 // Builder creates a database connection with the given database connection info
@@ -49,6 +52,9 @@ func Builder(ctx *database.Context) (database.Database, error) {
 		SQL:                  postgresDb,
 		Logger:               ctx.Logger,
 		AccountAddressParser: ctx.AccountAddressParser,
+
+		ShouldStoreTransaction: ctx.TransactionFilter,
+		ShouldStoreMessage:     ctx.MessageFilter,
 	}, nil
 }
 

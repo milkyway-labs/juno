@@ -71,6 +71,8 @@ type Context struct {
 	EncodingConfig       types.EncodingConfig
 	Logger               logging.Logger
 	AccountAddressParser types.AccountAddressParser
+	TransactionFilter    types.TransactionFilter
+	MessageFilter        types.MessageFilter
 }
 
 // NewContext allows to build a new Context instance
@@ -79,12 +81,16 @@ func NewContext(
 	encodingConfig types.EncodingConfig,
 	logger logging.Logger,
 	accountAddressParser types.AccountAddressParser,
+	transactionFilter types.TransactionFilter,
+	messageFilter types.MessageFilter,
 ) *Context {
 	return &Context{
 		Cfg:                  cfg,
 		EncodingConfig:       encodingConfig,
 		Logger:               logger,
 		AccountAddressParser: accountAddressParser,
+		TransactionFilter:    transactionFilter,
+		MessageFilter:        messageFilter,
 	}
 }
 

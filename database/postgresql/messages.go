@@ -37,13 +37,7 @@ func (db *Database) SaveMessages(messages []*types.Message) error {
 // saveMessagesWithTx stores the given messages inside the database.
 func (db *Database) saveMessagesWithTx(tx *sqlx.Tx, messages []*types.Message) error {
 	for _, msg := range messages {
-		partitionID := msg.Height / db.partitionSize
-		err := db.createPartitionIfNotExistsWithTx(tx, "messages", partitionID)
-		if err != nil {
-			return err
-		}
-
-		err = db.saveMessageInsidePartition(tx, msg, partitionID)
+		err := db.saveMessageInsidePartition(tx, msg)
 		if err != nil {
 			return err
 		}
@@ -55,7 +49,19 @@ func (db *Database) saveMessagesWithTx(tx *sqlx.Tx, messages []*types.Message) e
 // saveMessageInsidePartition stores the given message inside the partition having the provided id.
 // All the operations are done inside the same transaction.
 // It is responsibility of the caller to commit the transaction or rollback.
-func (db *Database) saveMessageInsidePartition(tx *sqlx.Tx, msg *types.Message, partitionID int64) error {
+func (db *Database) saveMessageInsidePartition(tx *sqlx.Tx, msg *types.Message) error {
+	// Skip storing unwanted messages
+	if !db.ShouldStoreMessage(msg) {
+		return nil
+	}
+
+	// Create the partition if it does not exist
+	partitionID := msg.Height / db.partitionSize
+	err := db.createPartitionIfNotExistsWithTx(tx, "messages", partitionID)
+	if err != nil {
+		return err
+	}
+
 	// Store the message
 	stmt := `
 INSERT INTO messages (index, type, value, transaction_hash, partition_id) 
@@ -63,7 +69,7 @@ VALUES ($1, $2, $3, $4, $5)
 ON CONFLICT ON CONSTRAINT unique_message_per_tx DO UPDATE 
 	SET  type = excluded.type,
 	     value = excluded.value`
-	_, err := tx.Exec(stmt, msg.Index, msg.Type, msg.Value, msg.TxHash, partitionID)
+	_, err = tx.Exec(stmt, msg.Index, msg.Type, msg.Value, msg.TxHash, partitionID)
 	if err != nil {
 		return err
 	}

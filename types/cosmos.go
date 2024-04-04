@@ -181,8 +181,9 @@ func MapMessage(txHash string, txHeight int64, index int, msg sdk.Msg, accountPa
 	if err != nil {
 		return nil, err
 	}
-
 	messageValue := string(messageBz)
+
+	// Special case for IBC packets as we want to extract the data from the packet
 	if msgReceivePacket, ok := msg.(*channeltypes.MsgRecvPacket); ok {
 		trimMessageString := utils.TrimLastChar(string(messageBz))
 		trimDataString := string(msgReceivePacket.Packet.Data)[1:]
