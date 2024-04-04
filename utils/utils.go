@@ -2,16 +2,17 @@ package utils
 
 import (
 	"fmt"
+	"unicode/utf8"
 
 	abci "github.com/cometbft/cometbft/abci/types"
 	tmcrypto "github.com/cometbft/cometbft/crypto"
-	"github.com/cometbft/cometbft/types"
+	cometbfttypes "github.com/cometbft/cometbft/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/bech32"
 )
 
 // ConvertValidatorAddressToBech32String converts the given validator address to its Bech32 string representation
-func ConvertValidatorAddressToBech32String(address types.Address) string {
+func ConvertValidatorAddressToBech32String(address cometbfttypes.Address) string {
 	return sdk.ConsAddress(address).String()
 }
 
@@ -57,4 +58,12 @@ func MaxInt64(a, b int64) int64 {
 		return a
 	}
 	return b
+}
+
+func TrimLastChar(s string) string {
+	r, size := utf8.DecodeLastRuneInString(s)
+	if r == utf8.RuneError && (size == 0 || size == 1) {
+		size = 0
+	}
+	return s[:len(s)-size]
 }

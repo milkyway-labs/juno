@@ -21,7 +21,7 @@ import (
 	"github.com/spf13/viper"
 
 	"github.com/forbole/juno/v5/node"
-	"github.com/forbole/juno/v5/types/params"
+	"github.com/forbole/juno/v5/types"
 )
 
 var (
@@ -43,7 +43,7 @@ type Source struct {
 }
 
 // NewSource returns a new Source instance
-func NewSource(home string, encodingConfig params.EncodingConfig) (*Source, error) {
+func NewSource(home string, encodingConfig types.EncodingConfig) (*Source, error) {
 	levelDB, err := db.NewGoLevelDB("application", path.Join(home, "data"))
 	if err != nil {
 		return nil, err

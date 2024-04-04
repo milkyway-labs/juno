@@ -27,8 +27,8 @@ import (
 	"github.com/cosmos/cosmos-sdk/x/upgrade"
 	upgradeclient "github.com/cosmos/cosmos-sdk/x/upgrade/client"
 
+	appparams "github.com/forbole/juno/v5/types"
 	"github.com/forbole/juno/v5/types/config"
-	appparams "github.com/forbole/juno/v5/types/params"
 )
 
 // SdkConfigSetup represents a method that allows to customize the given sdk.Config.

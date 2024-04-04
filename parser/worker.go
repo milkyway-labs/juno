@@ -7,9 +7,11 @@ import (
 
 	"github.com/cosmos/cosmos-sdk/x/authz"
 
-	"github.com/forbole/juno/v5/logging"
-
 	"github.com/cosmos/cosmos-sdk/codec"
+
+	"github.com/forbole/juno/v5/logging"
+	nodeutils "github.com/forbole/juno/v5/node/utils"
+	"github.com/forbole/juno/v5/utils"
 
 	"github.com/forbole/juno/v5/database"
 	"github.com/forbole/juno/v5/types/config"
@@ -22,7 +24,6 @@ import (
 
 	"github.com/forbole/juno/v5/node"
 	"github.com/forbole/juno/v5/types"
-	"github.com/forbole/juno/v5/types/utils"
 )
 
 // Worker defines a job consumer that is responsible for getting and
@@ -100,7 +101,7 @@ func (w Worker) Process(height int64) error {
 	if height == 0 {
 		cfg := config.Cfg.Parser
 
-		genesisDoc, genesisState, err := utils.GetGenesisDocAndState(cfg.GenesisFilePath, w.node)
+		genesisDoc, genesisState, err := nodeutils.GetGenesisDocAndState(cfg.GenesisFilePath, w.node)
 		if err != nil {
 			return fmt.Errorf("failed to get genesis: %s", err)
 		}
@@ -172,7 +173,7 @@ func (w Worker) SaveValidators(vals []*tmtypes.Validator) error {
 	for index, val := range vals {
 		consAddr := sdk.ConsAddress(val.Address).String()
 
-		consPubKey, err := types.ConvertValidatorPubKeyToBech32String(val.PubKey)
+		consPubKey, err := utils.ConvertValidatorPubKeyToBech32String(val.PubKey)
 		if err != nil {
 			return fmt.Errorf("failed to convert validator public key for validators %s: %s", consAddr, err)
 		}
@@ -251,7 +252,7 @@ func (w Worker) ExportCommit(commit *tmtypes.Commit, vals *tmctypes.ResultValida
 		}
 
 		signatures = append(signatures, types.NewCommitSig(
-			types.ConvertValidatorAddressToBech32String(commitSig.ValidatorAddress),
+			utils.ConvertValidatorAddressToBech32String(commitSig.ValidatorAddress),
 			val.VotingPower,
 			val.ProposerPriority,
 			commit.Height,

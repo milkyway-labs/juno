@@ -4,8 +4,6 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/cosmos/gogoproto/proto"
-
 	tmctypes "github.com/cometbft/cometbft/rpc/core/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/rs/zerolog"
@@ -118,7 +116,7 @@ func (d *defaultLogger) MsgError(module modules.Module, tx *types.Tx, msg sdk.Ms
 		LogKeyModule, module.Name(),
 		LogKeyHeight, tx.Height,
 		LogKeyTxHash, tx.TxHash,
-		LogKeyMsgType, proto.MessageName(msg),
+		LogKeyMsgType, sdk.MsgTypeURL(msg),
 	)
 }
 

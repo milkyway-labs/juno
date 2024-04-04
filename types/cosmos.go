@@ -1,13 +1,17 @@
 package types
 
 import (
+	"encoding/json"
 	"fmt"
 	"time"
 
 	tmctypes "github.com/cometbft/cometbft/rpc/core/types"
-
+	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/tx"
+	channeltypes "github.com/cosmos/ibc-go/v7/modules/core/04-channel/types"
+
+	"github.com/forbole/juno/v5/utils"
 )
 
 // Validator contains the data of a single validator
@@ -79,7 +83,7 @@ func NewBlockFromTmBlock(blk *tmctypes.ResultBlock, totalGas uint64) *Block {
 		blk.Block.Hash().String(),
 		len(blk.Block.Txs),
 		totalGas,
-		ConvertValidatorAddressToBech32String(blk.Block.ProposerAddress),
+		utils.ConvertValidatorAddressToBech32String(blk.Block.ProposerAddress),
 		blk.Block.Time,
 	)
 }
@@ -90,14 +94,31 @@ func NewBlockFromTmBlock(blk *tmctypes.ResultBlock, totalGas uint64) *Block {
 type Tx struct {
 	*tx.Tx
 	*sdk.TxResponse
+	Messages []*Message
 }
 
 // NewTx allows to create a new Tx instance from the given txResponse
-func NewTx(txResponse *sdk.TxResponse, tx *tx.Tx) (*Tx, error) {
+func NewTx(txResponse *sdk.TxResponse, tx *tx.Tx, messages []*Message) (*Tx, error) {
 	return &Tx{
 		Tx:         tx,
 		TxResponse: txResponse,
+		Messages:   messages,
 	}, nil
+}
+
+// MapTransaction allows to build a new Tx instance from the given txResponse and Cosmos transaction
+func MapTransaction(txResponse *sdk.TxResponse, tx *tx.Tx, accountParser AccountAddressParser, cdc codec.Codec) (*Tx, error) {
+	var messages []*Message
+	for i, msg := range tx.GetMsgs() {
+		message, err := MapMessage(txResponse.TxHash, txResponse.Height, i, msg, accountParser, cdc)
+		if err != nil {
+			return nil, err
+		}
+
+		messages = append(messages, message)
+	}
+
+	return NewTx(txResponse, tx, messages)
 }
 
 // FindEventByType searches inside the given tx events for the message having the specified index, in order
@@ -152,4 +173,54 @@ func NewMessage(txHash string, index int, msgType string, value string, addresse
 		Addresses: addresses,
 		Height:    height,
 	}
+}
+
+// MapMessage allows to build a new Message instance from the given tx data, index and Cosmos message
+func MapMessage(txHash string, txHeight int64, index int, msg sdk.Msg, accountParser AccountAddressParser, cdc codec.Codec) (*Message, error) {
+	messageBz, err := cdc.MarshalJSON(msg)
+	if err != nil {
+		return nil, err
+	}
+	messageValue := string(messageBz)
+
+	// Special case for IBC packets as we want to extract the data from the packet
+	if msgReceivePacket, ok := msg.(*channeltypes.MsgRecvPacket); ok {
+		trimMessageString := utils.TrimLastChar(string(messageBz))
+		trimDataString := string(msgReceivePacket.Packet.Data)[1:]
+		messageValue = fmt.Sprintf("%s,%s", trimMessageString, trimDataString)
+	}
+
+	accountAddresses, err := extractAccountAddresses(messageBz, accountParser)
+	if err != nil {
+		return nil, err
+	}
+
+	return NewMessage(
+		txHash,
+		index,
+		sdk.MsgTypeURL(msg),
+		messageValue,
+		accountAddresses,
+		txHeight,
+	), nil
+}
+
+// extractAccountAddresses extracts the account addresses from the given message bytes
+func extractAccountAddresses(messageBz []byte, isAccountAddress AccountAddressParser) ([]string, error) {
+	var messageData map[string]interface{}
+	err := json.Unmarshal(messageBz, &messageData)
+	if err != nil {
+		return nil, err
+	}
+
+	var addresses []string
+	for _, value := range messageData {
+		if stringValue, ok := value.(string); ok {
+			if isAccountAddress(stringValue) {
+				addresses = append(addresses, stringValue)
+			}
+		}
+	}
+
+	return addresses, nil
 }

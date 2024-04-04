@@ -7,16 +7,12 @@ import (
 	parsecmdtypes "github.com/forbole/juno/v5/cmd/parse/types"
 
 	"github.com/spf13/cobra"
-
-	v4 "github.com/forbole/juno/v5/cmd/migrate/v4"
 )
 
 type Migrator func(parseCfg *parsecmdtypes.Config) error
 
 var (
-	migrations = map[string]Migrator{
-		"v4": v4.RunMigration,
-	}
+	migrations = map[string]Migrator{}
 )
 
 func getVersions() []string {

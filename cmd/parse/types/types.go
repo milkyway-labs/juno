@@ -3,13 +3,12 @@ package types
 import (
 	"github.com/cosmos/cosmos-sdk/std"
 
-	"github.com/forbole/juno/v5/logging"
-	"github.com/forbole/juno/v5/types/config"
-	"github.com/forbole/juno/v5/types/params"
-
 	"github.com/forbole/juno/v5/database"
 	"github.com/forbole/juno/v5/database/builder"
+	"github.com/forbole/juno/v5/logging"
 	"github.com/forbole/juno/v5/modules/registrar"
+	"github.com/forbole/juno/v5/types"
+	"github.com/forbole/juno/v5/types/config"
 )
 
 // Config contains all the configuration for the "parse" command
@@ -20,6 +19,10 @@ type Config struct {
 	setupCfg              SdkConfigSetup
 	buildDb               database.Builder
 	logger                logging.Logger
+	accountAddressParser  types.AccountAddressParser
+
+	transactionFilter    types.TransactionFilter
+	messageFilterBuilder MessageFilterBuilder
 }
 
 // NewConfig allows to build a new Config instance
@@ -64,8 +67,8 @@ func (cfg *Config) WithEncodingConfigBuilder(b EncodingConfigBuilder) *Config {
 // GetEncodingConfigBuilder returns the encoding config builder to be used
 func (cfg *Config) GetEncodingConfigBuilder() EncodingConfigBuilder {
 	if cfg.encodingConfigBuilder == nil {
-		return func() params.EncodingConfig {
-			encodingConfig := params.MakeTestEncodingConfig()
+		return func() types.EncodingConfig {
+			encodingConfig := types.MakeTestEncodingConfig()
 			std.RegisterLegacyAminoCodec(encodingConfig.Amino)
 			std.RegisterInterfaces(encodingConfig.InterfaceRegistry)
 			ModuleBasics.RegisterLegacyAminoCodec(encodingConfig.Amino)
@@ -116,4 +119,51 @@ func (cfg *Config) GetLogger() logging.Logger {
 		return logging.DefaultLogger()
 	}
 	return cfg.logger
+}
+
+// WithAccountAddressParser sets the account address parser to be used
+func (cfg *Config) WithAccountAddressParser(parser types.AccountAddressParser) *Config {
+	cfg.accountAddressParser = parser
+	return cfg
+}
+
+// GetAccountAddressParser returns the account address parser to be used
+func (cfg *Config) GetAccountAddressParser() types.AccountAddressParser {
+	if cfg.accountAddressParser == nil {
+		return types.DefaultAddressParser()
+	}
+	return cfg.accountAddressParser
+}
+
+// MessageFilterBuilder represents a function that takes as input the configuration and returns a message filter
+type MessageFilterBuilder func(cfg config.Config) types.MessageFilter
+
+// WithMessageFilterBuilder sets the message filter to be used
+func (cfg *Config) WithMessageFilterBuilder(builder MessageFilterBuilder) *Config {
+	cfg.messageFilterBuilder = builder
+	return cfg
+}
+
+// GetMessageFilterBuilder returns the message filter builder to be used
+func (cfg *Config) GetMessageFilterBuilder() MessageFilterBuilder {
+	if cfg.messageFilterBuilder == nil {
+		return func(cfg config.Config) types.MessageFilter {
+			return types.DefaultMessageFilter()
+		}
+	}
+	return cfg.messageFilterBuilder
+}
+
+// WithTransactionFilter sets the transaction filter to be used
+func (cfg *Config) WithTransactionFilter(filter types.TransactionFilter) *Config {
+	cfg.transactionFilter = filter
+	return cfg
+}
+
+// GetTransactionFilter returns the transaction filter to be used
+func (cfg *Config) GetTransactionFilter() types.TransactionFilter {
+	if cfg.transactionFilter == nil {
+		return types.DefaultTransactionFilter()
+	}
+	return cfg.transactionFilter
 }
