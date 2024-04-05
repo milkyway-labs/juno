@@ -36,7 +36,7 @@ func (d *defaultLogger) SetLogLevel(level string) error {
 		return err
 	}
 
-	zerolog.SetGlobalLevel(logLvl)
+	d.Logger = d.Logger.Level(logLvl)
 	return nil
 }
 
@@ -48,7 +48,7 @@ func (d *defaultLogger) SetLogFormat(format string) error {
 		break
 
 	case "text":
-		log.Logger = log.Output(zerolog.ConsoleWriter{Out: os.Stderr})
+		d.Logger = d.Logger.Output(zerolog.ConsoleWriter{Out: os.Stderr})
 
 	default:
 		return fmt.Errorf("invalid logging format: %s", format)
