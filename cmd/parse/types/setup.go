@@ -18,10 +18,22 @@ import (
 
 // GetParserContext setups all the things that can be used to later parse the chain state
 func GetParserContext(cfg config.Config, parseConfig *Config) (*parser.Context, error) {
+	// Setup the logging
+	logger := parseConfig.GetLogger()
+	err := logger.SetLogFormat(cfg.Logging.LogFormat)
+	if err != nil {
+		return nil, fmt.Errorf("error while setting logging format: %s", err)
+	}
+
+	err = logger.SetLogLevel(cfg.Logging.LogLevel)
+	if err != nil {
+		return nil, fmt.Errorf("error while setting logging level: %s", err)
+	}
+
+	// Get the account parser and filters
 	accountAddressParser := parseConfig.GetAccountAddressParser()
 	transactionFilter := parseConfig.GetTransactionFilter()
 	messageFilter := parseConfig.GetMessageFilterBuilder()(cfg)
-	logger := parseConfig.GetLogger()
 
 	// Build the codec
 	encodingConfig := parseConfig.GetEncodingConfigBuilder()()
@@ -33,7 +45,7 @@ func GetParserContext(cfg config.Config, parseConfig *Config) (*parser.Context, 
 		sdkConfig.Seal()
 	}
 
-	// Get the db
+	// Create the database
 	databaseCtx := database.NewContext(
 		cfg.Database,
 		encodingConfig,
@@ -47,25 +59,14 @@ func GetParserContext(cfg config.Config, parseConfig *Config) (*parser.Context, 
 		return nil, err
 	}
 
-	// Init the client
+	// Create the node
 	nodeCtx := nodebuilder.NewContext(encodingConfig, accountAddressParser)
 	node, err := nodebuilder.BuildNode(cfg.Node, nodeCtx)
 	if err != nil {
 		return nil, fmt.Errorf("failed to start client: %s", err)
 	}
 
-	// Setup the logging
-	err = logger.SetLogFormat(cfg.Logging.LogFormat)
-	if err != nil {
-		return nil, fmt.Errorf("error while setting logging format: %s", err)
-	}
-
-	err = logger.SetLogLevel(cfg.Logging.LogLevel)
-	if err != nil {
-		return nil, fmt.Errorf("error while setting logging level: %s", err)
-	}
-
-	// Get the modules
+	// Build the modules
 	context := modsregistrar.NewContext(
 		cfg,
 		sdkConfig,
