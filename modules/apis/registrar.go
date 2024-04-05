@@ -11,10 +11,10 @@ import (
 // Context contains all the useful data that might be used when registering an API handler
 type Context struct {
 	registrar.Context
-	GRPCConnection *grpc.ClientConn
+	GRPCConnection grpc.ClientConnInterface
 }
 
-func NewContext(ctx registrar.Context, grpcConnection *grpc.ClientConn) Context {
+func NewContext(ctx registrar.Context, grpcConnection grpc.ClientConnInterface) Context {
 	return Context{
 		Context:        ctx,
 		GRPCConnection: grpcConnection,
