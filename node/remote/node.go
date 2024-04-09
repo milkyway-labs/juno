@@ -9,6 +9,7 @@ import (
 	"time"
 
 	tmtypes "github.com/cometbft/cometbft/types"
+	"google.golang.org/grpc"
 
 	constypes "github.com/cometbft/cometbft/consensus/types"
 	tmjson "github.com/cometbft/cometbft/libs/json"
@@ -202,7 +203,7 @@ func (cp *Node) BlockResults(height int64) (*tmctypes.ResultBlockResults, error)
 
 // Tx implements node.Node
 func (cp *Node) Tx(hash string) (*types.Tx, error) {
-	res, err := cp.txServiceClient.GetTx(context.Background(), &tx.GetTxRequest{Hash: hash})
+	res, err := cp.txServiceClient.GetTx(context.Background(), &tx.GetTxRequest{Hash: hash}, grpc.MaxCallRecvMsgSize(1310720))
 	if err != nil {
 		return nil, err
 	}
