@@ -31,6 +31,8 @@ import (
 type Worker struct {
 	index int
 
+	cfg config.Config
+
 	queue   types.HeightQueue
 	codec   codec.Codec
 	modules []modules.Module
@@ -44,6 +46,7 @@ type Worker struct {
 func NewWorker(ctx *Context, queue types.HeightQueue, index int) Worker {
 	return Worker{
 		index:   index,
+		cfg:     ctx.Config,
 		codec:   ctx.EncodingConfig.Codec,
 		node:    ctx.Node,
 		queue:   queue,
@@ -51,6 +54,12 @@ func NewWorker(ctx *Context, queue types.HeightQueue, index int) Worker {
 		modules: ctx.Modules,
 		logger:  ctx.Logger,
 	}
+}
+
+// shouldReEnqueueWhenFailed returns true if the worker should re-enqueue a block when
+// the parsing of its parts fails inside modules
+func (w Worker) shouldReEnqueueWhenFailed() bool {
+	return w.cfg.Parser.ReEnqueueWhenFailed
 }
 
 // Start starts a worker by listening for new jobs (block heights) from the
@@ -64,7 +73,7 @@ func (w Worker) Start() {
 
 	for i := range w.queue {
 		if err := w.ProcessIfNotExists(i); err != nil {
-			// re-enqueue any failed job after average block time
+			// Re-enqueue any failed job after average block time
 			time.Sleep(config.GetAvgBlockTime())
 
 			// TODO: Implement exponential backoff or max retries for a block height.
@@ -156,7 +165,12 @@ func (w Worker) HandleGenesis(genesisDoc *tmtypes.GenesisDoc, appState map[strin
 	// Call the genesis handlers
 	for _, module := range w.modules {
 		if genesisModule, ok := module.(modules.GenesisModule); ok {
-			if err := genesisModule.HandleGenesis(genesisDoc, appState); err != nil {
+			err := genesisModule.HandleGenesis(genesisDoc, appState)
+			if err != nil {
+				if w.shouldReEnqueueWhenFailed() {
+					return err
+				}
+
 				w.logger.GenesisError(module, err)
 			}
 		}
@@ -225,6 +239,10 @@ func (w Worker) ExportBlock(
 		if blockModule, ok := module.(modules.BlockModule); ok {
 			err = blockModule.HandleBlock(b, r, txs, vals)
 			if err != nil {
+				if w.shouldReEnqueueWhenFailed() {
+					return err
+				}
+
 				w.logger.BlockError(module, b, err)
 			}
 		}
@@ -279,27 +297,35 @@ func (w Worker) saveTx(tx *types.Tx) error {
 }
 
 // handleTx accepts the transaction and calls the tx handlers.
-func (w Worker) handleTx(tx *types.Tx) {
+func (w Worker) handleTx(tx *types.Tx) error {
 	// Call the tx handlers
 	for _, module := range w.modules {
 		if transactionModule, ok := module.(modules.TransactionModule); ok {
 			err := transactionModule.HandleTx(tx)
 			if err != nil {
+				if w.shouldReEnqueueWhenFailed() {
+					return err
+				}
+
 				w.logger.TxError(module, tx, err)
 			}
 		}
 	}
+
+	return nil
 }
 
 // handleMessage accepts the transaction and handles messages contained
 // inside the transaction.
-func (w Worker) handleMessage(index int, msg sdk.Msg, tx *types.Tx) {
+func (w Worker) handleMessage(index int, msg sdk.Msg, tx *types.Tx) error {
 	// Allow modules to handle the message
 	for _, module := range w.modules {
 		if messageModule, ok := module.(modules.MessageModule); ok {
 			err := messageModule.HandleMsg(index, msg, tx)
 			if err != nil {
-				w.logger.MsgError(module, tx, msg, err)
+				if w.shouldReEnqueueWhenFailed() {
+					w.logger.MsgError(module, tx, msg, err)
+				}
 			}
 		}
 	}
@@ -317,29 +343,37 @@ func (w Worker) handleMessage(index int, msg sdk.Msg, tx *types.Tx) {
 				if messageModule, ok := module.(modules.AuthzMessageModule); ok {
 					err = messageModule.HandleMsgExec(index, msgExec, authzIndex, executedMsg, tx)
 					if err != nil {
+						if w.shouldReEnqueueWhenFailed() {
+							return err
+						}
+
 						w.logger.MsgError(module, tx, executedMsg, err)
 					}
 				}
 			}
 		}
 	}
+
+	return nil
 }
 
 // ExportTxs accepts a slice of transactions and persists then inside the database.
 // An error is returned if the write fails.
 func (w Worker) ExportTxs(txs []*types.Tx) error {
-	// handle all transactions inside the block
 	for _, tx := range txs {
-		// save the transaction
+		// Save the transaction
 		err := w.saveTx(tx)
 		if err != nil {
 			return fmt.Errorf("error while storing txs: %s", err)
 		}
 
-		// call the tx handlers
-		w.handleTx(tx)
+		// Call the transactions handlers
+		err = w.handleTx(tx)
+		if err != nil {
+			return err
+		}
 
-		// handle all messages contained inside the transaction
+		// Handle all messages contained inside the transaction
 		sdkMsgs := make([]sdk.Msg, len(tx.Body.Messages))
 		for i, msg := range tx.Body.Messages {
 			var stdMsg sdk.Msg
@@ -350,9 +384,12 @@ func (w Worker) ExportTxs(txs []*types.Tx) error {
 			sdkMsgs[i] = stdMsg
 		}
 
-		// call the msg handlers
+		// Call the message handlers
 		for i, sdkMsg := range sdkMsgs {
-			w.handleMessage(i, sdkMsg, tx)
+			err = w.handleMessage(i, sdkMsg, tx)
+			if err != nil {
+				return err
+			}
 		}
 	}
 
