@@ -79,7 +79,7 @@ func GetParserContext(cfg config.Config, parseConfig *Config) (*parser.Context, 
 	mods := parseConfig.GetRegistrar().BuildModules(context)
 	registeredModules := modsregistrar.GetModules(mods, cfg.Chain.Modules, logger)
 
-	return parser.NewContext(encodingConfig, node, db, logger, registeredModules), nil
+	return parser.NewContext(cfg, encodingConfig, node, db, logger, registeredModules), nil
 }
 
 // getConfig returns the SDK Config instance as well as if it's sealed or not

@@ -69,8 +69,7 @@ config:
 				MaxConnections: 10,
 			},
 			GRPC: &remote.GRPCConfig{
-				Address:  "http://localhost:9090",
-				Insecure: true,
+				Address: "http://localhost:9090",
 			},
 		},
 	}
@@ -86,7 +85,6 @@ config:
         max_connections: 10
     grpc:
         address: http://localhost:9090
-        insecure: true
 `
 	require.Equal(t, strings.TrimLeft(expected, "\n"), string(bz))
 }
