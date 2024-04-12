@@ -1,5 +1,9 @@
 package config
 
+import (
+	"net/url"
+)
+
 type Config struct {
 	URL           string `yaml:"url"`
 	PartitionSize int64  `yaml:"partition_size"`
@@ -20,6 +24,19 @@ func (c Config) WithURL(url string) Config {
 func (c Config) WithPartitionSize(partitionSize int64) Config {
 	c.PartitionSize = partitionSize
 	return c
+}
+
+func (c Config) GetSchema() string {
+	u, err := url.Parse(c.URL)
+	if err != nil {
+		return "public"
+	}
+
+	searchPath := u.Query().Get("search_path")
+	if searchPath == "" {
+		return "public"
+	}
+	return searchPath
 }
 
 func (c Config) GetPartitionSize() int64 {
