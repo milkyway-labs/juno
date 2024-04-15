@@ -61,11 +61,6 @@ func NewNode(cfg *Details, accountAddressParser types.AccountAddressParser, code
 		return nil, err
 	}
 
-	err = rpcClient.Start()
-	if err != nil {
-		return nil, err
-	}
-
 	grpcConnection, err := CreateGrpcConnection(cfg, codec)
 	if err != nil {
 		return nil, err
@@ -81,8 +76,22 @@ func NewNode(cfg *Details, accountAddressParser types.AccountAddressParser, code
 	}, nil
 }
 
+// startIfNotRunning starts the node if it is not running
+func (cp *Node) startIfNotRunning() error {
+	if cp.client.IsRunning() {
+		return nil
+	}
+
+	return cp.client.Start()
+}
+
 // Genesis implements node.Node
 func (cp *Node) Genesis() (*tmctypes.ResultGenesis, error) {
+	err := cp.startIfNotRunning()
+	if err != nil {
+		return nil, err
+	}
+
 	res, err := cp.client.Genesis(cp.ctx)
 	if err != nil && strings.Contains(err.Error(), "use the genesis_chunked API instead") {
 		return cp.getGenesisChunked()
@@ -108,6 +117,11 @@ func (cp *Node) getGenesisChunked() (*tmctypes.ResultGenesis, error) {
 
 // getGenesisChunksStartingFrom returns all the genesis chunks data starting from the chunk with the given id
 func (cp *Node) getGenesisChunksStartingFrom(id uint) ([]byte, error) {
+	err := cp.startIfNotRunning()
+	if err != nil {
+		return nil, err
+	}
+
 	res, err := cp.client.GenesisChunked(cp.ctx, id)
 	if err != nil {
 		return nil, fmt.Errorf("error while getting genesis chunk %d out of %d", id, res.TotalChunks)
@@ -132,6 +146,11 @@ func (cp *Node) getGenesisChunksStartingFrom(id uint) ([]byte, error) {
 
 // ConsensusState implements node.Node
 func (cp *Node) ConsensusState() (*constypes.RoundStateSimple, error) {
+	err := cp.startIfNotRunning()
+	if err != nil {
+		return nil, err
+	}
+
 	state, err := cp.client.ConsensusState(context.Background())
 	if err != nil {
 		return nil, err
@@ -147,6 +166,11 @@ func (cp *Node) ConsensusState() (*constypes.RoundStateSimple, error) {
 
 // LatestHeight implements node.Node
 func (cp *Node) LatestHeight() (int64, error) {
+	err := cp.startIfNotRunning()
+	if err != nil {
+		return 0, err
+	}
+
 	status, err := cp.client.Status(cp.ctx)
 	if err != nil {
 		return -1, err
@@ -158,6 +182,11 @@ func (cp *Node) LatestHeight() (int64, error) {
 
 // ChainID implements node.Node
 func (cp *Node) ChainID() (string, error) {
+	err := cp.startIfNotRunning()
+	if err != nil {
+		return "", err
+	}
+
 	status, err := cp.client.Status(cp.ctx)
 	if err != nil {
 		return "", err
@@ -169,6 +198,11 @@ func (cp *Node) ChainID() (string, error) {
 
 // Validators implements node.Node
 func (cp *Node) Validators(height int64) (*tmctypes.ResultValidators, error) {
+	err := cp.startIfNotRunning()
+	if err != nil {
+		return nil, err
+	}
+
 	vals := &tmctypes.ResultValidators{
 		BlockHeight: height,
 	}
@@ -193,16 +227,31 @@ func (cp *Node) Validators(height int64) (*tmctypes.ResultValidators, error) {
 
 // Block implements node.Node
 func (cp *Node) Block(height int64) (*tmctypes.ResultBlock, error) {
+	err := cp.startIfNotRunning()
+	if err != nil {
+		return nil, err
+	}
+
 	return cp.client.Block(cp.ctx, &height)
 }
 
 // BlockResults implements node.Node
 func (cp *Node) BlockResults(height int64) (*tmctypes.ResultBlockResults, error) {
+	err := cp.startIfNotRunning()
+	if err != nil {
+		return nil, err
+	}
+
 	return cp.client.BlockResults(cp.ctx, &height)
 }
 
 // Tx implements node.Node
 func (cp *Node) Tx(hash string) (*types.Tx, error) {
+	err := cp.startIfNotRunning()
+	if err != nil {
+		return nil, err
+	}
+
 	res, err := cp.txServiceClient.GetTx(context.Background(), &tx.GetTxRequest{Hash: hash}, grpc.MaxCallRecvMsgSize(13107200))
 	if err != nil {
 		return nil, err
@@ -242,11 +291,21 @@ func (cp *Node) Txs(block *tmctypes.ResultBlock) ([]*types.Tx, error) {
 
 // TxSearch implements node.Node
 func (cp *Node) TxSearch(query string, page *int, perPage *int, orderBy string) (*tmctypes.ResultTxSearch, error) {
+	err := cp.startIfNotRunning()
+	if err != nil {
+		return nil, err
+	}
+
 	return cp.client.TxSearch(cp.ctx, query, false, page, perPage, orderBy)
 }
 
 // SubscribeEvents implements node.Node
 func (cp *Node) SubscribeEvents(subscriber, query string) (<-chan tmctypes.ResultEvent, context.CancelFunc, error) {
+	err := cp.startIfNotRunning()
+	if err != nil {
+		return nil, nil, err
+	}
+
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	eventCh, err := cp.client.Subscribe(ctx, subscriber, query)
 	return eventCh, cancel, err
