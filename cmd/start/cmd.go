@@ -166,18 +166,29 @@ func enqueueMissingBlocks(exportQueue types.HeightQueue, ctx *parser.Context) {
 
 // enqueueNewBlocks enqueues new block heights onto the provided queue.
 func enqueueNewBlocks(exportQueue types.HeightQueue, ctx *parser.Context) {
-	currHeight := mustGetLatestHeight(ctx)
+	// Get the latest stored block height from the database
+	latestStoredHeight, err := ctx.Database.GetLastBlockHeight()
+	if err != nil {
+		ctx.Logger.Error("failed to get last block height from database", "error", err)
+	}
+
+	// Get the latest block height from the chain
+	latestBlockHeight := mustGetLatestHeight(ctx)
 
 	// Enqueue upcoming heights
 	for {
-		latestBlockHeight := mustGetLatestHeight(ctx)
-
 		// Enqueue all heights from the current height up to the latest height
-		for ; currHeight <= latestBlockHeight; currHeight++ {
-			ctx.Logger.Debug("enqueueing new block", "height", currHeight)
-			exportQueue <- currHeight
+		for ; latestStoredHeight <= latestBlockHeight; latestStoredHeight++ {
+			ctx.Logger.Debug("enqueueing new block", "height", latestStoredHeight)
+			exportQueue <- latestStoredHeight
 		}
+
+		// Wait for a new block to be produced
 		time.Sleep(config.GetAvgBlockTime())
+
+		// Update the latest stored height and the latest block height
+		latestStoredHeight = latestBlockHeight
+		latestBlockHeight = mustGetLatestHeight(ctx)
 	}
 }
 
