@@ -12,7 +12,7 @@ type Config struct {
 	ParseGenesis        bool           `yaml:"parse_genesis"`
 	FastSync            bool           `yaml:"fast_sync,omitempty"`
 	ReEnqueueWhenFailed bool           `yaml:"re_enqueue_when_failed,omitempty"`
-	MaxRetries          int64          `yaml:"max_retries"`
+	MaxRetries          *int64         `yaml:"max_retries"`
 }
 
 // NewParsingConfig allows to build a new Config instance
@@ -35,7 +35,7 @@ func NewParsingConfig(
 		FastSync:            fastSync,
 		AvgBlockTime:        avgBlockTime,
 		ReEnqueueWhenFailed: reEnqueueWhenFailed,
-		MaxRetries:          maxRetries,
+		MaxRetries:          &maxRetries,
 	}
 }
 
@@ -54,4 +54,11 @@ func DefaultParsingConfig() Config {
 		false,
 		-1,
 	)
+}
+
+func (cfg Config) GetMaxRetries() int64 {
+	if cfg.MaxRetries == nil {
+		return -1
+	}
+	return *cfg.MaxRetries
 }

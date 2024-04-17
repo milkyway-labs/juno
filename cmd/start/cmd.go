@@ -74,7 +74,7 @@ func startParsing(ctx *parser.Context) error {
 
 	// Create a queue that will collect, aggregate, and export blocks and metadata
 	exportQueue := types.NewQueue(25)
-	retriesCount := types.NewRetriesCount(cfg.MaxRetries)
+	retriesCount := types.NewRetriesCount(cfg.GetMaxRetries())
 
 	// Create workers
 	workers := make([]parser.Worker, cfg.Workers)
@@ -188,7 +188,7 @@ func enqueueNewBlocks(exportQueue types.HeightQueue, ctx *parser.Context) {
 // mustGetLatestHeight tries getting the latest height from the RPC client.
 // If stops searching after the max_retries set inside the config
 func mustGetLatestHeight(ctx *parser.Context) int64 {
-	maxRetries := int(ctx.Config.Parser.MaxRetries)
+	maxRetries := int(ctx.Config.Parser.GetMaxRetries())
 	for retryCount := 0; maxRetries == -1 || retryCount <= maxRetries; retryCount++ {
 		latestBlockHeight, err := ctx.Node.LatestHeight()
 		if err == nil {
