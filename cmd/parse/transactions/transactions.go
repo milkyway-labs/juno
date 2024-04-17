@@ -5,8 +5,6 @@ import (
 
 	parsecmdtypes "github.com/forbole/juno/v5/cmd/parse/types"
 
-	"github.com/rs/zerolog/log"
-
 	"github.com/spf13/cobra"
 
 	"github.com/forbole/juno/v5/parser"
@@ -53,10 +51,9 @@ You can specify a custom height range by using the %s and %s flags.
 				endHeight = end
 			}
 
-			log.Info().Int64("start height", startHeight).Int64("end height", endHeight).
-				Msg("getting transactions...")
+			parseCtx.Logger.Info("getting transactions...", "start height", startHeight, "end height", endHeight)
 			for k := startHeight; k <= endHeight; k++ {
-				log.Info().Int64("height", k).Msg("processing transactions...")
+				parseCtx.Logger.Info("processing transactions...", "height", k)
 				err = worker.ProcessTransactions(k)
 				if err != nil {
 					return fmt.Errorf("error while re-fetching transactions of height %d: %s", k, err)

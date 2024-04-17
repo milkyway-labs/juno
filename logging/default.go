@@ -57,14 +57,18 @@ func (d *defaultLogger) SetLogFormat(format string) error {
 	return nil
 }
 
-// Info implements Logger
-func (d *defaultLogger) Info(msg string, keyVals ...interface{}) {
-	d.Logger.Info().Fields(getLogFields(keyVals...)).Msg(msg)
+func (d *defaultLogger) Trace(msg string, keyVals ...interface{}) {
+	d.Logger.Trace().Fields(getLogFields(keyVals...)).Msg(msg)
 }
 
 // Debug implements Logger
 func (d *defaultLogger) Debug(msg string, keyVals ...interface{}) {
 	d.Logger.Debug().Fields(getLogFields(keyVals...)).Msg(msg)
+}
+
+// Info implements Logger
+func (d *defaultLogger) Info(msg string, keyVals ...interface{}) {
+	d.Logger.Info().Fields(getLogFields(keyVals...)).Msg(msg)
 }
 
 // Error implements Logger

@@ -20,8 +20,9 @@ type Logger interface {
 	SetLogLevel(level string) error
 	SetLogFormat(format string) error
 
-	Info(msg string, keyvals ...interface{})
+	Trace(msg string, keyvals ...interface{})
 	Debug(msg string, keyvals ...interface{})
+	Info(msg string, keyvals ...interface{})
 	Error(msg string, keyvals ...interface{})
 
 	GenesisError(module modules.Module, err error)

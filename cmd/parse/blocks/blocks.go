@@ -6,8 +6,6 @@ import (
 	parsecmdtypes "github.com/forbole/juno/v5/cmd/parse/types"
 	"github.com/forbole/juno/v5/utils"
 
-	"github.com/rs/zerolog/log"
-
 	"github.com/spf13/cobra"
 
 	"github.com/forbole/juno/v5/parser"
@@ -66,8 +64,7 @@ will be replaced with the data downloaded from the node.
 				endHeight = end
 			}
 
-			log.Info().Int64("start height", startHeight).Int64("end height", endHeight).
-				Msg("getting blocks and transactions")
+			parseCtx.Logger.Info("getting blocks and transactions", "start height", startHeight, "end height", endHeight)
 			for k := startHeight; k <= endHeight; k++ {
 				if force {
 					err = worker.Process(k)

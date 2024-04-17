@@ -12,7 +12,6 @@ import (
 
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
-	"github.com/rs/zerolog/log"
 )
 
 // RunAdditionalOperations implements modules.AdditionalOperationsModule
@@ -50,7 +49,7 @@ func (m *Module) RunAdditionalOperations() error {
 	go m.startServer(httpServer)
 
 	// Block main process (signal capture will call WaitGroup's Done)
-	log.Info().Str("module", "apis").Str("address", httpServer.Addr).Msg("started API server")
+	m.ctx.Logger.Info("started API server", "module", "apis", "address", httpServer.Addr)
 	return nil
 }
 
@@ -58,7 +57,7 @@ func (m *Module) RunAdditionalOperations() error {
 func (m *Module) Logger() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		c.Next()
-		log.Trace().Str("module", "apis").Str("path", c.Request.URL.Path).Msg("received request")
+		m.ctx.Logger.Trace("received request", "module", "apis", "path", c.Request.URL.Path)
 	}
 }
 
@@ -73,7 +72,7 @@ func (m *Module) trapSignal(httpServer *http.Server) {
 	// Kill -9 is syscall.SIGKILL but can't be caught, so don't need to add it
 	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
 	<-quit
-	log.Debug().Str("module", "apis").Msg("shutting down API server")
+	m.ctx.Logger.Debug("shutting down API server", "module", "apis")
 
 	// The context is used to inform the server it has 5 seconds to finish
 	// the request it is currently handling
@@ -81,10 +80,10 @@ func (m *Module) trapSignal(httpServer *http.Server) {
 	defer cancel()
 
 	if err := httpServer.Shutdown(ctx); err != nil {
-		log.Error().Err(err).Str("module", "apis").Msg("API server forces to shutdown")
+		m.ctx.Logger.Error("API server forced to shutdown", "module", "apis", "error", err)
 	}
 
-	log.Debug().Str("module", "apis").Msg("API server shutdown")
+	m.ctx.Logger.Debug("API server shutdown", "module", "apis")
 }
 
 // startServer starts the API server
