@@ -28,6 +28,7 @@ parsing:
   parse_genesis: true
   fast_sync: true
   re_enqueue_when_failed: false
+  max_retries: 10
 
 database:
   url: postgres://user:password@localhost:5432/juno?sslmode=disable
@@ -106,16 +107,17 @@ node, you need to set the [`node`](#node) type to `local` and then set the follo
 
 ## `parsing`
 
-|        Attribute         |   Type    | Description                                                                                          | Example                                  |
-|:------------------------:|:---------:|:-----------------------------------------------------------------------------------------------------|:-----------------------------------------|
-|        `workers`         | `integer` | Number of workers that will be used to fetch the data and store it inside the database               | `5`                                      |
-|       `fast_sync`        | `boolean` | Whether Juno should use the fast sync abilities of different modules when enabled                    | `false`                                  |
-|   `listen_new_blocks`    | `boolean` | Whether Juno should parse new blocks as soon as they get created                                     | `true`                                   | 
-|     `parse_genesis`      | `boolean` | Whether Juno needs to parse the genesis state or not                                                 | `true`                                   |
-|    `parse_old_blocks`    | `boolean` | Whether Juno should parse old chain blocks or not                                                    | `true`                                   | 
-|      `start_height`      | `integer` | Height at which Juno should start parsing old blocks                                                 | `250000`                                 | 
-|   `genesis_file_path`    | `string`  | Path of the genesis file to be parsed                                                                | `'/bdjuno/.bdjuno/genesis/genesis.json'` |
-| `re_enqueue_when_failed` | `boolean` | Whether blocks should be re-enqueued if the parsing inside various modules fails. (Default: `false`) | `true`                                   |
+|        Attribute         |   Type    | Description                                                                                                                                                                                                                                                               | Example                                  |
+|:------------------------:|:---------:|:--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|:-----------------------------------------|
+|        `workers`         | `integer` | Number of workers that will be used to fetch the data and store it inside the database                                                                                                                                                                                    | `5`                                      |
+|       `fast_sync`        | `boolean` | Whether Juno should use the fast sync abilities of different modules when enabled                                                                                                                                                                                         | `false`                                  |
+|   `listen_new_blocks`    | `boolean` | Whether Juno should parse new blocks as soon as they get created                                                                                                                                                                                                          | `true`                                   | 
+|     `parse_genesis`      | `boolean` | Whether Juno needs to parse the genesis state or not                                                                                                                                                                                                                      | `true`                                   |
+|    `parse_old_blocks`    | `boolean` | Whether Juno should parse old chain blocks or not                                                                                                                                                                                                                         | `true`                                   | 
+|      `start_height`      | `integer` | Height at which Juno should start parsing old blocks                                                                                                                                                                                                                      | `250000`                                 | 
+|   `genesis_file_path`    | `string`  | Path of the genesis file to be parsed                                                                                                                                                                                                                                     | `'/bdjuno/.bdjuno/genesis/genesis.json'` |
+| `re_enqueue_when_failed` | `boolean` | Whether blocks should be re-enqueued if the parsing inside various modules fails. (Default: `false`)                                                                                                                                                                      | `true`                                   |
+|      `max_retries`       | `integer` | Number of retries that should be done before giving up on a block parsing. If set to `-1`, the retries will be unlimited. <br/> **Note**: The retry method is going to be based on exponential-backoff, with a wait time of `retryCount * avgBlockTime` per each attempt. | `-1`                                     |
 
 ## `database`
 This section contains all the different configuration related to the PostgreSQL database where Juno will write the data.

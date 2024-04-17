@@ -33,7 +33,9 @@ type Worker struct {
 
 	cfg config.Config
 
-	queue   types.HeightQueue
+	queue         types.HeightQueue
+	retriesCounts *types.RetriesCount
+
 	codec   codec.Codec
 	modules []modules.Module
 
@@ -43,16 +45,17 @@ type Worker struct {
 }
 
 // NewWorker allows to create a new Worker implementation.
-func NewWorker(ctx *Context, queue types.HeightQueue, index int) Worker {
+func NewWorker(ctx *Context, queue types.HeightQueue, retriesCount *types.RetriesCount, index int) Worker {
 	return Worker{
-		index:   index,
-		cfg:     ctx.Config,
-		codec:   ctx.EncodingConfig.Codec,
-		node:    ctx.Node,
-		queue:   queue,
-		db:      ctx.Database,
-		modules: ctx.Modules,
-		logger:  ctx.Logger,
+		index:         index,
+		cfg:           ctx.Config,
+		codec:         ctx.EncodingConfig.Codec,
+		node:          ctx.Node,
+		queue:         queue,
+		retriesCounts: retriesCount,
+		db:            ctx.Database,
+		modules:       ctx.Modules,
+		logger:        ctx.Logger,
 	}
 }
 
@@ -72,15 +75,22 @@ func (w Worker) Start() {
 	}
 
 	for i := range w.queue {
-		if err := w.ProcessIfNotExists(i); err != nil {
-			// Re-enqueue any failed job after average block time
-			time.Sleep(config.GetAvgBlockTime())
+		// Make sure we did not reach the max retries yet
+		if w.retriesCounts.HasReachedMax(i) {
+			w.logger.Error("failed to process block", "height", i, "err", err)
+			continue
+		}
 
-			// TODO: Implement exponential backoff or max retries for a block height.
-			go func() {
-				w.logger.Error("re-enqueueing failed block", "height", i, "err", err)
-				w.queue <- i
-			}()
+		// Process the block
+		err = w.ProcessIfNotExists(i)
+		if err != nil {
+			// Log the error and increment the count
+			w.logger.Error("re-enqueuing failed block", "height", i, "err", err, "count", w.retriesCounts.Get(i))
+			w.retriesCounts.Increment(i)
+
+			// Wait for the average block time multiplied by the count and then re-enqueue the height
+			time.Sleep(config.GetAvgBlockTime() * time.Duration(w.retriesCounts.Get(i)))
+			w.queue <- i
 		}
 
 		logging.WorkerHeight.WithLabelValues(fmt.Sprintf("%d", w.index), chainID).Set(float64(i))

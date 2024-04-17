@@ -74,11 +74,12 @@ func startParsing(ctx *parser.Context) error {
 
 	// Create a queue that will collect, aggregate, and export blocks and metadata
 	exportQueue := types.NewQueue(25)
+	retriesCount := types.NewRetriesCount(cfg.GetMaxRetries())
 
 	// Create workers
 	workers := make([]parser.Worker, cfg.Workers)
 	for i := range workers {
-		workers[i] = parser.NewWorker(ctx, exportQueue, i)
+		workers[i] = parser.NewWorker(ctx, exportQueue, retriesCount, i)
 	}
 
 	waitGroup.Add(1)
@@ -166,47 +167,37 @@ func enqueueMissingBlocks(exportQueue types.HeightQueue, ctx *parser.Context) {
 
 // enqueueNewBlocks enqueues new block heights onto the provided queue.
 func enqueueNewBlocks(exportQueue types.HeightQueue, ctx *parser.Context) {
-	// Get the latest stored block height from the database
-	latestStoredHeight, err := ctx.Database.GetLastBlockHeight()
-	if err != nil {
-		ctx.Logger.Error("failed to get last block height from database", "error", err)
-	}
-
-	// Get the latest block height from the chain
-	latestBlockHeight := mustGetLatestHeight(ctx)
+	currentHeight := mustGetLatestHeight(ctx)
 
 	// Enqueue upcoming heights
 	for {
+		// Get the latest block height from the chain
+		latestBlockHeight := mustGetLatestHeight(ctx)
+
 		// Enqueue all heights from the current height up to the latest height
-		for ; latestStoredHeight <= latestBlockHeight; latestStoredHeight++ {
-			ctx.Logger.Debug("enqueueing new block", "height", latestStoredHeight)
-			exportQueue <- latestStoredHeight
+		for ; currentHeight <= latestBlockHeight; currentHeight++ {
+			ctx.Logger.Debug("enqueueing new block", "height", currentHeight)
+			exportQueue <- currentHeight
 		}
 
 		// Wait for a new block to be produced
 		time.Sleep(config.GetAvgBlockTime())
-
-		// Update the latest stored height and the latest block height
-		latestStoredHeight = latestBlockHeight
-		latestBlockHeight = mustGetLatestHeight(ctx)
 	}
 }
 
 // mustGetLatestHeight tries getting the latest height from the RPC client.
-// If after 50 tries no latest height can be found, it returns 0.
+// If stops searching after the max_retries set inside the config
 func mustGetLatestHeight(ctx *parser.Context) int64 {
-	for retryCount := 0; retryCount < 50; retryCount++ {
+	maxRetries := int(ctx.Config.Parser.GetMaxRetries())
+	for retryCount := 0; maxRetries == -1 || retryCount <= maxRetries; retryCount++ {
 		latestBlockHeight, err := ctx.Node.LatestHeight()
 		if err == nil {
 			return latestBlockHeight
 		}
 
-		ctx.Logger.Error("failed to get last block from RPCConfig client",
-			"err", err,
-			"retry interval", config.GetAvgBlockTime(),
-			"retry count", retryCount)
+		ctx.Logger.Error("failed to get last block from rpc client", "err", err, "retry count", retryCount)
 
-		time.Sleep(config.GetAvgBlockTime())
+		time.Sleep(config.GetAvgBlockTime() * time.Duration(retryCount))
 	}
 
 	return 0
