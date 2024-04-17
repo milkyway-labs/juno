@@ -30,7 +30,7 @@ You can specify a custom height range by using the %s and %s flags.
 				return err
 			}
 
-			worker := parser.NewWorker(parseCtx, nil, 0)
+			worker := parser.NewWorker(parseCtx, nil, nil, 0)
 
 			// Get the flag values
 			start, _ := cmd.Flags().GetInt64(flagStart)

@@ -74,11 +74,12 @@ func startParsing(ctx *parser.Context) error {
 
 	// Create a queue that will collect, aggregate, and export blocks and metadata
 	exportQueue := types.NewQueue(25)
+	retriesCount := types.NewRetriesCount()
 
 	// Create workers
 	workers := make([]parser.Worker, cfg.Workers)
 	for i := range workers {
-		workers[i] = parser.NewWorker(ctx, exportQueue, i)
+		workers[i] = parser.NewWorker(ctx, exportQueue, retriesCount, i)
 	}
 
 	waitGroup.Add(1)
