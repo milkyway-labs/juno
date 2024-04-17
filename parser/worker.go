@@ -34,7 +34,7 @@ type Worker struct {
 	cfg config.Config
 
 	queue         types.HeightQueue
-	retriesCounts types.RetriesCount
+	retriesCounts *types.RetriesCount
 
 	codec   codec.Codec
 	modules []modules.Module
@@ -45,7 +45,7 @@ type Worker struct {
 }
 
 // NewWorker allows to create a new Worker implementation.
-func NewWorker(ctx *Context, queue types.HeightQueue, retriesCount types.RetriesCount, index int) Worker {
+func NewWorker(ctx *Context, queue types.HeightQueue, retriesCount *types.RetriesCount, index int) Worker {
 	return Worker{
 		index:         index,
 		cfg:           ctx.Config,
@@ -76,21 +76,20 @@ func (w Worker) Start() {
 
 	for i := range w.queue {
 		// Make sure we did not reach the max retries yet
-		count := w.retriesCounts.Get(i)
-		if w.cfg.Parser.MaxRetries != -1 && count >= w.cfg.Parser.MaxRetries {
-			w.logger.Error("failed to process block", "height", i, "err", err, "count", count)
+		if w.retriesCounts.HasReachedMax(i) {
+			w.logger.Error("failed to process block", "height", i, "err", err)
 			continue
 		}
 
 		// Process the block
 		err = w.ProcessIfNotExists(i)
 		if err != nil {
-			// Wait for the average block time multiplied by the count
-			time.Sleep(config.GetAvgBlockTime() * time.Duration(count))
-
-			// If there is any error, increment the count and enqueue the block
-			w.logger.Debug("re-enqueuing failed block", "height", i, "err", err, "count", count)
+			// Log the error and increment the count
+			w.logger.Debug("re-enqueuing failed block", "height", i, "err", err, "count", w.retriesCounts.Get(i))
 			w.retriesCounts.Increment(i)
+
+			// Wait for the average block time multiplied by the count and then re-enqueue the height
+			time.Sleep(config.GetAvgBlockTime() * time.Duration(w.retriesCounts.Get(i)))
 			w.queue <- i
 		}
 
