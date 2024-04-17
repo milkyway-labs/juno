@@ -85,7 +85,7 @@ func (w Worker) Start() {
 		err = w.ProcessIfNotExists(i)
 		if err != nil {
 			// Log the error and increment the count
-			w.logger.Debug("re-enqueuing failed block", "height", i, "err", err, "count", w.retriesCounts.Get(i))
+			w.logger.Error("re-enqueuing failed block", "height", i, "err", err, "count", w.retriesCounts.Get(i))
 			w.retriesCounts.Increment(i)
 
 			// Wait for the average block time multiplied by the count and then re-enqueue the height
