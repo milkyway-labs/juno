@@ -33,8 +33,7 @@ type Worker struct {
 
 	cfg config.Config
 
-	queue         types.HeightQueue
-	retriesCounts *types.RetriesCount
+	queue types.HeightQueue
 
 	codec   codec.Codec
 	modules []modules.Module
@@ -45,17 +44,16 @@ type Worker struct {
 }
 
 // NewWorker allows to create a new Worker implementation.
-func NewWorker(ctx *Context, queue types.HeightQueue, retriesCount *types.RetriesCount, index int) Worker {
+func NewWorker(ctx *Context, queue types.HeightQueue, index int) Worker {
 	return Worker{
-		index:         index,
-		cfg:           ctx.Config,
-		codec:         ctx.EncodingConfig.Codec,
-		node:          ctx.Node,
-		queue:         queue,
-		retriesCounts: retriesCount,
-		db:            ctx.Database,
-		modules:       ctx.Modules,
-		logger:        ctx.Logger,
+		index:   index,
+		cfg:     ctx.Config,
+		codec:   ctx.EncodingConfig.Codec,
+		node:    ctx.Node,
+		queue:   queue,
+		db:      ctx.Database,
+		modules: ctx.Modules,
+		logger:  ctx.Logger,
 	}
 }
 
@@ -76,24 +74,26 @@ func (w Worker) Start() {
 
 	for i := range w.queue {
 		// Make sure we did not reach the max retries yet
-		if w.retriesCounts.HasReachedMax(i) {
+		if i.HasReachedMaxRetries(w.cfg.Parser.GetMaxRetries()) {
 			w.logger.Error("failed to process block", "height", i, "err", err)
 			continue
 		}
 
 		// Process the block
-		err = w.ProcessIfNotExists(i)
+		err = w.ProcessIfNotExists(i.Height)
 		if err != nil {
-			// Log the error and increment the count
-			w.logger.Error("re-enqueuing failed block", "height", i, "err", err, "count", w.retriesCounts.Get(i))
-			w.retriesCounts.Increment(i)
+			go func() {
+				// Build the block with the updated retry count and log the error
+				newBlock := i.IncrementRetryCount()
+				w.logger.Debug("re-enqueuing failed block", "height", i.Height, "err", err, "count", newBlock.RetryCount)
 
-			// Wait for the average block time multiplied by the count and then re-enqueue the height
-			time.Sleep(config.GetAvgBlockTime() * time.Duration(w.retriesCounts.Get(i)))
-			w.queue <- i
+				// Sleep for the proper time and re-enqueue the block
+				time.Sleep(config.GetAvgBlockTime() * time.Duration(newBlock.RetryCount))
+				w.queue <- newBlock
+			}()
 		}
 
-		logging.WorkerHeight.WithLabelValues(fmt.Sprintf("%d", w.index), chainID).Set(float64(i))
+		logging.WorkerHeight.WithLabelValues(fmt.Sprintf("%d", w.index), chainID).Set(float64(i.Height))
 	}
 }
 

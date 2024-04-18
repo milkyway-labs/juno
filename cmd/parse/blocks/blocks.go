@@ -35,7 +35,7 @@ will be replaced with the data downloaded from the node.
 				return err
 			}
 
-			worker := parser.NewWorker(parseCtx, nil, nil, 0)
+			worker := parser.NewWorker(parseCtx, nil, 0)
 
 			// Get the flag values
 			start, _ := cmd.Flags().GetInt64(flagStart)

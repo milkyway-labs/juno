@@ -74,12 +74,11 @@ func startParsing(ctx *parser.Context) error {
 
 	// Create a queue that will collect, aggregate, and export blocks and metadata
 	exportQueue := types.NewQueue(25)
-	retriesCount := types.NewRetriesCount(cfg.GetMaxRetries())
 
 	// Create workers
 	workers := make([]parser.Worker, cfg.Workers)
 	for i := range workers {
-		workers[i] = parser.NewWorker(ctx, exportQueue, retriesCount, i)
+		workers[i] = parser.NewWorker(ctx, exportQueue, i)
 	}
 
 	waitGroup.Add(1)
@@ -103,7 +102,7 @@ func startParsing(ctx *parser.Context) error {
 
 	if cfg.ParseGenesis {
 		// Add the genesis to the queue if requested
-		exportQueue <- 0
+		exportQueue <- types.NewBlockData(0)
 	}
 
 	if cfg.ParseOldBlocks {
@@ -157,10 +156,10 @@ func enqueueMissingBlocks(exportQueue types.HeightQueue, ctx *parser.Context) {
 			}
 		}
 	} else {
-		ctx.Logger.Info("syncing missing blocks...", "latest_block_height", latestBlockHeight)
+		ctx.Logger.Info("syncing missing blocks...", "start_height", startHeight, "latest_block_height", latestBlockHeight)
 		for _, i := range ctx.Database.GetMissingHeights(startHeight, latestBlockHeight) {
 			ctx.Logger.Debug("enqueueing missing block", "height", i)
-			exportQueue <- i
+			exportQueue <- types.NewBlockData(i)
 		}
 	}
 }
@@ -177,7 +176,7 @@ func enqueueNewBlocks(exportQueue types.HeightQueue, ctx *parser.Context) {
 		// Enqueue all heights from the current height up to the latest height
 		for ; currentHeight <= latestBlockHeight; currentHeight++ {
 			ctx.Logger.Debug("enqueueing new block", "height", currentHeight)
-			exportQueue <- currentHeight
+			exportQueue <- types.NewBlockData(currentHeight)
 		}
 
 		// Wait for a new block to be produced
