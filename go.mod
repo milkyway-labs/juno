@@ -341,10 +341,7 @@ replace (
 	github.com/cosmos/cosmos-proto => github.com/cosmos/cosmos-proto v1.0.0-beta.2
 	github.com/cosmos/cosmos-sdk => github.com/osmosis-labs/cosmos-sdk v0.47.6-0.20240520015414-d958d4441808
 	github.com/cosmos/gogoproto => github.com/cosmos/gogoproto v1.4.11
-
+	github.com/cosmos/iavl => github.com/cosmos/iavl v1.1.2-0.20240405172238-7f92c6b356ac
 	github.com/gogo/protobuf => github.com/regen-network/protobuf v1.3.3-alpha.regen.1
-
-	// Required to fix github.com/protocolbuffers/protobuf/issues/16163
 	github.com/golang/protobuf => github.com/golang/protobuf v1.5.4
-	golang.org/x/exp => golang.org/x/exp v0.0.0-20230711153332-06a737ee72cb
 )

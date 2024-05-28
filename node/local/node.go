@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"os"
 	"path"
-	"sort"
 	"time"
 
 	"github.com/cosmos/cosmos-sdk/codec"
@@ -16,7 +15,6 @@ import (
 	cs "github.com/cometbft/cometbft/consensus"
 	"github.com/cometbft/cometbft/evidence"
 	"github.com/cometbft/cometbft/libs/log"
-	tmmath "github.com/cometbft/cometbft/libs/math"
 	tmquery "github.com/cometbft/cometbft/libs/pubsub/query"
 	"github.com/cometbft/cometbft/privval"
 	"github.com/cometbft/cometbft/proxy"
@@ -257,50 +255,6 @@ func (cp *Node) getHeight(latestHeight int64, heightPtr *int64) (int64, error) {
 	return latestHeight, nil
 }
 
-func validatePerPage(perPagePtr *int) int {
-	if perPagePtr == nil { // no per_page parameter
-		return defaultPerPage
-	}
-
-	perPage := *perPagePtr
-	if perPage < 1 {
-		return defaultPerPage
-	} else if perPage > maxPerPage {
-		return maxPerPage
-	}
-	return perPage
-}
-
-func validatePage(pagePtr *int, perPage, totalCount int) (int, error) {
-	if perPage < 1 {
-		panic(fmt.Sprintf("zero or negative perPage: %d", perPage))
-	}
-
-	if pagePtr == nil { // no page parameter
-		return 1, nil
-	}
-
-	pages := ((totalCount - 1) / perPage) + 1
-	if pages == 0 {
-		pages = 1 // one page (even if it's empty)
-	}
-	page := *pagePtr
-	if page <= 0 || page > pages {
-		return 1, fmt.Errorf("page should be within [1, %d] range, given %d", pages, page)
-	}
-
-	return page, nil
-}
-
-func validateSkipCount(page, perPage int) int {
-	skipCount := (page - 1) * perPage
-	if skipCount < 0 {
-		return 0
-	}
-
-	return skipCount
-}
-
 // Genesis implements node.Node
 func (cp *Node) Genesis() (*tmctypes.ResultGenesis, error) {
 	return &tmctypes.ResultGenesis{Genesis: cp.genesisDoc}, nil
@@ -474,59 +428,40 @@ func (cp *Node) TxSearch(query string, pagePtr *int, perPagePtr *int, orderBy st
 		return nil, err
 	}
 
-	results, err := cp.txIndexer.Search(cp.ctx, q)
+	perPage := 0
+	if perPagePtr != nil {
+		perPage = *perPagePtr
+	}
+
+	page := 0
+	if pagePtr != nil {
+		page = *pagePtr
+	}
+
+	results, count, err := cp.txIndexer.Search(cp.ctx, q, tmctypes.Pagination{
+		OrderDesc:   orderBy == "desc",
+		IsPaginated: perPagePtr != nil,
+		Page:        page,
+		PerPage:     perPage,
+	})
 	if err != nil {
 		return nil, err
 	}
 
-	// sort results (must be done before pagination)
-	switch orderBy {
-	case "desc":
-		sort.Slice(results, func(i, j int) bool {
-			if results[i].Height == results[j].Height {
-				return results[i].Index > results[j].Index
-			}
-			return results[i].Height > results[j].Height
-		})
-	case "asc", "":
-		sort.Slice(results, func(i, j int) bool {
-			if results[i].Height == results[j].Height {
-				return results[i].Index < results[j].Index
-			}
-			return results[i].Height < results[j].Height
-		})
-	default:
-		return nil, fmt.Errorf("expected order_by to be either `asc` or `desc` or empty")
-	}
-
-	// paginate results
-	totalCount := len(results)
-	perPage := validatePerPage(perPagePtr)
-
-	page, err := validatePage(pagePtr, perPage, totalCount)
-	if err != nil {
-		return nil, err
-	}
-
-	skipCount := validateSkipCount(page, perPage)
-	pageSize := tmmath.MinInt(perPage, totalCount-skipCount)
-
-	apiResults := make([]*tmctypes.ResultTx, 0, pageSize)
-	for i := skipCount; i < skipCount+pageSize; i++ {
-		r := results[i]
-
+	apiResults := make([]*tmctypes.ResultTx, len(results))
+	for i, r := range results {
 		var proof tmtypes.TxProof
-		apiResults = append(apiResults, &tmctypes.ResultTx{
+		apiResults[i] = &tmctypes.ResultTx{
 			Hash:     tmtypes.Tx(r.Tx).Hash(),
 			Height:   r.Height,
 			Index:    r.Index,
 			TxResult: r.Result,
 			Tx:       r.Tx,
 			Proof:    proof,
-		})
+		}
 	}
 
-	return &tmctypes.ResultTxSearch{Txs: apiResults, TotalCount: totalCount}, nil
+	return &tmctypes.ResultTxSearch{Txs: apiResults, TotalCount: count}, nil
 }
 
 // SubscribeEvents implements node.Node
