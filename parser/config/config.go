@@ -1,18 +1,23 @@
 package config
 
-import "time"
+import (
+	"time"
+
+	"github.com/forbole/juno/v5/types"
+)
 
 type Config struct {
-	GenesisFilePath     string         `yaml:"genesis_file_path,omitempty"`
-	Workers             int64          `yaml:"workers"`
-	StartHeight         int64          `yaml:"start_height"`
-	AvgBlockTime        *time.Duration `yaml:"average_block_time"`
-	ParseNewBlocks      bool           `yaml:"listen_new_blocks"`
-	ParseOldBlocks      bool           `yaml:"parse_old_blocks"`
-	ParseGenesis        bool           `yaml:"parse_genesis"`
-	FastSync            bool           `yaml:"fast_sync,omitempty"`
-	ReEnqueueWhenFailed bool           `yaml:"re_enqueue_when_failed,omitempty"`
-	MaxRetries          *int64         `yaml:"max_retries"`
+	GenesisFilePath     string             `yaml:"genesis_file_path,omitempty"`
+	Workers             int64              `yaml:"workers"`
+	StartHeight         int64              `yaml:"start_height"`
+	AvgBlockTime        *time.Duration     `yaml:"average_block_time"`
+	ParseNewBlocks      bool               `yaml:"listen_new_blocks"`
+	ParseOldBlocks      bool               `yaml:"parse_old_blocks"`
+	ParseGenesis        bool               `yaml:"parse_genesis"`
+	FastSync            bool               `yaml:"fast_sync,omitempty"`
+	ReEnqueueWhenFailed bool               `yaml:"re_enqueue_when_failed,omitempty"`
+	MaxRetries          *int64             `yaml:"max_retries"`
+	ReparseRange        *types.HeightRange `yaml:"reparse_range,omitempty"`
 }
 
 // NewParsingConfig allows to build a new Config instance
