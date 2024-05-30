@@ -156,7 +156,14 @@ func enqueueMissingBlocks(exportQueue types.HeightQueue, ctx *parser.Context) {
 			}
 		}
 	} else {
-		ctx.Logger.Info("syncing missing blocks...", "start_height", startHeight, "latest_block_height", latestBlockHeight)
+		if cfg.ReparseRange != nil {
+			ctx.Logger.Info("re-parsing blocks in range...", "start_height", cfg.ReparseRange.Start, "end_height", cfg.ReparseRange.End)
+			for i := cfg.ReparseRange.Start; i <= cfg.ReparseRange.End; i++ {
+				exportQueue <- types.NewBlockData(i)
+			}
+		}
+
+		ctx.Logger.Info("syncing missing blocks...", "start_height", cfg.StartHeight, "latest_block_height", latestBlockHeight)
 		for _, i := range ctx.Database.GetMissingHeights(startHeight, latestBlockHeight) {
 			ctx.Logger.Debug("enqueueing missing block", "height", i)
 			exportQueue <- types.NewBlockData(i)
