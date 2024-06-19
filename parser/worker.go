@@ -108,7 +108,7 @@ func (w Worker) ProcessIfNotExists(height int64) error {
 
 	// If the block already exists and the height is not included in the reparse range, skip it
 	if exists {
-		if !w.cfg.Parser.ReparseRange.Includes(height) {
+		if w.cfg.Parser.ReparseRange != nil && !w.cfg.Parser.ReparseRange.Includes(height) {
 			w.logger.Debug("skipping already exported block", "height", height)
 			return nil
 		}
