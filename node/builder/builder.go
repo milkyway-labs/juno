@@ -5,7 +5,6 @@ import (
 
 	"github.com/forbole/juno/v5/node"
 	nodeconfig "github.com/forbole/juno/v5/node/config"
-	"github.com/forbole/juno/v5/node/local"
 	"github.com/forbole/juno/v5/node/remote"
 	"github.com/forbole/juno/v5/types"
 )
@@ -23,13 +22,11 @@ func NewContext(encodingConfig types.EncodingConfig, accountAddressParser types.
 }
 
 func BuildNode(cfg nodeconfig.Config, ctx Context) (node.Node, error) {
-	cdc, txConfig := ctx.EncodingConfig.Codec, ctx.EncodingConfig.TxConfig
-
 	switch cfg.Type {
 	case nodeconfig.TypeRemote:
-		return remote.NewNode(cfg.Details.(*remote.Details), ctx.AccountAddressParser, cdc)
-	case nodeconfig.TypeLocal:
-		return local.NewNode(cfg.Details.(*local.Details), txConfig, ctx.AccountAddressParser, cdc)
+		return remote.NewNode(cfg.Details.(*remote.Details), ctx.AccountAddressParser, ctx.EncodingConfig.Codec)
+	// case nodeconfig.TypeLocal:
+	// 	return local.NewNode(cfg.Details.(*local.Details), txConfig, ctx.AccountAddressParser, cdc)
 	case nodeconfig.TypeNone:
 		return nil, nil
 

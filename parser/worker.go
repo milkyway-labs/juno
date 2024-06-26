@@ -5,9 +5,7 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/cosmos/cosmos-sdk/x/authz"
-
-	"github.com/cosmos/cosmos-sdk/codec"
+	"github.com/forbole/juno/v5/cosmos-sdk/codec"
 
 	"github.com/forbole/juno/v5/logging"
 	nodeutils "github.com/forbole/juno/v5/node/utils"
@@ -345,29 +343,30 @@ func (w Worker) handleMessage(index int, msg sdk.Msg, tx *types.Tx) error {
 		}
 	}
 
+	// TODO: Add support fort MsgExec
 	// If it's a MsgExecute, we need to make sure the included messages are handled as well
-	if msgExec, ok := msg.(*authz.MsgExec); ok {
-		for authzIndex, msgAny := range msgExec.Msgs {
-			var executedMsg sdk.Msg
-			err := w.codec.UnpackAny(msgAny, &executedMsg)
-			if err != nil {
-				w.logger.Error("unable to unpack MsgExec inner message", "index", authzIndex, "error", err)
-			}
-
-			for _, module := range w.modules {
-				if messageModule, ok := module.(modules.AuthzMessageModule); ok {
-					err = messageModule.HandleMsgExec(index, msgExec, authzIndex, executedMsg, tx)
-					if err != nil {
-						if w.shouldReEnqueueWhenFailed() {
-							return err
-						}
-
-						w.logger.MsgError(module, tx, executedMsg, err)
-					}
-				}
-			}
-		}
-	}
+	// if msgExec, ok := msg.(*authz.MsgExec); ok {
+	// 	for authzIndex, msgAny := range msgExec.Msgs {
+	// 		var executedMsg sdk.Msg
+	// 		err := w.codec.UnpackAny((*gogoproto.Any)(msgAny), &executedMsg)
+	// 		if err != nil {
+	// 			w.logger.Error("unable to unpack MsgExec inner message", "index", authzIndex, "error", err)
+	// 		}
+	//
+	// 		for _, module := range w.modules {
+	// 			if messageModule, ok := module.(modules.AuthzMessageModule); ok {
+	// 				err = messageModule.HandleMsgExec(index, msgExec, authzIndex, executedMsg, tx)
+	// 				if err != nil {
+	// 					if w.shouldReEnqueueWhenFailed() {
+	// 						return err
+	// 					}
+	//
+	// 					w.logger.MsgError(module, tx, executedMsg, err)
+	// 				}
+	// 			}
+	// 		}
+	// 	}
+	// }
 
 	return nil
 }

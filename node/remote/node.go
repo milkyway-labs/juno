@@ -13,13 +13,11 @@ import (
 
 	constypes "github.com/cometbft/cometbft/consensus/types"
 	tmjson "github.com/cometbft/cometbft/libs/json"
-	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
+	"github.com/forbole/juno/v5/cosmos-sdk/codec"
+	"github.com/forbole/juno/v5/cosmos-sdk/types/tx"
 	"github.com/forbole/juno/v5/node"
-
-	"github.com/cosmos/cosmos-sdk/types/tx"
-
 	"github.com/forbole/juno/v5/types"
 
 	httpclient "github.com/cometbft/cometbft/rpc/client/http"
@@ -43,7 +41,7 @@ type Node struct {
 }
 
 // NewNode allows to build a new Node instance
-func NewNode(cfg *Details, accountAddressParser types.AccountAddressParser, codec codec.Codec) (*Node, error) {
+func NewNode(cfg *Details, accountAddressParser types.AccountAddressParser, codec codec.ProtoCodec) (*Node, error) {
 	httpClient, err := jsonrpcclient.DefaultHTTPClient(cfg.RPC.Address)
 	if err != nil {
 		return nil, err

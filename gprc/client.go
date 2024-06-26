@@ -7,8 +7,8 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/cosmos/cosmos-sdk/codec"
 	grpctypes "github.com/cosmos/cosmos-sdk/types/grpc"
+	"github.com/forbole/juno/v5/cosmos-sdk/codec"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/encoding"
@@ -30,25 +30,20 @@ type Connection struct {
 }
 
 // NewConnection a new Connection instance
-func NewConnection(rpcAddress string, cdc codec.Codec) (*Connection, error) {
+func NewConnection(rpcAddress string, cdc codec.ProtoCodec) (*Connection, error) {
 	jsonRPCClient, err := jsonrpc2.NewClient(rpcAddress, &http.Client{Timeout: time.Minute})
 	if err != nil {
 		return nil, err
 	}
 
-	protoCodec, ok := cdc.(*codec.ProtoCodec)
-	if !ok {
-		return nil, fmt.Errorf("invalid codec type: %T", cdc)
-	}
-
 	return &Connection{
 		jsonrpcClient: jsonRPCClient,
-		gprcCdc:       protoCodec.GRPCCodec(),
+		gprcCdc:       cdc.GRPCCodec(),
 	}, nil
 }
 
 // MustCreateConnection returns a new Connection instance, or panics if any error arises
-func MustCreateConnection(rpcAddress string, cdc codec.Codec) *Connection {
+func MustCreateConnection(rpcAddress string, cdc codec.ProtoCodec) *Connection {
 	conn, err := NewConnection(rpcAddress, cdc)
 	if err != nil {
 		panic(err)

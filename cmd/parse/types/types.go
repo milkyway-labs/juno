@@ -1,8 +1,6 @@
 package types
 
 import (
-	"github.com/cosmos/cosmos-sdk/std"
-
 	"github.com/forbole/juno/v5/database"
 	"github.com/forbole/juno/v5/database/builder"
 	"github.com/forbole/juno/v5/logging"
@@ -69,10 +67,10 @@ func (cfg *Config) GetEncodingConfigBuilder() EncodingConfigBuilder {
 	if cfg.encodingConfigBuilder == nil {
 		return func() types.EncodingConfig {
 			encodingConfig := types.MakeTestEncodingConfig()
-			std.RegisterLegacyAminoCodec(encodingConfig.Amino)
-			std.RegisterInterfaces(encodingConfig.InterfaceRegistry)
-			ModuleBasics.RegisterLegacyAminoCodec(encodingConfig.Amino)
-			ModuleBasics.RegisterInterfaces(encodingConfig.InterfaceRegistry)
+			// std.RegisterLegacyAminoCodec(encodingConfig.Amino)
+			// std.RegisterInterfaces(encodingConfig.InterfaceRegistry)
+			// ModuleBasics.RegisterLegacyAminoCodec(encodingConfig.Amino)
+			// ModuleBasics.RegisterInterfaces(encodingConfig.InterfaceRegistry)
 			return encodingConfig
 		}
 	}

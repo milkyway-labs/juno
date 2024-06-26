@@ -6,10 +6,10 @@ import (
 	"time"
 
 	tmctypes "github.com/cometbft/cometbft/rpc/core/types"
-	"github.com/cosmos/cosmos-sdk/codec"
-	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/cosmos/cosmos-sdk/types/tx"
-	channeltypes "github.com/cosmos/ibc-go/v7/modules/core/04-channel/types"
+	channeltypes "github.com/cosmos/ibc-go/v8/modules/core/04-channel/types"
+	"github.com/forbole/juno/v5/cosmos-sdk/codec"
+	sdk "github.com/forbole/juno/v5/cosmos-sdk/types"
+	"github.com/forbole/juno/v5/cosmos-sdk/types/tx"
 
 	"github.com/forbole/juno/v5/utils"
 )

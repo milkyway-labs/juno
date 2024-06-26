@@ -3,13 +3,11 @@ package config
 import (
 	"gopkg.in/yaml.v3"
 
-	"github.com/forbole/juno/v5/node/local"
 	"github.com/forbole/juno/v5/node/remote"
 )
 
 const (
 	TypeRemote = "remote"
-	TypeLocal  = "local"
 	TypeNone   = "none"
 )
 
@@ -44,8 +42,8 @@ func (s *Config) UnmarshalYAML(n *yaml.Node) error {
 	switch obj.Type {
 	case TypeRemote:
 		s.Details = new(remote.Details)
-	case TypeLocal:
-		s.Details = new(local.Details)
+	// case TypeLocal:
+	// 	s.Details = new(local.Details)
 	default:
 		panic("unknown node type")
 	}

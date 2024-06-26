@@ -3,9 +3,9 @@ package postgresql
 import (
 	"fmt"
 
-	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/jmoiron/sqlx"
 
+	"github.com/forbole/juno/v5/cosmos-sdk/codec"
 	"github.com/forbole/juno/v5/logging"
 	"github.com/forbole/juno/v5/types"
 	"github.com/forbole/juno/v5/utils"

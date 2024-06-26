@@ -2,9 +2,9 @@ package types
 
 import (
 	"github.com/cosmos/cosmos-sdk/client"
-	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/codec/types"
-	"github.com/cosmos/cosmos-sdk/x/auth/tx"
+
+	"github.com/forbole/juno/v5/cosmos-sdk/codec"
 )
 
 // EncodingConfig specifies the concrete encoding types to use for a given app.
@@ -12,7 +12,7 @@ import (
 // NOTE: This is copied from simapp in order to avoid importing that package as a dependency
 type EncodingConfig struct {
 	InterfaceRegistry types.InterfaceRegistry
-	Codec             codec.Codec
+	Codec             codec.ProtoCodec
 	TxConfig          client.TxConfig
 	Amino             *codec.LegacyAmino
 }
@@ -23,14 +23,16 @@ type EncodingConfig struct {
 // [DEPRECATED]
 // NOTE: This is copied from simapp in order to avoid importing that package as a dependency
 func MakeTestEncodingConfig() EncodingConfig {
-	amino := codec.NewLegacyAmino()
-	interfaceRegistry := types.NewInterfaceRegistry()
-	cdc := codec.NewProtoCodec(interfaceRegistry)
-
-	return EncodingConfig{
-		InterfaceRegistry: interfaceRegistry,
-		Codec:             cdc,
-		TxConfig:          tx.NewTxConfig(cdc, tx.DefaultSignModes),
-		Amino:             amino,
-	}
+	// amino := codec.NewLegacyAmino()
+	// interfaceRegistry := types.NewInterfaceRegistry()
+	// cdc := codec.NewProtoCodec(interfaceRegistry)
+	//
+	// return EncodingConfig{
+	// 	InterfaceRegistry: interfaceRegistry,
+	// 	Codec:             cdc,
+	// 	TxConfig:          tx.NewTxConfig(cdc, tx.DefaultSignModes),
+	// 	Amino:             amino,
+	// }
+	// TODO: Fix me.
+	panic("Fix MakeTestEncodingConfig")
 }
