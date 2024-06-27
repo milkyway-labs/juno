@@ -32,7 +32,7 @@ func GetHeightRequestContext(context context.Context, height int64) context.Cont
 }
 
 // MustCreateGrpcConnection creates a new gRPC connection using the provided configuration and panics on error
-func MustCreateGrpcConnection(cfg *Details, cdc codec.ProtoCodec) grpc.ClientConnInterface {
+func MustCreateGrpcConnection(cfg *Details, cdc codec.GRPCCodecProvider) grpc.ClientConnInterface {
 	grpConnection, err := CreateGrpcConnection(cfg, cdc)
 	if err != nil {
 		panic(err)
@@ -41,7 +41,7 @@ func MustCreateGrpcConnection(cfg *Details, cdc codec.ProtoCodec) grpc.ClientCon
 }
 
 // CreateGrpcConnection creates a new gRPC client connection from the given configuration
-func CreateGrpcConnection(cfg *Details, cdc codec.ProtoCodec) (grpc.ClientConnInterface, error) {
+func CreateGrpcConnection(cfg *Details, cdc codec.GRPCCodecProvider) (grpc.ClientConnInterface, error) {
 	// If the gRPC config is not specified, we can create a gRPC-over-RPC connection
 	if cfg.GRPC == nil {
 		grpcConnection, err := gprc.NewConnection(cfg.RPC.Address, cdc)

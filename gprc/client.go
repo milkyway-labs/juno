@@ -30,7 +30,7 @@ type Connection struct {
 }
 
 // NewConnection a new Connection instance
-func NewConnection(rpcAddress string, cdc codec.ProtoCodec) (*Connection, error) {
+func NewConnection(rpcAddress string, cdc codec.GRPCCodecProvider) (*Connection, error) {
 	jsonRPCClient, err := jsonrpc2.NewClient(rpcAddress, &http.Client{Timeout: time.Minute})
 	if err != nil {
 		return nil, err
@@ -43,7 +43,7 @@ func NewConnection(rpcAddress string, cdc codec.ProtoCodec) (*Connection, error)
 }
 
 // MustCreateConnection returns a new Connection instance, or panics if any error arises
-func MustCreateConnection(rpcAddress string, cdc codec.ProtoCodec) *Connection {
+func MustCreateConnection(rpcAddress string, cdc codec.GRPCCodecProvider) *Connection {
 	conn, err := NewConnection(rpcAddress, cdc)
 	if err != nil {
 		panic(err)

@@ -33,7 +33,7 @@ var (
 // chain SDK REST client that allows for essential data queries.
 type Node struct {
 	ctx                  context.Context
-	codec                codec.Codec
+	codec                codec.GRPCodec
 	accountAddressParser types.AccountAddressParser
 
 	client          *httpclient.HTTP
@@ -41,7 +41,7 @@ type Node struct {
 }
 
 // NewNode allows to build a new Node instance
-func NewNode(cfg *Details, accountAddressParser types.AccountAddressParser, codec codec.ProtoCodec) (*Node, error) {
+func NewNode(cfg *Details, accountAddressParser types.AccountAddressParser, codec codec.GRPCodec) (*Node, error) {
 	httpClient, err := jsonrpcclient.DefaultHTTPClient(cfg.RPC.Address)
 	if err != nil {
 		return nil, err
