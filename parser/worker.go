@@ -5,7 +5,9 @@ import (
 	"fmt"
 	"time"
 
+	gogoproto "github.com/cosmos/gogoproto/types/any"
 	"github.com/forbole/juno/v5/cosmos-sdk/codec"
+	"github.com/forbole/juno/v5/cosmos-sdk/x/authz"
 
 	"github.com/forbole/juno/v5/database"
 	"github.com/forbole/juno/v5/logging"
@@ -194,6 +196,7 @@ func (w Worker) HandleGenesis(genesisDoc *tmtypes.GenesisDoc, appState map[strin
 // consensus public key. An error is returned if the public key cannot be Bech32
 // encoded or if the DB write fails.
 func (w Worker) SaveValidators(vals []*tmtypes.Validator) error {
+	// TODO: Fix SaveValidators
 	//var validators = make([]*types.Validator, len(vals))
 	//for index, val := range vals {
 	//	consAddr := sdk.ConsAddress(val.Address).String()
@@ -341,30 +344,29 @@ func (w Worker) handleMessage(index int, msg sdk.Msg, tx *types.Tx) error {
 		}
 	}
 
-	// TODO: Add support fort MsgExec
 	// If it's a MsgExecute, we need to make sure the included messages are handled as well
-	// if msgExec, ok := msg.(*authz.MsgExec); ok {
-	// 	for authzIndex, msgAny := range msgExec.Msgs {
-	// 		var executedMsg sdk.Msg
-	// 		err := w.codec.UnpackAny((*gogoproto.Any)(msgAny), &executedMsg)
-	// 		if err != nil {
-	// 			w.logger.Error("unable to unpack MsgExec inner message", "index", authzIndex, "error", err)
-	// 		}
-	//
-	// 		for _, module := range w.modules {
-	// 			if messageModule, ok := module.(modules.AuthzMessageModule); ok {
-	// 				err = messageModule.HandleMsgExec(index, msgExec, authzIndex, executedMsg, tx)
-	// 				if err != nil {
-	// 					if w.shouldReEnqueueWhenFailed() {
-	// 						return err
-	// 					}
-	//
-	// 					w.logger.MsgError(module, tx, executedMsg, err)
-	// 				}
-	// 			}
-	// 		}
-	// 	}
-	// }
+	if msgExec, ok := msg.(*authz.MsgExec); ok {
+		for authzIndex, msgAny := range msgExec.Msgs {
+			var executedMsg sdk.Msg
+			err := w.codec.UnpackAny((*gogoproto.Any)(msgAny), &executedMsg)
+			if err != nil {
+				w.logger.Error("unable to unpack MsgExec inner message", "index", authzIndex, "error", err)
+			}
+
+			for _, module := range w.modules {
+				if messageModule, ok := module.(modules.AuthzMessageModule); ok {
+					err = messageModule.HandleMsgExec(index, msgExec, authzIndex, executedMsg, tx)
+					if err != nil {
+						if w.shouldReEnqueueWhenFailed() {
+							return err
+						}
+
+						w.logger.MsgError(module, tx, executedMsg, err)
+					}
+				}
+			}
+		}
+	}
 
 	return nil
 }
