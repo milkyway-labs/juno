@@ -2,13 +2,12 @@ package modules
 
 import (
 	"encoding/json"
+	"github.com/forbole/juno/v5/cosmos-sdk/x/authz"
 	"strings"
-
-	"github.com/cosmos/cosmos-sdk/x/authz"
 
 	tmctypes "github.com/cometbft/cometbft/rpc/core/types"
 	tmtypes "github.com/cometbft/cometbft/types"
-	sdk "github.com/cosmos/cosmos-sdk/types"
+	sdk "github.com/forbole/juno/v5/cosmos-sdk/types"
 	"github.com/go-co-op/gocron"
 
 	"github.com/forbole/juno/v5/types"

@@ -2,16 +2,12 @@ package types
 
 import (
 	"fmt"
-	"reflect"
-
 	"github.com/forbole/juno/v5/parser"
 
 	nodebuilder "github.com/forbole/juno/v5/node/builder"
 	"github.com/forbole/juno/v5/types/config"
 
 	"github.com/forbole/juno/v5/database"
-
-	sdk "github.com/cosmos/cosmos-sdk/types"
 
 	modsregistrar "github.com/forbole/juno/v5/modules/registrar"
 )
@@ -37,14 +33,6 @@ func GetParserContext(cfg config.Config, parseConfig *Config) (*parser.Context, 
 
 	// Build the codec
 	encodingConfig := parseConfig.GetEncodingConfigBuilder()()
-
-	// Setup the SDK configuration
-	sdkConfig, sealed := getConfig()
-	if !sealed {
-		parseConfig.GetSetupConfig()(cfg, sdkConfig)
-		sdkConfig.Seal()
-	}
-
 	// Create the database
 	databaseCtx := database.NewContext(
 		cfg.Database,
@@ -69,7 +57,6 @@ func GetParserContext(cfg config.Config, parseConfig *Config) (*parser.Context, 
 	// Build the modules
 	context := modsregistrar.NewContext(
 		cfg,
-		sdkConfig,
 		encodingConfig,
 		db,
 		node,
@@ -80,11 +67,4 @@ func GetParserContext(cfg config.Config, parseConfig *Config) (*parser.Context, 
 	registeredModules := modsregistrar.GetModules(mods, cfg.Chain.Modules, logger)
 
 	return parser.NewContext(cfg, encodingConfig, node, db, logger, registeredModules), nil
-}
-
-// getConfig returns the SDK Config instance as well as if it's sealed or not
-func getConfig() (config *sdk.Config, sealed bool) {
-	sdkConfig := sdk.GetConfig()
-	fv := reflect.ValueOf(sdkConfig).Elem().FieldByName("sealed")
-	return sdkConfig, fv.Bool()
 }

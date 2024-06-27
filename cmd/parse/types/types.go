@@ -14,7 +14,6 @@ type Config struct {
 	registrar             registrar.Registrar
 	configParser          config.Parser
 	encodingConfigBuilder EncodingConfigBuilder
-	setupCfg              SdkConfigSetup
 	buildDb               database.Builder
 	logger                logging.Logger
 	accountAddressParser  types.AccountAddressParser
@@ -77,20 +76,6 @@ func (cfg *Config) GetEncodingConfigBuilder() EncodingConfigBuilder {
 	return cfg.encodingConfigBuilder
 }
 
-// WithSetupConfig sets the SDK setup configurator to be used
-func (cfg *Config) WithSetupConfig(s SdkConfigSetup) *Config {
-	cfg.setupCfg = s
-	return cfg
-}
-
-// GetSetupConfig returns the SDK configuration builder to use
-func (cfg *Config) GetSetupConfig() SdkConfigSetup {
-	if cfg.setupCfg == nil {
-		return DefaultConfigSetup
-	}
-	return cfg.setupCfg
-}
-
 // WithDBBuilder sets the database builder to be used
 func (cfg *Config) WithDBBuilder(b database.Builder) *Config {
 	cfg.buildDb = b
@@ -127,9 +112,6 @@ func (cfg *Config) WithAccountAddressParser(parser types.AccountAddressParser) *
 
 // GetAccountAddressParser returns the account address parser to be used
 func (cfg *Config) GetAccountAddressParser() types.AccountAddressParser {
-	if cfg.accountAddressParser == nil {
-		return types.DefaultAddressParser()
-	}
 	return cfg.accountAddressParser
 }
 

@@ -7,8 +7,8 @@ import (
 	"strconv"
 	"time"
 
-	grpctypes "github.com/cosmos/cosmos-sdk/types/grpc"
 	"github.com/forbole/juno/v5/cosmos-sdk/codec"
+	grpctypes "github.com/forbole/juno/v5/cosmos-sdk/types/grpc"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/encoding"

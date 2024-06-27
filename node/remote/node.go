@@ -13,7 +13,7 @@ import (
 
 	constypes "github.com/cometbft/cometbft/consensus/types"
 	tmjson "github.com/cometbft/cometbft/libs/json"
-	sdk "github.com/cosmos/cosmos-sdk/types"
+	sdk "github.com/forbole/juno/v5/cosmos-sdk/types"
 
 	"github.com/forbole/juno/v5/cosmos-sdk/codec"
 	"github.com/forbole/juno/v5/cosmos-sdk/types/tx"

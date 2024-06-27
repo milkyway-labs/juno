@@ -7,18 +7,16 @@ import (
 
 	"github.com/forbole/juno/v5/cosmos-sdk/codec"
 
+	"github.com/forbole/juno/v5/database"
 	"github.com/forbole/juno/v5/logging"
 	nodeutils "github.com/forbole/juno/v5/node/utils"
-	"github.com/forbole/juno/v5/utils"
-
-	"github.com/forbole/juno/v5/database"
 	"github.com/forbole/juno/v5/types/config"
 
 	"github.com/forbole/juno/v5/modules"
 
 	tmctypes "github.com/cometbft/cometbft/rpc/core/types"
 	tmtypes "github.com/cometbft/cometbft/types"
-	sdk "github.com/cosmos/cosmos-sdk/types"
+	sdk "github.com/forbole/juno/v5/cosmos-sdk/types"
 
 	"github.com/forbole/juno/v5/node"
 	"github.com/forbole/juno/v5/types"
@@ -196,22 +194,22 @@ func (w Worker) HandleGenesis(genesisDoc *tmtypes.GenesisDoc, appState map[strin
 // consensus public key. An error is returned if the public key cannot be Bech32
 // encoded or if the DB write fails.
 func (w Worker) SaveValidators(vals []*tmtypes.Validator) error {
-	var validators = make([]*types.Validator, len(vals))
-	for index, val := range vals {
-		consAddr := sdk.ConsAddress(val.Address).String()
-
-		consPubKey, err := utils.ConvertValidatorPubKeyToBech32String(val.PubKey)
-		if err != nil {
-			return fmt.Errorf("failed to convert validator public key for validators %s: %s", consAddr, err)
-		}
-
-		validators[index] = types.NewValidator(consAddr, consPubKey)
-	}
-
-	err := w.db.SaveValidators(validators)
-	if err != nil {
-		return fmt.Errorf("error while saving validators: %s", err)
-	}
+	//var validators = make([]*types.Validator, len(vals))
+	//for index, val := range vals {
+	//	consAddr := sdk.ConsAddress(val.Address).String()
+	//
+	//	consPubKey, err := utils.ConvertValidatorPubKeyToBech32String(val.PubKey)
+	//	if err != nil {
+	//		return fmt.Errorf("failed to convert validator public key for validators %s: %s", consAddr, err)
+	//	}
+	//
+	//	validators[index] = types.NewValidator(consAddr, consPubKey)
+	//}
+	//
+	//err := w.db.SaveValidators(validators)
+	//if err != nil {
+	//	return fmt.Errorf("error while saving validators: %s", err)
+	//}
 
 	return nil
 }
@@ -229,11 +227,11 @@ func (w Worker) ExportBlock(
 	}
 
 	// Make sure the proposer exists
-	proposerAddr := sdk.ConsAddress(b.Block.ProposerAddress)
-	val := findValidatorByAddr(proposerAddr.String(), vals)
-	if val == nil {
-		return fmt.Errorf("failed to find validator by proposer address %s: %s", proposerAddr.String(), err)
-	}
+	// proposerAddr := sdk.ConsAddress(b.Block.ProposerAddress)
+	// val := findValidatorByAddr(proposerAddr.String(), vals)
+	// if val == nil {
+	// 	return fmt.Errorf("failed to find validator by proposer address %s: %s", proposerAddr.String(), err)
+	// }
 
 	// Save the block
 	err = w.db.SaveBlock(types.NewBlockFromTmBlock(b, sumGasTxs(txs)))
@@ -270,26 +268,26 @@ func (w Worker) ExportBlock(
 // returned if any write fails or if there is any missing aggregated data.
 func (w Worker) ExportCommit(commit *tmtypes.Commit, vals *tmctypes.ResultValidators) error {
 	var signatures []*types.CommitSig
-	for _, commitSig := range commit.Signatures {
-		// Avoid empty commits
-		if commitSig.Signature == nil {
-			continue
-		}
-
-		valAddr := sdk.ConsAddress(commitSig.ValidatorAddress)
-		val := findValidatorByAddr(valAddr.String(), vals)
-		if val == nil {
-			return fmt.Errorf("failed to find validator by commit validator address %s", valAddr.String())
-		}
-
-		signatures = append(signatures, types.NewCommitSig(
-			utils.ConvertValidatorAddressToBech32String(commitSig.ValidatorAddress),
-			val.VotingPower,
-			val.ProposerPriority,
-			commit.Height,
-			commitSig.Timestamp,
-		))
-	}
+	// for _, commitSig := range commit.Signatures {
+	// 	// Avoid empty commits
+	// 	if commitSig.Signature == nil {
+	// 		continue
+	// 	}
+	//
+	// 	valAddr := sdk.ConsAddress(commitSig.ValidatorAddress)
+	// 	val := findValidatorByAddr(valAddr.String(), vals)
+	// 	if val == nil {
+	// 		return fmt.Errorf("failed to find validator by commit validator address %s", valAddr.String())
+	// 	}
+	//
+	// 	signatures = append(signatures, types.NewCommitSig(
+	// 		utils.ConvertValidatorAddressToBech32String(commitSig.ValidatorAddress),
+	// 		val.VotingPower,
+	// 		val.ProposerPriority,
+	// 		commit.Height,
+	// 		commitSig.Timestamp,
+	// 	))
+	// }
 
 	err := w.db.SaveCommitSignatures(signatures)
 	if err != nil {
