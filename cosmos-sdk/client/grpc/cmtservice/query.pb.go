@@ -7,12 +7,12 @@ import (
 	context "context"
 	fmt "fmt"
 	p2p "github.com/cometbft/cometbft/proto/tendermint/p2p"
-	types "github.com/cometbft/cometbft/proto/tendermint/types"
+	types1 "github.com/cometbft/cometbft/proto/tendermint/types"
 	_ "github.com/cosmos/cosmos-proto"
+	types "github.com/cosmos/cosmos-sdk/codec/types"
 	_ "github.com/cosmos/gogoproto/gogoproto"
 	grpc1 "github.com/cosmos/gogoproto/grpc"
 	proto "github.com/cosmos/gogoproto/proto"
-	any "github.com/cosmos/gogoproto/types/any"
 	query "github.com/forbole/juno/v5/cosmos-sdk/types/query"
 	_ "github.com/forbole/juno/v5/cosmos-sdk/types/tx/amino"
 	_ "google.golang.org/genproto/googleapis/api/annotations"
@@ -265,10 +265,10 @@ func (m *GetLatestValidatorSetResponse) GetPagination() *query.PageResponse {
 
 // Validator is the type for the validator-set.
 type Validator struct {
-	Address          string   `protobuf:"bytes,1,opt,name=address,proto3" json:"address,omitempty"`
-	PubKey           *any.Any `protobuf:"bytes,2,opt,name=pub_key,json=pubKey,proto3" json:"pub_key,omitempty"`
-	VotingPower      int64    `protobuf:"varint,3,opt,name=voting_power,json=votingPower,proto3" json:"voting_power,omitempty"`
-	ProposerPriority int64    `protobuf:"varint,4,opt,name=proposer_priority,json=proposerPriority,proto3" json:"proposer_priority,omitempty"`
+	Address          string     `protobuf:"bytes,1,opt,name=address,proto3" json:"address,omitempty"`
+	PubKey           *types.Any `protobuf:"bytes,2,opt,name=pub_key,json=pubKey,proto3" json:"pub_key,omitempty"`
+	VotingPower      int64      `protobuf:"varint,3,opt,name=voting_power,json=votingPower,proto3" json:"voting_power,omitempty"`
+	ProposerPriority int64      `protobuf:"varint,4,opt,name=proposer_priority,json=proposerPriority,proto3" json:"proposer_priority,omitempty"`
 }
 
 func (m *Validator) Reset()         { *m = Validator{} }
@@ -311,7 +311,7 @@ func (m *Validator) GetAddress() string {
 	return ""
 }
 
-func (m *Validator) GetPubKey() *any.Any {
+func (m *Validator) GetPubKey() *types.Any {
 	if m != nil {
 		return m.PubKey
 	}
@@ -381,9 +381,9 @@ func (m *GetBlockByHeightRequest) GetHeight() int64 {
 // GetBlockByHeightResponse is the response type for the Query/GetBlockByHeight
 // RPC method.
 type GetBlockByHeightResponse struct {
-	BlockId *types.BlockID `protobuf:"bytes,1,opt,name=block_id,json=blockId,proto3" json:"block_id,omitempty"`
+	BlockId *types1.BlockID `protobuf:"bytes,1,opt,name=block_id,json=blockId,proto3" json:"block_id,omitempty"`
 	// Deprecated: please use `sdk_block` instead
-	Block *types.Block `protobuf:"bytes,2,opt,name=block,proto3" json:"block,omitempty"`
+	Block *types1.Block `protobuf:"bytes,2,opt,name=block,proto3" json:"block,omitempty"`
 	// Since: cosmos-sdk 0.47
 	SdkBlock *Block `protobuf:"bytes,3,opt,name=sdk_block,json=sdkBlock,proto3" json:"sdk_block,omitempty"`
 }
@@ -421,14 +421,14 @@ func (m *GetBlockByHeightResponse) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_GetBlockByHeightResponse proto.InternalMessageInfo
 
-func (m *GetBlockByHeightResponse) GetBlockId() *types.BlockID {
+func (m *GetBlockByHeightResponse) GetBlockId() *types1.BlockID {
 	if m != nil {
 		return m.BlockId
 	}
 	return nil
 }
 
-func (m *GetBlockByHeightResponse) GetBlock() *types.Block {
+func (m *GetBlockByHeightResponse) GetBlock() *types1.Block {
 	if m != nil {
 		return m.Block
 	}
@@ -483,9 +483,9 @@ var xxx_messageInfo_GetLatestBlockRequest proto.InternalMessageInfo
 // GetLatestBlockResponse is the response type for the Query/GetLatestBlock RPC
 // method.
 type GetLatestBlockResponse struct {
-	BlockId *types.BlockID `protobuf:"bytes,1,opt,name=block_id,json=blockId,proto3" json:"block_id,omitempty"`
+	BlockId *types1.BlockID `protobuf:"bytes,1,opt,name=block_id,json=blockId,proto3" json:"block_id,omitempty"`
 	// Deprecated: please use `sdk_block` instead
-	Block *types.Block `protobuf:"bytes,2,opt,name=block,proto3" json:"block,omitempty"`
+	Block *types1.Block `protobuf:"bytes,2,opt,name=block,proto3" json:"block,omitempty"`
 	// Since: cosmos-sdk 0.47
 	SdkBlock *Block `protobuf:"bytes,3,opt,name=sdk_block,json=sdkBlock,proto3" json:"sdk_block,omitempty"`
 }
@@ -523,14 +523,14 @@ func (m *GetLatestBlockResponse) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_GetLatestBlockResponse proto.InternalMessageInfo
 
-func (m *GetLatestBlockResponse) GetBlockId() *types.BlockID {
+func (m *GetLatestBlockResponse) GetBlockId() *types1.BlockID {
 	if m != nil {
 		return m.BlockId
 	}
 	return nil
 }
 
-func (m *GetLatestBlockResponse) GetBlock() *types.Block {
+func (m *GetLatestBlockResponse) GetBlock() *types1.Block {
 	if m != nil {
 		return m.Block
 	}
@@ -3442,7 +3442,7 @@ func (m *Validator) Unmarshal(dAtA []byte) error {
 				return io.ErrUnexpectedEOF
 			}
 			if m.PubKey == nil {
-				m.PubKey = &any.Any{}
+				m.PubKey = &types.Any{}
 			}
 			if err := m.PubKey.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
 				return err
@@ -3635,7 +3635,7 @@ func (m *GetBlockByHeightResponse) Unmarshal(dAtA []byte) error {
 				return io.ErrUnexpectedEOF
 			}
 			if m.BlockId == nil {
-				m.BlockId = &types.BlockID{}
+				m.BlockId = &types1.BlockID{}
 			}
 			if err := m.BlockId.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
 				return err
@@ -3671,7 +3671,7 @@ func (m *GetBlockByHeightResponse) Unmarshal(dAtA []byte) error {
 				return io.ErrUnexpectedEOF
 			}
 			if m.Block == nil {
-				m.Block = &types.Block{}
+				m.Block = &types1.Block{}
 			}
 			if err := m.Block.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
 				return err
@@ -3843,7 +3843,7 @@ func (m *GetLatestBlockResponse) Unmarshal(dAtA []byte) error {
 				return io.ErrUnexpectedEOF
 			}
 			if m.BlockId == nil {
-				m.BlockId = &types.BlockID{}
+				m.BlockId = &types1.BlockID{}
 			}
 			if err := m.BlockId.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
 				return err
@@ -3879,7 +3879,7 @@ func (m *GetLatestBlockResponse) Unmarshal(dAtA []byte) error {
 				return io.ErrUnexpectedEOF
 			}
 			if m.Block == nil {
-				m.Block = &types.Block{}
+				m.Block = &types1.Block{}
 			}
 			if err := m.Block.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
 				return err

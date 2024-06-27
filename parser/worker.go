@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"time"
 
-	gogoproto "github.com/cosmos/gogoproto/types/any"
 	"github.com/forbole/juno/v5/cosmos-sdk/codec"
 	"github.com/forbole/juno/v5/cosmos-sdk/x/authz"
 	"github.com/forbole/juno/v5/utils"
@@ -348,7 +347,7 @@ func (w Worker) handleMessage(index int, msg sdk.Msg, tx *types.Tx) error {
 	if msgExec, ok := msg.(*authz.MsgExec); ok {
 		for authzIndex, msgAny := range msgExec.Msgs {
 			var executedMsg sdk.Msg
-			err := w.codec.UnpackAny((*gogoproto.Any)(msgAny), &executedMsg)
+			err := w.codec.UnpackAny(msgAny, &executedMsg)
 			if err != nil {
 				w.logger.Error("unable to unpack MsgExec inner message", "index", authzIndex, "error", err)
 			}

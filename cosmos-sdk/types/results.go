@@ -6,7 +6,7 @@ import (
 	strings "strings"
 
 	coretypes "github.com/cometbft/cometbft/rpc/core/types"
-	codectypes "github.com/forbole/juno/v5/cosmos-sdk/codec/types"
+	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
 )
 
 // NewResponseResultTx returns a TxResponse given a ResultTx from tendermint

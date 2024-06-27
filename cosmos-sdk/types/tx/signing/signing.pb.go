@@ -5,9 +5,9 @@ package signing
 
 import (
 	fmt "fmt"
+	types "github.com/cosmos/cosmos-sdk/codec/types"
 	proto "github.com/cosmos/gogoproto/proto"
-	any "github.com/cosmos/gogoproto/types/any"
-	types "github.com/forbole/juno/v5/cosmos-sdk/crypto/types"
+	types1 "github.com/forbole/juno/v5/cosmos-sdk/crypto/types"
 	io "io"
 	math "math"
 	math_bits "math/bits"
@@ -147,7 +147,7 @@ func (m *SignatureDescriptors) GetSignatures() []*SignatureDescriptor {
 // clients.
 type SignatureDescriptor struct {
 	// public_key is the public key of the signer
-	PublicKey *any.Any                  `protobuf:"bytes,1,opt,name=public_key,json=publicKey,proto3" json:"public_key,omitempty"`
+	PublicKey *types.Any                `protobuf:"bytes,1,opt,name=public_key,json=publicKey,proto3" json:"public_key,omitempty"`
 	Data      *SignatureDescriptor_Data `protobuf:"bytes,2,opt,name=data,proto3" json:"data,omitempty"`
 	// sequence is the sequence of the account, which describes the
 	// number of committed transactions signed by a given address. It is used to
@@ -188,7 +188,7 @@ func (m *SignatureDescriptor) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_SignatureDescriptor proto.InternalMessageInfo
 
-func (m *SignatureDescriptor) GetPublicKey() *any.Any {
+func (m *SignatureDescriptor) GetPublicKey() *types.Any {
 	if m != nil {
 		return m.PublicKey
 	}
@@ -357,7 +357,7 @@ func (m *SignatureDescriptor_Data_Single) GetSignature() []byte {
 // Multi is the signature data for a multisig public key
 type SignatureDescriptor_Data_Multi struct {
 	// bitarray specifies which keys within the multisig are signing
-	Bitarray *types.CompactBitArray `protobuf:"bytes,1,opt,name=bitarray,proto3" json:"bitarray,omitempty"`
+	Bitarray *types1.CompactBitArray `protobuf:"bytes,1,opt,name=bitarray,proto3" json:"bitarray,omitempty"`
 	// signatures is the signatures of the multi-signature
 	Signatures []*SignatureDescriptor_Data `protobuf:"bytes,2,rep,name=signatures,proto3" json:"signatures,omitempty"`
 }
@@ -395,7 +395,7 @@ func (m *SignatureDescriptor_Data_Multi) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_SignatureDescriptor_Data_Multi proto.InternalMessageInfo
 
-func (m *SignatureDescriptor_Data_Multi) GetBitarray() *types.CompactBitArray {
+func (m *SignatureDescriptor_Data_Multi) GetBitarray() *types1.CompactBitArray {
 	if m != nil {
 		return m.Bitarray
 	}
@@ -976,7 +976,7 @@ func (m *SignatureDescriptor) Unmarshal(dAtA []byte) error {
 				return io.ErrUnexpectedEOF
 			}
 			if m.PublicKey == nil {
-				m.PublicKey = &any.Any{}
+				m.PublicKey = &types.Any{}
 			}
 			if err := m.PublicKey.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
 				return err
@@ -1340,7 +1340,7 @@ func (m *SignatureDescriptor_Data_Multi) Unmarshal(dAtA []byte) error {
 				return io.ErrUnexpectedEOF
 			}
 			if m.Bitarray == nil {
-				m.Bitarray = &types.CompactBitArray{}
+				m.Bitarray = &types1.CompactBitArray{}
 			}
 			if err := m.Bitarray.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
 				return err

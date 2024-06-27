@@ -1,6 +1,7 @@
 package types
 
 import (
+	"github.com/cosmos/cosmos-sdk/codec/types"
 	"github.com/gogo/protobuf/jsonpb"
 	"google.golang.org/protobuf/proto"
 	"google.golang.org/protobuf/reflect/protodesc"
@@ -17,7 +18,7 @@ type AnyUnpacker interface {
 	//    var msg sdk.Msg
 	//    err := cdc.UnpackAny(any, &msg)
 	//    ...
-	UnpackAny(any *Any, iface interface{}) error
+	UnpackAny(any *types.Any, iface interface{}) error
 }
 
 // InterfaceRegistry provides a mechanism for registering interfaces and

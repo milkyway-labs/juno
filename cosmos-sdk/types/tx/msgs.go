@@ -3,7 +3,7 @@ package tx
 import (
 	"fmt"
 
-	"github.com/forbole/juno/v5/cosmos-sdk/codec/types"
+	"github.com/cosmos/cosmos-sdk/codec/types"
 	sdk "github.com/forbole/juno/v5/cosmos-sdk/types"
 )
 

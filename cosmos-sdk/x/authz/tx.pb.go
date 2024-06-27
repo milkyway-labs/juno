@@ -6,9 +6,9 @@ package authz
 import (
 	fmt "fmt"
 	_ "github.com/cosmos/cosmos-proto"
+	types "github.com/cosmos/cosmos-sdk/codec/types"
 	_ "github.com/cosmos/gogoproto/gogoproto"
 	proto "github.com/cosmos/gogoproto/proto"
-	any "github.com/cosmos/gogoproto/types/any"
 	_ "github.com/forbole/juno/v5/cosmos-sdk/types/msgservice"
 	_ "github.com/forbole/juno/v5/cosmos-sdk/types/tx/amino"
 	io "io"
@@ -35,7 +35,7 @@ type MsgExec struct {
 	// Execute Msg.
 	// The x/authz will try to find a grant matching (msg.signers[0], grantee,
 	// MsgTypeURL(msg)) triple and validate it.
-	Msgs []*any.Any `protobuf:"bytes,2,rep,name=msgs,proto3" json:"msgs,omitempty"`
+	Msgs []*types.Any `protobuf:"bytes,2,rep,name=msgs,proto3" json:"msgs,omitempty"`
 }
 
 func (m *MsgExec) Reset()         { *m = MsgExec{} }
@@ -359,7 +359,7 @@ func (m *MsgExec) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.Msgs = append(m.Msgs, &any.Any{})
+			m.Msgs = append(m.Msgs, &types.Any{})
 			if err := m.Msgs[len(m.Msgs)-1].Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
 				return err
 			}
