@@ -19,3 +19,7 @@ coverage.txt
 # Configuration
 *.toml
 *.yaml
+
+# Protobuf generation config
+!buf.gen.gogo.yaml
+!buf.yaml
