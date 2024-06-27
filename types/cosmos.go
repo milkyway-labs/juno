@@ -9,6 +9,7 @@ import (
 	"github.com/forbole/juno/v5/cosmos-sdk/codec"
 	sdk "github.com/forbole/juno/v5/cosmos-sdk/types"
 	"github.com/forbole/juno/v5/cosmos-sdk/types/tx"
+	channeltypes "github.com/forbole/juno/v5/ibc-go/modules/core/04-channel/types"
 
 	"github.com/forbole/juno/v5/utils"
 )
@@ -183,12 +184,11 @@ func MapMessage(txHash string, txHeight int64, index int, msg sdk.Msg, accountPa
 	messageValue := string(messageBz)
 
 	// Special case for IBC packets as we want to extract the data from the packet
-	// TODO: Fix IBC
-	// if msgReceivePacket, ok := msg.(*channeltypes.MsgRecvPacket); ok {
-	// 	trimMessageString := utils.TrimLastChar(string(messageBz))
-	// 	trimDataString := string(msgReceivePacket.Packet.Data)[1:]
-	// 	messageValue = fmt.Sprintf("%s,%s", trimMessageString, trimDataString)
-	// }
+	if msgReceivePacket, ok := msg.(*channeltypes.MsgRecvPacket); ok {
+		trimMessageString := utils.TrimLastChar(string(messageBz))
+		trimDataString := string(msgReceivePacket.Packet.Data)[1:]
+		messageValue = fmt.Sprintf("%s,%s", trimMessageString, trimDataString)
+	}
 
 	accountAddresses, err := extractAccountAddresses(messageBz, accountParser)
 	if err != nil {

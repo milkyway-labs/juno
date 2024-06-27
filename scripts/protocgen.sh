@@ -17,19 +17,10 @@ for dir in $proto_dirs; do
   echo "Generating proto code for $dir"
 
   cd $dir
-  # check if buf.gen.pulsar.yaml exists in the proto directory
-  if [ -f "buf.gen.pulsar.yaml" ]; then
-    buf generate --template buf.gen.pulsar.yaml
-    # move generated files to the right places
-    if [ -d "../cosmos" -a "$dir" != "./proto" ]; then
-      cp -r ../cosmos $home/api
-      rm -rf ../cosmos
-    fi
-  fi
-
   # check if buf.gen.gogo.yaml exists in the proto directory
   if [ -f "buf.gen.gogo.yaml" ]; then
       for file in $(find . -maxdepth 5 -name '*.proto'); do
+        echo "$file"
         # this regex checks if a proto file has its go_package set to cosmossdk.io/api/...
         # gogo proto files SHOULD ONLY be generated if this is false
         # we don't want gogo proto to run for proto files which are natively built for google.golang.org/protobuf
@@ -37,17 +28,6 @@ for dir in $proto_dirs; do
           buf generate --template buf.gen.gogo.yaml $file
         fi
     done
-
-    # move generated files to the right places
-    if [ -d "../cosmossdk.io" ]; then
-      cp -r ../cosmossdk.io/* $home
-      rm -rf ../cosmossdk.io
-    fi
-
-    if [ -d "../github.com" -a "$dir" != "./proto" ]; then
-      cp -r ../github.com/forbole/juno/v5/cosmos-sdk $home
-      rm -rf ../github.com
-    fi
   fi
 
   cd $home
@@ -55,6 +35,7 @@ done
 
 # move generated files to the right places
 cp -r github.com/forbole/juno/v5/cosmos-sdk ./
+cp -r github.com/forbole/juno/v5/ibc-go ./
 rm -rf github.com
 
-go mod tidy
+# go mod tidy
