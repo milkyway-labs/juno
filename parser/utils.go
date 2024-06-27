@@ -10,6 +10,7 @@ import (
 // Tendermint validators for a particular block. If no validator is found, nil
 // is returned.
 func findValidatorByAddr(consAddr string, vals *tmctypes.ResultValidators) *tmtypes.Validator {
+	// TODO: Fix findValidatorByAddr
 	// for _, val := range vals.Validators {
 	// 	if consAddr == sdk.ConsAddress(val.Address).String() {
 	// 		return val
