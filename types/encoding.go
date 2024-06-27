@@ -9,5 +9,5 @@ import (
 // NOTE: This is copied from simapp in order to avoid importing that package as a dependency
 type EncodingConfig struct {
 	Codec codec.GRPCodec
-	Amino *codec.LegacyAmino
+	Amino codec.LegacyAmino
 }

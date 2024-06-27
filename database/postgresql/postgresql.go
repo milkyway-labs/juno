@@ -22,7 +22,7 @@ type Database struct {
 	partitionSize int64
 
 	Cdc   codec.Codec
-	Amino *codec.LegacyAmino
+	Amino codec.LegacyAmino
 
 	SQL                  *sqlx.DB
 	Logger               logging.Logger

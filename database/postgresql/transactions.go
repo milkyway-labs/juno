@@ -74,7 +74,7 @@ ON CONFLICT (hash, partition_id) DO UPDATE
 	}
 	sigInfoBz := fmt.Sprintf("[%s]", strings.Join(sigInfos, ","))
 
-	logsBz, err := (*db.Amino).MarshalJSON(tx.Logs)
+	logsBz, err := db.Amino.MarshalJSON(tx.Logs)
 	if err != nil {
 		return err
 	}
