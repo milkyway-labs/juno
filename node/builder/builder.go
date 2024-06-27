@@ -24,7 +24,7 @@ func NewContext(encodingConfig types.EncodingConfig, accountAddressParser types.
 func BuildNode(cfg nodeconfig.Config, ctx Context) (node.Node, error) {
 	switch cfg.Type {
 	case nodeconfig.TypeRemote:
-		return remote.NewNode(cfg.Details.(*remote.Details), ctx.AccountAddressParser, ctx.EncodingConfig.Codec)
+		return remote.NewNode(cfg.Details.(*remote.Details), ctx.AccountAddressParser, ctx.EncodingConfig.Codec, ctx.EncodingConfig.GRPCodec)
 	// case nodeconfig.TypeLocal:
 	// 	return local.NewNode(cfg.Details.(*local.Details), txConfig, ctx.AccountAddressParser, cdc)
 	case nodeconfig.TypeNone:

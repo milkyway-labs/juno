@@ -33,7 +33,8 @@ var (
 // chain SDK REST client that allows for essential data queries.
 type Node struct {
 	ctx                  context.Context
-	codec                codec.GRPCodec
+	codec                codec.Codec
+	grpcCodec            codec.GRPCodec
 	accountAddressParser types.AccountAddressParser
 
 	client          *httpclient.HTTP
@@ -41,7 +42,7 @@ type Node struct {
 }
 
 // NewNode allows to build a new Node instance
-func NewNode(cfg *Details, accountAddressParser types.AccountAddressParser, codec codec.GRPCodec) (*Node, error) {
+func NewNode(cfg *Details, accountAddressParser types.AccountAddressParser, codec codec.Codec, grpcCodec codec.GRPCodec) (*Node, error) {
 	httpClient, err := jsonrpcclient.DefaultHTTPClient(cfg.RPC.Address)
 	if err != nil {
 		return nil, err
@@ -59,7 +60,7 @@ func NewNode(cfg *Details, accountAddressParser types.AccountAddressParser, code
 		return nil, err
 	}
 
-	grpcConnection, err := CreateGrpcConnection(cfg, codec)
+	grpcConnection, err := CreateGrpcConnection(cfg, grpcCodec)
 	if err != nil {
 		return nil, err
 	}
@@ -67,6 +68,7 @@ func NewNode(cfg *Details, accountAddressParser types.AccountAddressParser, code
 	return &Node{
 		ctx:                  context.Background(),
 		codec:                codec,
+		grpcCodec:            grpcCodec,
 		accountAddressParser: accountAddressParser,
 
 		client:          rpcClient,

@@ -22,15 +22,17 @@ type Config interface {
 	GetBech32ConsensusPubPrefix() string
 }
 
-var sdkConfig Config
+type ConfigGetter = func() Config
 
-func SetSdkConfig(config Config) {
-	sdkConfig = config
+var configGetter ConfigGetter
+
+func SetSdkConfigGetter(getter ConfigGetter) {
+	configGetter = getter
 }
 
 func GetSdkConfig() Config {
-	if sdkConfig == nil {
+	if configGetter == nil {
 		panic("set the cosmos sdk confg using the SetSdkConfig function")
 	}
-	return sdkConfig
+	return configGetter()
 }
