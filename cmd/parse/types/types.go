@@ -63,16 +63,6 @@ func (cfg *Config) WithEncodingConfigBuilder(b EncodingConfigBuilder) *Config {
 
 // GetEncodingConfigBuilder returns the encoding config builder to be used
 func (cfg *Config) GetEncodingConfigBuilder() EncodingConfigBuilder {
-	if cfg.encodingConfigBuilder == nil {
-		return func() types.EncodingConfig {
-			encodingConfig := types.MakeTestEncodingConfig()
-			// std.RegisterLegacyAminoCodec(encodingConfig.Amino)
-			// std.RegisterInterfaces(encodingConfig.InterfaceRegistry)
-			// ModuleBasics.RegisterLegacyAminoCodec(encodingConfig.Amino)
-			// ModuleBasics.RegisterInterfaces(encodingConfig.InterfaceRegistry)
-			return encodingConfig
-		}
-	}
 	return cfg.encodingConfigBuilder
 }
 
