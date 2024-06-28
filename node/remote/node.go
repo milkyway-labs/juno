@@ -10,10 +10,10 @@ import (
 
 	tmtypes "github.com/cometbft/cometbft/types"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/encoding"
 
 	constypes "github.com/cometbft/cometbft/consensus/types"
 	tmjson "github.com/cometbft/cometbft/libs/json"
-	sdk "github.com/forbole/juno/v5/cosmos-sdk/types"
 
 	"github.com/forbole/juno/v5/cosmos-sdk/codec"
 	"github.com/forbole/juno/v5/cosmos-sdk/types/tx"
@@ -34,7 +34,7 @@ var (
 type Node struct {
 	ctx                  context.Context
 	codec                codec.Codec
-	grpcCodec            codec.GRPCodec
+	grpcCodec            encoding.Codec
 	accountAddressParser types.AccountAddressParser
 
 	client          *httpclient.HTTP
@@ -42,7 +42,7 @@ type Node struct {
 }
 
 // NewNode allows to build a new Node instance
-func NewNode(cfg *Details, accountAddressParser types.AccountAddressParser, codec codec.Codec, grpcCodec codec.GRPCodec) (*Node, error) {
+func NewNode(cfg *Details, accountAddressParser types.AccountAddressParser, codec codec.Codec, grpcCodec encoding.Codec) (*Node, error) {
 	httpClient, err := jsonrpcclient.DefaultHTTPClient(cfg.RPC.Address)
 	if err != nil {
 		return nil, err
@@ -255,15 +255,6 @@ func (cp *Node) Tx(hash string) (*types.Tx, error) {
 	res, err := cp.txServiceClient.GetTx(context.Background(), &tx.GetTxRequest{Hash: hash}, grpc.MaxCallRecvMsgSize(13107200))
 	if err != nil {
 		return nil, err
-	}
-
-	// Decode messages
-	for _, msg := range res.Tx.Body.Messages {
-		var stdMsg sdk.Msg
-		err = cp.codec.UnpackAny(msg, &stdMsg)
-		if err != nil {
-			return nil, fmt.Errorf("error while unpacking message: %s", err)
-		}
 	}
 
 	convTx, err := types.MapTransaction(res.TxResponse, res.Tx, cp.accountAddressParser, cp.codec)

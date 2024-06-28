@@ -7,7 +7,6 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/forbole/juno/v5/cosmos-sdk/codec"
 	grpctypes "github.com/forbole/juno/v5/cosmos-sdk/types/grpc"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
@@ -30,7 +29,7 @@ type Connection struct {
 }
 
 // NewConnection a new Connection instance
-func NewConnection(rpcAddress string, cdc codec.GRPCCodecProvider) (*Connection, error) {
+func NewConnection(rpcAddress string, cdc encoding.Codec) (*Connection, error) {
 	jsonRPCClient, err := jsonrpc2.NewClient(rpcAddress, &http.Client{Timeout: time.Minute})
 	if err != nil {
 		return nil, err
@@ -38,12 +37,12 @@ func NewConnection(rpcAddress string, cdc codec.GRPCCodecProvider) (*Connection,
 
 	return &Connection{
 		jsonrpcClient: jsonRPCClient,
-		gprcCdc:       cdc.GRPCCodec(),
+		gprcCdc:       cdc,
 	}, nil
 }
 
 // MustCreateConnection returns a new Connection instance, or panics if any error arises
-func MustCreateConnection(rpcAddress string, cdc codec.GRPCCodecProvider) *Connection {
+func MustCreateConnection(rpcAddress string, cdc encoding.Codec) *Connection {
 	conn, err := NewConnection(rpcAddress, cdc)
 	if err != nil {
 		panic(err)
