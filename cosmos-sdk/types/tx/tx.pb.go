@@ -6,9 +6,9 @@ package tx
 import (
 	fmt "fmt"
 	_ "github.com/cosmos/cosmos-proto"
-	types "github.com/cosmos/cosmos-sdk/codec/types"
 	_ "github.com/cosmos/gogoproto/gogoproto"
 	proto "github.com/cosmos/gogoproto/proto"
+	types "github.com/forbole/juno/v5/cosmos-sdk/codec/types"
 	types1 "github.com/forbole/juno/v5/cosmos-sdk/crypto/types"
 	github_com_forbole_juno_v5_cosmos_sdk_types "github.com/forbole/juno/v5/cosmos-sdk/types"
 	types2 "github.com/forbole/juno/v5/cosmos-sdk/types"

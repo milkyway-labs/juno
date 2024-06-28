@@ -2,9 +2,8 @@ package codec
 
 import (
 	"github.com/cosmos/gogoproto/proto"
+	"github.com/forbole/juno/v5/cosmos-sdk/codec/types"
 	"google.golang.org/grpc/encoding"
-
-	"github.com/cosmos/cosmos-sdk/codec/types"
 )
 
 type (
@@ -16,28 +15,8 @@ type (
 	// 1. AminoCodec: Provides full Amino serialization compatibility.
 	// 2. ProtoCodec: Provides full Protobuf serialization compatibility.
 	Codec interface {
-		BinaryCodec
+		types.AnyUnpacker
 		JSONCodec
-		//
-		// // InterfaceRegistry returns the interface registry.
-		// InterfaceRegistry() types.InterfaceRegistry
-		//
-		// // GetMsgAnySigners returns the signers of the given message encoded in a protobuf Any
-		// // as well as the decoded google.golang.org/protobuf/proto.Message that was used to
-		// // extract the signers so that this can be used in other contexts.
-		// GetMsgAnySigners(msg *types.Any) ([][]byte, protov2.Message, error)
-		//
-		// // GetMsgV2Signers returns the signers of the given message.
-		// GetMsgV2Signers(msg protov2.Message) ([][]byte, error)
-		//
-		// // GetMsgV1Signers returns the signers of the given message plus the
-		// // decoded google.golang.org/protobuf/proto.Message that was used to extract the
-		// // signers so that this can be used in other contexts.
-		// GetMsgV1Signers(msg proto.Message) ([][]byte, protov2.Message, error)
-		//
-		// // mustEmbedCodec requires that all implementations of Codec embed an official implementation from the codec
-		// // package. This allows new methods to be added to the Codec interface without breaking backwards compatibility.
-		// mustEmbedCodec()
 	}
 
 	GRPCodec interface {
@@ -45,60 +24,9 @@ type (
 		GRPCCodecProvider
 	}
 
-	BinaryCodec interface {
-		// // Marshal returns binary encoding of v.
-		// Marshal(o proto.Message) ([]byte, error)
-		// // MustMarshal calls Marshal and panics if error is returned.
-		// MustMarshal(o proto.Message) []byte
-		//
-		// // MarshalLengthPrefixed returns binary encoding of v with bytes length prefix.
-		// MarshalLengthPrefixed(o proto.Message) ([]byte, error)
-		// // MustMarshalLengthPrefixed calls MarshalLengthPrefixed and panics if
-		// // error is returned.
-		// MustMarshalLengthPrefixed(o proto.Message) []byte
-		//
-		// // Unmarshal parses the data encoded with Marshal method and stores the result
-		// // in the value pointed to by v.
-		// Unmarshal(bz []byte, ptr proto.Message) error
-		// // MustUnmarshal calls Unmarshal and panics if error is returned.
-		// MustUnmarshal(bz []byte, ptr proto.Message)
-		//
-		// // Unmarshal parses the data encoded with UnmarshalLengthPrefixed method and stores
-		// // the result in the value pointed to by v.
-		// UnmarshalLengthPrefixed(bz []byte, ptr proto.Message) error
-		// // MustUnmarshalLengthPrefixed calls UnmarshalLengthPrefixed and panics if error
-		// // is returned.
-		// MustUnmarshalLengthPrefixed(bz []byte, ptr proto.Message)
-		//
-		// // MarshalInterface is a helper method which will wrap `i` into `Any` for correct
-		// // binary interface (de)serialization.
-		// MarshalInterface(i proto.Message) ([]byte, error)
-		// // UnmarshalInterface is a helper method which will parse binary enoded data
-		// // into `Any` and unpack any into the `ptr`. It fails if the target interface type
-		// // is not registered in codec, or is not compatible with the serialized data
-		// UnmarshalInterface(bz []byte, ptr interface{}) error
-		//
-		types.AnyUnpacker
-	}
-
 	JSONCodec interface {
 		// MarshalJSON returns JSON encoding of v.
 		MarshalJSON(o proto.Message) ([]byte, error)
-		// // MustMarshalJSON calls MarshalJSON and panics if error is returned.
-		// MustMarshalJSON(o proto.Message) []byte
-		// // MarshalInterfaceJSON is a helper method which will wrap `i` into `Any` for correct
-		// // JSON interface (de)serialization.
-		// MarshalInterfaceJSON(i proto.Message) ([]byte, error)
-		// // UnmarshalInterfaceJSON is a helper method which will parse JSON enoded data
-		// // into `Any` and unpack any into the `ptr`. It fails if the target interface type
-		// // is not registered in codec, or is not compatible with the serialized data
-		// UnmarshalInterfaceJSON(bz []byte, ptr interface{}) error
-		//
-		// // UnmarshalJSON parses the data encoded with MarshalJSON method and stores the result
-		// // in the value pointed to by v.
-		// UnmarshalJSON(bz []byte, ptr proto.Message) error
-		// // MustUnmarshalJSON calls Unmarshal and panics if error is returned.
-		// MustUnmarshalJSON(bz []byte, ptr proto.Message)
 	}
 
 	// GRPCCodecProvider is implemented by the Codec

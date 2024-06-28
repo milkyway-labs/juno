@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/forbole/juno/v5/cosmos-sdk/codec"
 	"github.com/forbole/juno/v5/cosmos-sdk/x/authz"
 	"github.com/forbole/juno/v5/utils"
 
@@ -33,7 +32,6 @@ type Worker struct {
 
 	queue types.HeightQueue
 
-	codec   codec.Codec
 	modules []modules.Module
 
 	node   node.Node
@@ -46,7 +44,6 @@ func NewWorker(ctx *Context, queue types.HeightQueue, index int) Worker {
 	return Worker{
 		index:   index,
 		cfg:     ctx.Config,
-		codec:   ctx.EncodingConfig.Codec,
 		node:    ctx.Node,
 		queue:   queue,
 		db:      ctx.Database,
@@ -198,7 +195,7 @@ func (w Worker) HandleGenesis(genesisDoc *tmtypes.GenesisDoc, appState map[strin
 func (w Worker) SaveValidators(vals []*tmtypes.Validator) error {
 	var validators = make([]*types.Validator, len(vals))
 	for index, val := range vals {
-		consAddr := sdk.ConsAddress(val.Address).String()
+		consAddr := sdk.NewConsAddress(val.Address).String()
 
 		consPubKey, err := utils.ConvertValidatorPubKeyToBech32String(val.PubKey)
 		if err != nil {
@@ -345,16 +342,10 @@ func (w Worker) handleMessage(index int, msg sdk.Msg, tx *types.Tx) error {
 
 	// If it's a MsgExecute, we need to make sure the included messages are handled as well
 	if msgExec, ok := msg.(*authz.MsgExec); ok {
-		for authzIndex, msgAny := range msgExec.Msgs {
-			var executedMsg sdk.Msg
-			err := w.codec.UnpackAny(msgAny, &executedMsg)
-			if err != nil {
-				w.logger.Error("unable to unpack MsgExec inner message", "index", authzIndex, "error", err)
-			}
-
+		for authzIndex, executedMsg := range msgExec.Msgs {
 			for _, module := range w.modules {
 				if messageModule, ok := module.(modules.AuthzMessageModule); ok {
-					err = messageModule.HandleMsgExec(index, msgExec, authzIndex, executedMsg, tx)
+					err := messageModule.HandleMsgExec(index, msgExec, authzIndex, executedMsg, tx)
 					if err != nil {
 						if w.shouldReEnqueueWhenFailed() {
 							return err
@@ -386,19 +377,8 @@ func (w Worker) ExportTxs(txs []*types.Tx) error {
 			return err
 		}
 
-		// Handle all messages contained inside the transaction
-		sdkMsgs := make([]sdk.Msg, len(tx.Body.Messages))
-		for i, msg := range tx.Body.Messages {
-			var stdMsg sdk.Msg
-			err := w.codec.UnpackAny(msg, &stdMsg)
-			if err != nil {
-				return err
-			}
-			sdkMsgs[i] = stdMsg
-		}
-
 		// Call the message handlers
-		for i, sdkMsg := range sdkMsgs {
+		for i, sdkMsg := range tx.Body.Messages {
 			err = w.handleMessage(i, sdkMsg, tx)
 			if err != nil {
 				return err
