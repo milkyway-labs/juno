@@ -7,10 +7,6 @@ import (
 	sdk "github.com/forbole/juno/v5/cosmos-sdk/types"
 )
 
-const (
-	msgResponseInterfaceProtoName = "cosmos.tx.v1beta1.MsgResponse"
-)
-
 // MsgResponse is the interface all Msg server handlers' response types need to
 // implement. It's the interface that's representing all Msg responses packed
 // in Anys.
