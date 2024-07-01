@@ -2,32 +2,27 @@ package types
 
 import (
 	"encoding/json"
+
+	"github.com/forbole/juno/v5/cosmos-sdk/codec"
 )
 
-// NewResponseResultTx returns a TxResponse given a ResultTx from tendermint
-// func NewResponseResultTx(res *coretypes.ResultTx, anyTx *codectypes.Any, timestamp string) *TxResponse {
-// 	if res == nil {
-// 		return nil
-// 	}
-//
-// 	parsedLogs, _ := ParseABCILogs(res.TxResult.Log)
-//
-// 	return &TxResponse{
-// 		TxHash:    res.Hash.String(),
-// 		Height:    res.Height,
-// 		Codespace: res.TxResult.Codespace,
-// 		Code:      res.TxResult.Code,
-// 		Data:      strings.ToUpper(hex.EncodeToString(res.TxResult.Data)),
-// 		RawLog:    res.TxResult.Log,
-// 		Logs:      parsedLogs,
-// 		Info:      res.TxResult.Info,
-// 		GasWanted: res.TxResult.GasWanted,
-// 		GasUsed:   res.TxResult.GasUsed,
-// 		Tx:        anyTx,
-// 		Timestamp: timestamp,
-// 		Events:    res.TxResult.Events,
-// 	}
-// }
+func (gi GasInfo) String() string {
+	bz, _ := codec.MarshalYAML(codec.NewProtoCodec(), &gi)
+	return string(bz)
+}
+
+func (r Result) String() string {
+	bz, _ := codec.MarshalYAML(codec.NewProtoCodec(), &r)
+	return string(bz)
+}
+
+func (r TxResponse) String() string {
+	bz, _ := codec.MarshalYAML(codec.NewProtoCodec(), &r)
+	return string(bz)
+}
+
+// ABCIMessageLogs represents a slice of ABCIMessageLog.
+type ABCIMessageLogs []ABCIMessageLog
 
 // ParseABCILogs attempts to parse a stringified ABCI tx log into a slice of
 // ABCIMessageLog types. It returns an error upon JSON decoding failure.
