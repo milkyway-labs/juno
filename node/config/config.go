@@ -42,8 +42,6 @@ func (s *Config) UnmarshalYAML(n *yaml.Node) error {
 	switch obj.Type {
 	case TypeRemote:
 		s.Details = new(remote.Details)
-	// case TypeLocal:
-	// 	s.Details = new(local.Details)
 	default:
 		panic("unknown node type")
 	}

@@ -1,20 +1,18 @@
 package types
 
-type ConsAddressBuilder = func([]byte) ConsAddress
+import "github.com/forbole/juno/v5/cosmos-sdk/types/bech32"
 
-type ConsAddress interface {
-	String() string
-}
-
-var buildConsAddress ConsAddressBuilder
-
-func SetConsAddressBuilder(b ConsAddressBuilder) {
-	buildConsAddress = b
-}
+type ConsAddress []byte
 
 func NewConsAddress(bz []byte) ConsAddress {
-	if buildConsAddress == nil {
-		panic("cons address builder not set, please set it using the SetConsAddressBuilder function")
+	return ConsAddress(bz)
+}
+
+func (bz ConsAddress) String() string {
+	addr, err := bech32.ConvertAndEncode(GetSdkConfig().GetBech32ConsensusAddrPrefix(), bz)
+	if err != nil {
+		// Panic like the cosmos-sdk
+		panic(err)
 	}
-	return buildConsAddress(bz)
+	return addr
 }

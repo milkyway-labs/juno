@@ -49,9 +49,8 @@ func Builder(ctx *database.Context) (database.Database, error) {
 		Cdc:   ctx.EncodingConfig.Codec,
 		Amino: ctx.EncodingConfig.Amino,
 
-		SQL:                  postgresDb,
-		Logger:               ctx.Logger,
-		AccountAddressParser: ctx.AccountAddressParser,
+		SQL:    postgresDb,
+		Logger: ctx.Logger,
 
 		ShouldStoreTransaction: ctx.TransactionFilter,
 		ShouldStoreMessage:     ctx.MessageFilter,
