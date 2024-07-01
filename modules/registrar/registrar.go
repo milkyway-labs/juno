@@ -1,8 +1,6 @@
 package registrar
 
 import (
-	sdk "github.com/cosmos/cosmos-sdk/types"
-
 	"github.com/forbole/juno/v5/database"
 	"github.com/forbole/juno/v5/logging"
 	"github.com/forbole/juno/v5/modules"
@@ -16,7 +14,6 @@ import (
 // Context represents the context of the modules registrar
 type Context struct {
 	JunoConfig           config.Config
-	SDKConfig            *sdk.Config
 	EncodingConfig       types.EncodingConfig
 	Database             database.Database
 	Proxy                node.Node
@@ -27,7 +24,6 @@ type Context struct {
 // NewContext allows to build a new Context instance
 func NewContext(
 	parsingConfig config.Config,
-	sdkConfig *sdk.Config,
 	encodingConfig types.EncodingConfig,
 	database database.Database,
 	proxy node.Node,
@@ -36,7 +32,6 @@ func NewContext(
 ) Context {
 	return Context{
 		JunoConfig:           parsingConfig,
-		SDKConfig:            sdkConfig,
 		EncodingConfig:       encodingConfig,
 		Database:             database,
 		Proxy:                proxy,

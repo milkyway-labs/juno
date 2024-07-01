@@ -7,18 +7,18 @@ import (
 	abci "github.com/cometbft/cometbft/abci/types"
 	tmcrypto "github.com/cometbft/cometbft/crypto"
 	cometbfttypes "github.com/cometbft/cometbft/types"
-	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/cosmos/cosmos-sdk/types/bech32"
+	sdk "github.com/forbole/juno/v5/cosmos-sdk/types"
+	"github.com/forbole/juno/v5/cosmos-sdk/types/bech32"
 )
 
 // ConvertValidatorAddressToBech32String converts the given validator address to its Bech32 string representation
 func ConvertValidatorAddressToBech32String(address cometbfttypes.Address) string {
-	return sdk.ConsAddress(address).String()
+	return sdk.NewConsAddress(address).String()
 }
 
 // ConvertValidatorPubKeyToBech32String converts the given pubKey to a Bech32 string
 func ConvertValidatorPubKeyToBech32String(pubKey tmcrypto.PubKey) (string, error) {
-	bech32Prefix := sdk.GetConfig().GetBech32ConsensusPubPrefix()
+	bech32Prefix := sdk.GetSdkConfig().GetBech32ConsensusPubPrefix()
 	return bech32.ConvertAndEncode(bech32Prefix, pubKey.Bytes())
 }
 

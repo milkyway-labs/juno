@@ -45,10 +45,6 @@ type Database interface {
 	// An error is returned if the operation fails.
 	SaveCommitSignatures(signatures []*types.CommitSig) error
 
-	// SaveMessage stores a single message.
-	// An error is returned if the operation fails.
-	SaveMessage(msg *types.Message) error
-
 	// Close closes the connection to the database
 	Close()
 }

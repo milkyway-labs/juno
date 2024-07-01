@@ -1,15 +1,14 @@
 package types
 
 import (
-	"encoding/json"
 	"fmt"
 	"time"
 
 	tmctypes "github.com/cometbft/cometbft/rpc/core/types"
-	"github.com/cosmos/cosmos-sdk/codec"
-	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/cosmos/cosmos-sdk/types/tx"
-	channeltypes "github.com/cosmos/ibc-go/v7/modules/core/04-channel/types"
+	"github.com/forbole/juno/v5/cosmos-sdk/codec"
+	"github.com/forbole/juno/v5/cosmos-sdk/codec/types"
+	sdk "github.com/forbole/juno/v5/cosmos-sdk/types"
+	"github.com/forbole/juno/v5/cosmos-sdk/types/tx"
 
 	"github.com/forbole/juno/v5/utils"
 )
@@ -109,7 +108,7 @@ func NewTx(txResponse *sdk.TxResponse, tx *tx.Tx, messages []*Message) (*Tx, err
 // MapTransaction allows to build a new Tx instance from the given txResponse and Cosmos transaction
 func MapTransaction(txResponse *sdk.TxResponse, tx *tx.Tx, accountParser AccountAddressParser, cdc codec.Codec) (*Tx, error) {
 	var messages []*Message
-	for i, msg := range tx.GetMsgs() {
+	for i, msg := range tx.Body.Messages {
 		message, err := MapMessage(txResponse.TxHash, txResponse.Height, i, msg, accountParser, cdc)
 		if err != nil {
 			return nil, err
@@ -155,72 +154,34 @@ func (tx Tx) Successful() bool {
 
 // Message represents the data of a single message
 type Message struct {
-	TxHash    string
-	Index     int
-	Type      string
-	Value     string
-	Addresses []string
-	Height    int64
+	TxHash string
+	Index  int
+	// Message type url
+	Type string
+	// Value that can be used to create a Any object to
+	// unmarshal the message
+	Value  []byte
+	Height int64
 }
 
 // NewMessage allows to build a new Message instance
-func NewMessage(txHash string, index int, msgType string, value string, addresses []string, height int64) *Message {
+func NewMessage(txHash string, index int, msgType string, value []byte, height int64) *Message {
 	return &Message{
-		TxHash:    txHash,
-		Index:     index,
-		Type:      msgType,
-		Value:     value,
-		Addresses: addresses,
-		Height:    height,
+		TxHash: txHash,
+		Index:  index,
+		Type:   msgType,
+		Value:  value,
+		Height: height,
 	}
 }
 
 // MapMessage allows to build a new Message instance from the given tx data, index and Cosmos message
-func MapMessage(txHash string, txHeight int64, index int, msg sdk.Msg, accountParser AccountAddressParser, cdc codec.Codec) (*Message, error) {
-	messageBz, err := cdc.MarshalJSON(msg)
-	if err != nil {
-		return nil, err
-	}
-	messageValue := string(messageBz)
-
-	// Special case for IBC packets as we want to extract the data from the packet
-	if msgReceivePacket, ok := msg.(*channeltypes.MsgRecvPacket); ok {
-		trimMessageString := utils.TrimLastChar(string(messageBz))
-		trimDataString := string(msgReceivePacket.Packet.Data)[1:]
-		messageValue = fmt.Sprintf("%s,%s", trimMessageString, trimDataString)
-	}
-
-	accountAddresses, err := extractAccountAddresses(messageBz, accountParser)
-	if err != nil {
-		return nil, err
-	}
-
+func MapMessage(txHash string, txHeight int64, index int, msg *types.Any, accountParser AccountAddressParser, cdc codec.Codec) (*Message, error) {
 	return NewMessage(
 		txHash,
 		index,
-		sdk.MsgTypeURL(msg),
-		messageValue,
-		accountAddresses,
+		msg.GetTypeUrl(),
+		msg.Value,
 		txHeight,
 	), nil
-}
-
-// extractAccountAddresses extracts the account addresses from the given message bytes
-func extractAccountAddresses(messageBz []byte, isAccountAddress AccountAddressParser) ([]string, error) {
-	var messageData map[string]interface{}
-	err := json.Unmarshal(messageBz, &messageData)
-	if err != nil {
-		return nil, err
-	}
-
-	var addresses []string
-	for _, value := range messageData {
-		if stringValue, ok := value.(string); ok {
-			if isAccountAddress(stringValue) {
-				addresses = append(addresses, stringValue)
-			}
-		}
-	}
-
-	return addresses, nil
 }
