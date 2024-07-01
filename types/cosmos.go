@@ -1,7 +1,6 @@
 package types
 
 import (
-	"encoding/json"
 	"fmt"
 	"time"
 
@@ -185,24 +184,4 @@ func MapMessage(txHash string, txHeight int64, index int, msg *types.Any, accoun
 		msg.Value,
 		txHeight,
 	), nil
-}
-
-// extractAccountAddresses extracts the account addresses from the given message bytes
-func extractAccountAddresses(messageBz []byte, isAccountAddress AccountAddressParser) ([]string, error) {
-	var messageData map[string]interface{}
-	err := json.Unmarshal(messageBz, &messageData)
-	if err != nil {
-		return nil, err
-	}
-
-	var addresses []string
-	for _, value := range messageData {
-		if stringValue, ok := value.(string); ok {
-			if isAccountAddress(stringValue) {
-				addresses = append(addresses, stringValue)
-			}
-		}
-	}
-
-	return addresses, nil
 }
