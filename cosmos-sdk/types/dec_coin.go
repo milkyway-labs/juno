@@ -671,19 +671,21 @@ func ParseDecAmount(coinStr string) (string, string, error) {
 	parsingAmount := true
 
 	for _, r := range strings.TrimSpace(coinStr) {
-		if parsingAmount {
-			if unicode.IsDigit(r) || r == '.' {
+		switch {
+		case parsingAmount:
+			switch {
+			case unicode.IsDigit(r) || r == '.':
 				amountRune = append(amountRune, r)
-			} else if unicode.IsSpace(r) { // if space is seen, indicates that we have finished parsing amount
+			case unicode.IsSpace(r): // if space is seen, indicates that we have finished parsing amount
 				parsingAmount = false
-			} else if unicode.IsLetter(r) { // if letter is seen, indicates that it is the start of denom
+			case unicode.IsLetter(r): // if letter is seen, indicates that it is the start of denom
 				parsingAmount = false
 				seenLetter = true
 				denomRune = append(denomRune, r)
-			} else { // Invalid character encountered in amount part
+			default: // Invalid character encountered in amount part
 				return "", "", fmt.Errorf("invalid character in coin string: %s", string(r))
 			}
-		} else if !seenLetter { // This logic flow is for skipping spaces between amount and denomination
+		case !seenLetter: // This logic flow is for skipping spaces between amount and denomination
 			if unicode.IsLetter(r) {
 				seenLetter = true
 				denomRune = append(denomRune, r)
@@ -691,7 +693,7 @@ func ParseDecAmount(coinStr string) (string, string, error) {
 				// Invalid character before denomination starts
 				return "", "", fmt.Errorf("invalid start of denomination: %s", string(r))
 			}
-		} else {
+		default:
 			// Parsing the denomination
 			if unicode.IsLetter(r) || unicode.IsDigit(r) || r == '/' || r == ':' || r == '.' || r == '_' || r == '-' {
 				denomRune = append(denomRune, r)
