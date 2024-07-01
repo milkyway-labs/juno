@@ -157,7 +157,10 @@ func (tx Tx) Successful() bool {
 type Message struct {
 	TxHash string
 	Index  int
-	Type   string
+	// Message type url
+	Type string
+	// Value that can be used to create a Any object to
+	// unmarshal the message
 	Value  []byte
 	Height int64
 }
