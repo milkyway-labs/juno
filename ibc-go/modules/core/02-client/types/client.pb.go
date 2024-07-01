@@ -73,10 +73,10 @@ func (m *Height) XXX_DiscardUnknown() {
 var xxx_messageInfo_Height proto.InternalMessageInfo
 
 func init() {
-	proto.RegisterType((*Height)(nil), "ibc.core.client.v1.Height")
+	// proto.RegisterType((*Height)(nil), "ibc.core.client.v1.Height")
 }
 
-func init() { proto.RegisterFile("ibc/core/client/v1/client.proto", fileDescriptor_b6bc4c8185546947) }
+//func init() { proto.RegisterFile("ibc/core/client/v1/client.proto", fileDescriptor_b6bc4c8185546947) }
 
 var fileDescriptor_b6bc4c8185546947 = []byte{
 	// 229 bytes of a gzipped FileDescriptorProto

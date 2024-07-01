@@ -77,7 +77,7 @@ func (*Any) XXX_MessageName() string {
 func init() {
 }
 
-func init() { proto.RegisterFile("google/protobuf/any.proto", fileDescriptor_b53526c13ae22eb4) }
+////func init() { proto.RegisterFile("google/protobuf/any.proto", fileDescriptor_b53526c13ae22eb4) }
 
 var fileDescriptor_b53526c13ae22eb4 = []byte{
 	// 248 bytes of a gzipped FileDescriptorProto

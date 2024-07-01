@@ -38,4 +38,10 @@ cp -r github.com/forbole/juno/v5/cosmos-sdk ./
 cp -r github.com/forbole/juno/v5/ibc-go ./
 rm -rf github.com
 
-# go mod tidy
+# Comment out all the proto registrations.
+# We assume that the codec provided by the client has registered the types.
+find . -name "*.pb.go" | while read -r file; do
+    sed -i '/proto\.Register/s/^/\/\//' "$file"
+done
+
+go mod tidy

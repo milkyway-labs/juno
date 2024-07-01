@@ -76,15 +76,15 @@ var E_OneofName = &proto.ExtensionDesc{
 }
 
 func init() {
-	proto.RegisterExtension(E_Name)
-	proto.RegisterExtension(E_MessageEncoding)
-	proto.RegisterExtension(E_Encoding)
-	proto.RegisterExtension(E_FieldName)
-	proto.RegisterExtension(E_DontOmitempty)
-	proto.RegisterExtension(E_OneofName)
+	// proto.RegisterExtension(E_Name)
+	// proto.RegisterExtension(E_MessageEncoding)
+	// proto.RegisterExtension(E_Encoding)
+	// proto.RegisterExtension(E_FieldName)
+	// proto.RegisterExtension(E_DontOmitempty)
+	// proto.RegisterExtension(E_OneofName)
 }
 
-func init() { proto.RegisterFile("amino/amino.proto", fileDescriptor_115c1f70afec6bc5) }
+//func init() { proto.RegisterFile("amino/amino.proto", fileDescriptor_115c1f70afec6bc5) }
 
 var fileDescriptor_115c1f70afec6bc5 = []byte{
 	// 313 bytes of a gzipped FileDescriptorProto

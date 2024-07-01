@@ -67,10 +67,10 @@ func (m *MsgRecvPacket) XXX_DiscardUnknown() {
 var xxx_messageInfo_MsgRecvPacket proto.InternalMessageInfo
 
 func init() {
-	proto.RegisterType((*MsgRecvPacket)(nil), "ibc.core.channel.v1.MsgRecvPacket")
+	// proto.RegisterType((*MsgRecvPacket)(nil), "ibc.core.channel.v1.MsgRecvPacket")
 }
 
-func init() { proto.RegisterFile("ibc/core/channel/v1/tx.proto", fileDescriptor_bc4637e0ac3fc7b7) }
+//func init() { proto.RegisterFile("ibc/core/channel/v1/tx.proto", fileDescriptor_bc4637e0ac3fc7b7) }
 
 var fileDescriptor_bc4637e0ac3fc7b7 = []byte{
 	// 355 bytes of a gzipped FileDescriptorProto

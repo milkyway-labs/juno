@@ -79,10 +79,10 @@ func (m *Packet) XXX_DiscardUnknown() {
 var xxx_messageInfo_Packet proto.InternalMessageInfo
 
 func init() {
-	proto.RegisterType((*Packet)(nil), "ibc.core.channel.v1.Packet")
+	// proto.RegisterType((*Packet)(nil), "ibc.core.channel.v1.Packet")
 }
 
-func init() { proto.RegisterFile("ibc/core/channel/v1/channel.proto", fileDescriptor_c3a07336710636a0) }
+//func init() { proto.RegisterFile("ibc/core/channel/v1/channel.proto", fileDescriptor_c3a07336710636a0) }
 
 var fileDescriptor_c3a07336710636a0 = []byte{
 	// 380 bytes of a gzipped FileDescriptorProto

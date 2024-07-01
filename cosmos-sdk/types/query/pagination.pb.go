@@ -186,12 +186,12 @@ func (m *PageResponse) GetTotal() uint64 {
 }
 
 func init() {
-	proto.RegisterType((*PageRequest)(nil), "cosmos.base.query.v1beta1.PageRequest")
-	proto.RegisterType((*PageResponse)(nil), "cosmos.base.query.v1beta1.PageResponse")
+	// proto.RegisterType((*PageRequest)(nil), "cosmos.base.query.v1beta1.PageRequest")
+	// proto.RegisterType((*PageResponse)(nil), "cosmos.base.query.v1beta1.PageResponse")
 }
 
 func init() {
-	proto.RegisterFile("cosmos/base/query/v1beta1/pagination.proto", fileDescriptor_53d6d609fe6828af)
+	// proto.RegisterFile("cosmos/base/query/v1beta1/pagination.proto", fileDescriptor_53d6d609fe6828af)
 }
 
 var fileDescriptor_53d6d609fe6828af = []byte{

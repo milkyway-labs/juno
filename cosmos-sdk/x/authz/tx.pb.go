@@ -110,11 +110,11 @@ func (m *MsgExecResponse) XXX_DiscardUnknown() {
 var xxx_messageInfo_MsgExecResponse proto.InternalMessageInfo
 
 func init() {
-	proto.RegisterType((*MsgExec)(nil), "cosmos.authz.v1beta1.MsgExec")
-	proto.RegisterType((*MsgExecResponse)(nil), "cosmos.authz.v1beta1.MsgExecResponse")
+	// proto.RegisterType((*MsgExec)(nil), "cosmos.authz.v1beta1.MsgExec")
+	// proto.RegisterType((*MsgExecResponse)(nil), "cosmos.authz.v1beta1.MsgExecResponse")
 }
 
-func init() { proto.RegisterFile("cosmos/authz/v1beta1/tx.proto", fileDescriptor_3ceddab7d8589ad1) }
+//func init() { proto.RegisterFile("cosmos/authz/v1beta1/tx.proto", fileDescriptor_3ceddab7d8589ad1) }
 
 var fileDescriptor_3ceddab7d8589ad1 = []byte{
 	// 352 bytes of a gzipped FileDescriptorProto

@@ -31,10 +31,10 @@ var E_ModuleQuerySafe = &proto.ExtensionDesc{
 }
 
 func init() {
-	proto.RegisterExtension(E_ModuleQuerySafe)
+	// proto.RegisterExtension(E_ModuleQuerySafe)
 }
 
-func init() { proto.RegisterFile("cosmos/query/v1/query.proto", fileDescriptor_5c815d91553f8dca) }
+//func init() { proto.RegisterFile("cosmos/query/v1/query.proto", fileDescriptor_5c815d91553f8dca) }
 
 var fileDescriptor_5c815d91553f8dca = []byte{
 	// 220 bytes of a gzipped FileDescriptorProto

@@ -1005,22 +1005,22 @@ func (m *AuxSignerData) GetSig() []byte {
 }
 
 func init() {
-	proto.RegisterType((*Tx)(nil), "cosmos.tx.v1beta1.Tx")
-	proto.RegisterType((*TxRaw)(nil), "cosmos.tx.v1beta1.TxRaw")
-	proto.RegisterType((*SignDoc)(nil), "cosmos.tx.v1beta1.SignDoc")
-	proto.RegisterType((*SignDocDirectAux)(nil), "cosmos.tx.v1beta1.SignDocDirectAux")
-	proto.RegisterType((*TxBody)(nil), "cosmos.tx.v1beta1.TxBody")
-	proto.RegisterType((*AuthInfo)(nil), "cosmos.tx.v1beta1.AuthInfo")
-	proto.RegisterType((*SignerInfo)(nil), "cosmos.tx.v1beta1.SignerInfo")
-	proto.RegisterType((*ModeInfo)(nil), "cosmos.tx.v1beta1.ModeInfo")
-	proto.RegisterType((*ModeInfo_Single)(nil), "cosmos.tx.v1beta1.ModeInfo.Single")
-	proto.RegisterType((*ModeInfo_Multi)(nil), "cosmos.tx.v1beta1.ModeInfo.Multi")
-	proto.RegisterType((*Fee)(nil), "cosmos.tx.v1beta1.Fee")
-	proto.RegisterType((*Tip)(nil), "cosmos.tx.v1beta1.Tip")
-	proto.RegisterType((*AuxSignerData)(nil), "cosmos.tx.v1beta1.AuxSignerData")
+	// proto.RegisterType((*Tx)(nil), "cosmos.tx.v1beta1.Tx")
+	// proto.RegisterType((*TxRaw)(nil), "cosmos.tx.v1beta1.TxRaw")
+	// proto.RegisterType((*SignDoc)(nil), "cosmos.tx.v1beta1.SignDoc")
+	// proto.RegisterType((*SignDocDirectAux)(nil), "cosmos.tx.v1beta1.SignDocDirectAux")
+	// proto.RegisterType((*TxBody)(nil), "cosmos.tx.v1beta1.TxBody")
+	// proto.RegisterType((*AuthInfo)(nil), "cosmos.tx.v1beta1.AuthInfo")
+	// proto.RegisterType((*SignerInfo)(nil), "cosmos.tx.v1beta1.SignerInfo")
+	// proto.RegisterType((*ModeInfo)(nil), "cosmos.tx.v1beta1.ModeInfo")
+	// proto.RegisterType((*ModeInfo_Single)(nil), "cosmos.tx.v1beta1.ModeInfo.Single")
+	// proto.RegisterType((*ModeInfo_Multi)(nil), "cosmos.tx.v1beta1.ModeInfo.Multi")
+	// proto.RegisterType((*Fee)(nil), "cosmos.tx.v1beta1.Fee")
+	// proto.RegisterType((*Tip)(nil), "cosmos.tx.v1beta1.Tip")
+	// proto.RegisterType((*AuxSignerData)(nil), "cosmos.tx.v1beta1.AuxSignerData")
 }
 
-func init() { proto.RegisterFile("cosmos/tx/v1beta1/tx.proto", fileDescriptor_96d1575ffde80842) }
+//func init() { proto.RegisterFile("cosmos/tx/v1beta1/tx.proto", fileDescriptor_96d1575ffde80842) }
 
 var fileDescriptor_96d1575ffde80842 = []byte{
 	// 1072 bytes of a gzipped FileDescriptorProto

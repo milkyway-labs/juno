@@ -254,14 +254,14 @@ func (m *StatusResponse) GetValidatorHash() []byte {
 }
 
 func init() {
-	proto.RegisterType((*ConfigRequest)(nil), "cosmos.base.node.v1beta1.ConfigRequest")
-	proto.RegisterType((*ConfigResponse)(nil), "cosmos.base.node.v1beta1.ConfigResponse")
-	proto.RegisterType((*StatusRequest)(nil), "cosmos.base.node.v1beta1.StatusRequest")
-	proto.RegisterType((*StatusResponse)(nil), "cosmos.base.node.v1beta1.StatusResponse")
+	// proto.RegisterType((*ConfigRequest)(nil), "cosmos.base.node.v1beta1.ConfigRequest")
+	// proto.RegisterType((*ConfigResponse)(nil), "cosmos.base.node.v1beta1.ConfigResponse")
+	// proto.RegisterType((*StatusRequest)(nil), "cosmos.base.node.v1beta1.StatusRequest")
+	// proto.RegisterType((*StatusResponse)(nil), "cosmos.base.node.v1beta1.StatusResponse")
 }
 
 func init() {
-	proto.RegisterFile("cosmos/base/node/v1beta1/query.proto", fileDescriptor_8324226a07064341)
+	// proto.RegisterFile("cosmos/base/node/v1beta1/query.proto", fileDescriptor_8324226a07064341)
 }
 
 var fileDescriptor_8324226a07064341 = []byte{

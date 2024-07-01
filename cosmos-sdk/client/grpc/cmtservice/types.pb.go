@@ -258,12 +258,12 @@ func (m *Header) GetProposerAddress() string {
 }
 
 func init() {
-	proto.RegisterType((*Block)(nil), "cosmos.base.tendermint.v1beta1.Block")
-	proto.RegisterType((*Header)(nil), "cosmos.base.tendermint.v1beta1.Header")
+	// proto.RegisterType((*Block)(nil), "cosmos.base.tendermint.v1beta1.Block")
+	// proto.RegisterType((*Header)(nil), "cosmos.base.tendermint.v1beta1.Header")
 }
 
 func init() {
-	proto.RegisterFile("cosmos/base/tendermint/v1beta1/types.proto", fileDescriptor_bb9931519c08e0d6)
+	// proto.RegisterFile("cosmos/base/tendermint/v1beta1/types.proto", fileDescriptor_bb9931519c08e0d6)
 }
 
 var fileDescriptor_bb9931519c08e0d6 = []byte{

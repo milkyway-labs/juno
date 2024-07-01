@@ -40,11 +40,11 @@ var E_Signer = &proto.ExtensionDesc{
 }
 
 func init() {
-	proto.RegisterExtension(E_Service)
-	proto.RegisterExtension(E_Signer)
+	// proto.RegisterExtension(E_Service)
+	// proto.RegisterExtension(E_Signer)
 }
 
-func init() { proto.RegisterFile("cosmos/msg/v1/msg.proto", fileDescriptor_5c08b83ea858d203) }
+//func init() { proto.RegisterFile("cosmos/msg/v1/msg.proto", fileDescriptor_5c08b83ea858d203) }
 
 var fileDescriptor_5c08b83ea858d203 = []byte{
 	// 228 bytes of a gzipped FileDescriptorProto

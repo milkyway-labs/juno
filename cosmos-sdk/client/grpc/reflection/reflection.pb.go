@@ -205,14 +205,14 @@ func (m *ListImplementationsResponse) GetImplementationMessageNames() []string {
 }
 
 func init() {
-	proto.RegisterType((*ListAllInterfacesRequest)(nil), "cosmos.base.reflection.v1beta1.ListAllInterfacesRequest")
-	proto.RegisterType((*ListAllInterfacesResponse)(nil), "cosmos.base.reflection.v1beta1.ListAllInterfacesResponse")
-	proto.RegisterType((*ListImplementationsRequest)(nil), "cosmos.base.reflection.v1beta1.ListImplementationsRequest")
-	proto.RegisterType((*ListImplementationsResponse)(nil), "cosmos.base.reflection.v1beta1.ListImplementationsResponse")
+	// proto.RegisterType((*ListAllInterfacesRequest)(nil), "cosmos.base.reflection.v1beta1.ListAllInterfacesRequest")
+	// proto.RegisterType((*ListAllInterfacesResponse)(nil), "cosmos.base.reflection.v1beta1.ListAllInterfacesResponse")
+	// proto.RegisterType((*ListImplementationsRequest)(nil), "cosmos.base.reflection.v1beta1.ListImplementationsRequest")
+	// proto.RegisterType((*ListImplementationsResponse)(nil), "cosmos.base.reflection.v1beta1.ListImplementationsResponse")
 }
 
 func init() {
-	proto.RegisterFile("cosmos/base/reflection/v1beta1/reflection.proto", fileDescriptor_d48c054165687f5c)
+	// proto.RegisterFile("cosmos/base/reflection/v1beta1/reflection.proto", fileDescriptor_d48c054165687f5c)
 }
 
 var fileDescriptor_d48c054165687f5c = []byte{

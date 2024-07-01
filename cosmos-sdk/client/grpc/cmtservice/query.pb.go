@@ -1180,29 +1180,29 @@ func (m *ProofOps) GetOps() []ProofOp {
 }
 
 func init() {
-	proto.RegisterType((*GetValidatorSetByHeightRequest)(nil), "cosmos.base.tendermint.v1beta1.GetValidatorSetByHeightRequest")
-	proto.RegisterType((*GetValidatorSetByHeightResponse)(nil), "cosmos.base.tendermint.v1beta1.GetValidatorSetByHeightResponse")
-	proto.RegisterType((*GetLatestValidatorSetRequest)(nil), "cosmos.base.tendermint.v1beta1.GetLatestValidatorSetRequest")
-	proto.RegisterType((*GetLatestValidatorSetResponse)(nil), "cosmos.base.tendermint.v1beta1.GetLatestValidatorSetResponse")
-	proto.RegisterType((*Validator)(nil), "cosmos.base.tendermint.v1beta1.Validator")
-	proto.RegisterType((*GetBlockByHeightRequest)(nil), "cosmos.base.tendermint.v1beta1.GetBlockByHeightRequest")
-	proto.RegisterType((*GetBlockByHeightResponse)(nil), "cosmos.base.tendermint.v1beta1.GetBlockByHeightResponse")
-	proto.RegisterType((*GetLatestBlockRequest)(nil), "cosmos.base.tendermint.v1beta1.GetLatestBlockRequest")
-	proto.RegisterType((*GetLatestBlockResponse)(nil), "cosmos.base.tendermint.v1beta1.GetLatestBlockResponse")
-	proto.RegisterType((*GetSyncingRequest)(nil), "cosmos.base.tendermint.v1beta1.GetSyncingRequest")
-	proto.RegisterType((*GetSyncingResponse)(nil), "cosmos.base.tendermint.v1beta1.GetSyncingResponse")
-	proto.RegisterType((*GetNodeInfoRequest)(nil), "cosmos.base.tendermint.v1beta1.GetNodeInfoRequest")
-	proto.RegisterType((*GetNodeInfoResponse)(nil), "cosmos.base.tendermint.v1beta1.GetNodeInfoResponse")
-	proto.RegisterType((*VersionInfo)(nil), "cosmos.base.tendermint.v1beta1.VersionInfo")
-	proto.RegisterType((*Module)(nil), "cosmos.base.tendermint.v1beta1.Module")
-	proto.RegisterType((*ABCIQueryRequest)(nil), "cosmos.base.tendermint.v1beta1.ABCIQueryRequest")
-	proto.RegisterType((*ABCIQueryResponse)(nil), "cosmos.base.tendermint.v1beta1.ABCIQueryResponse")
-	proto.RegisterType((*ProofOp)(nil), "cosmos.base.tendermint.v1beta1.ProofOp")
-	proto.RegisterType((*ProofOps)(nil), "cosmos.base.tendermint.v1beta1.ProofOps")
+	// proto.RegisterType((*GetValidatorSetByHeightRequest)(nil), "cosmos.base.tendermint.v1beta1.GetValidatorSetByHeightRequest")
+	// proto.RegisterType((*GetValidatorSetByHeightResponse)(nil), "cosmos.base.tendermint.v1beta1.GetValidatorSetByHeightResponse")
+	// proto.RegisterType((*GetLatestValidatorSetRequest)(nil), "cosmos.base.tendermint.v1beta1.GetLatestValidatorSetRequest")
+	// proto.RegisterType((*GetLatestValidatorSetResponse)(nil), "cosmos.base.tendermint.v1beta1.GetLatestValidatorSetResponse")
+	// proto.RegisterType((*Validator)(nil), "cosmos.base.tendermint.v1beta1.Validator")
+	// proto.RegisterType((*GetBlockByHeightRequest)(nil), "cosmos.base.tendermint.v1beta1.GetBlockByHeightRequest")
+	// proto.RegisterType((*GetBlockByHeightResponse)(nil), "cosmos.base.tendermint.v1beta1.GetBlockByHeightResponse")
+	// proto.RegisterType((*GetLatestBlockRequest)(nil), "cosmos.base.tendermint.v1beta1.GetLatestBlockRequest")
+	// proto.RegisterType((*GetLatestBlockResponse)(nil), "cosmos.base.tendermint.v1beta1.GetLatestBlockResponse")
+	// proto.RegisterType((*GetSyncingRequest)(nil), "cosmos.base.tendermint.v1beta1.GetSyncingRequest")
+	// proto.RegisterType((*GetSyncingResponse)(nil), "cosmos.base.tendermint.v1beta1.GetSyncingResponse")
+	// proto.RegisterType((*GetNodeInfoRequest)(nil), "cosmos.base.tendermint.v1beta1.GetNodeInfoRequest")
+	// proto.RegisterType((*GetNodeInfoResponse)(nil), "cosmos.base.tendermint.v1beta1.GetNodeInfoResponse")
+	// proto.RegisterType((*VersionInfo)(nil), "cosmos.base.tendermint.v1beta1.VersionInfo")
+	// proto.RegisterType((*Module)(nil), "cosmos.base.tendermint.v1beta1.Module")
+	// proto.RegisterType((*ABCIQueryRequest)(nil), "cosmos.base.tendermint.v1beta1.ABCIQueryRequest")
+	// proto.RegisterType((*ABCIQueryResponse)(nil), "cosmos.base.tendermint.v1beta1.ABCIQueryResponse")
+	// proto.RegisterType((*ProofOp)(nil), "cosmos.base.tendermint.v1beta1.ProofOp")
+	// proto.RegisterType((*ProofOps)(nil), "cosmos.base.tendermint.v1beta1.ProofOps")
 }
 
 func init() {
-	proto.RegisterFile("cosmos/base/tendermint/v1beta1/query.proto", fileDescriptor_40c93fb3ef485c5d)
+	// proto.RegisterFile("cosmos/base/tendermint/v1beta1/query.proto", fileDescriptor_40c93fb3ef485c5d)
 }
 
 var fileDescriptor_40c93fb3ef485c5d = []byte{

@@ -1122,29 +1122,29 @@ func (m *TxDecodeAminoResponse) GetAminoJson() string {
 }
 
 func init() {
-	proto.RegisterEnum("cosmos.tx.v1beta1.OrderBy", OrderBy_name, OrderBy_value)
-	proto.RegisterEnum("cosmos.tx.v1beta1.BroadcastMode", BroadcastMode_name, BroadcastMode_value)
-	proto.RegisterType((*GetTxsEventRequest)(nil), "cosmos.tx.v1beta1.GetTxsEventRequest")
-	proto.RegisterType((*GetTxsEventResponse)(nil), "cosmos.tx.v1beta1.GetTxsEventResponse")
-	proto.RegisterType((*BroadcastTxRequest)(nil), "cosmos.tx.v1beta1.BroadcastTxRequest")
-	proto.RegisterType((*BroadcastTxResponse)(nil), "cosmos.tx.v1beta1.BroadcastTxResponse")
-	proto.RegisterType((*SimulateRequest)(nil), "cosmos.tx.v1beta1.SimulateRequest")
-	proto.RegisterType((*SimulateResponse)(nil), "cosmos.tx.v1beta1.SimulateResponse")
-	proto.RegisterType((*GetTxRequest)(nil), "cosmos.tx.v1beta1.GetTxRequest")
-	proto.RegisterType((*GetTxResponse)(nil), "cosmos.tx.v1beta1.GetTxResponse")
-	proto.RegisterType((*GetBlockWithTxsRequest)(nil), "cosmos.tx.v1beta1.GetBlockWithTxsRequest")
-	proto.RegisterType((*GetBlockWithTxsResponse)(nil), "cosmos.tx.v1beta1.GetBlockWithTxsResponse")
-	proto.RegisterType((*TxDecodeRequest)(nil), "cosmos.tx.v1beta1.TxDecodeRequest")
-	proto.RegisterType((*TxDecodeResponse)(nil), "cosmos.tx.v1beta1.TxDecodeResponse")
-	proto.RegisterType((*TxEncodeRequest)(nil), "cosmos.tx.v1beta1.TxEncodeRequest")
-	proto.RegisterType((*TxEncodeResponse)(nil), "cosmos.tx.v1beta1.TxEncodeResponse")
-	proto.RegisterType((*TxEncodeAminoRequest)(nil), "cosmos.tx.v1beta1.TxEncodeAminoRequest")
-	proto.RegisterType((*TxEncodeAminoResponse)(nil), "cosmos.tx.v1beta1.TxEncodeAminoResponse")
-	proto.RegisterType((*TxDecodeAminoRequest)(nil), "cosmos.tx.v1beta1.TxDecodeAminoRequest")
-	proto.RegisterType((*TxDecodeAminoResponse)(nil), "cosmos.tx.v1beta1.TxDecodeAminoResponse")
+	// proto.RegisterEnum("cosmos.tx.v1beta1.OrderBy", OrderBy_name, OrderBy_value)
+	// proto.RegisterEnum("cosmos.tx.v1beta1.BroadcastMode", BroadcastMode_name, BroadcastMode_value)
+	// proto.RegisterType((*GetTxsEventRequest)(nil), "cosmos.tx.v1beta1.GetTxsEventRequest")
+	// proto.RegisterType((*GetTxsEventResponse)(nil), "cosmos.tx.v1beta1.GetTxsEventResponse")
+	// proto.RegisterType((*BroadcastTxRequest)(nil), "cosmos.tx.v1beta1.BroadcastTxRequest")
+	// proto.RegisterType((*BroadcastTxResponse)(nil), "cosmos.tx.v1beta1.BroadcastTxResponse")
+	// proto.RegisterType((*SimulateRequest)(nil), "cosmos.tx.v1beta1.SimulateRequest")
+	// proto.RegisterType((*SimulateResponse)(nil), "cosmos.tx.v1beta1.SimulateResponse")
+	// proto.RegisterType((*GetTxRequest)(nil), "cosmos.tx.v1beta1.GetTxRequest")
+	// proto.RegisterType((*GetTxResponse)(nil), "cosmos.tx.v1beta1.GetTxResponse")
+	// proto.RegisterType((*GetBlockWithTxsRequest)(nil), "cosmos.tx.v1beta1.GetBlockWithTxsRequest")
+	// proto.RegisterType((*GetBlockWithTxsResponse)(nil), "cosmos.tx.v1beta1.GetBlockWithTxsResponse")
+	// proto.RegisterType((*TxDecodeRequest)(nil), "cosmos.tx.v1beta1.TxDecodeRequest")
+	// proto.RegisterType((*TxDecodeResponse)(nil), "cosmos.tx.v1beta1.TxDecodeResponse")
+	// proto.RegisterType((*TxEncodeRequest)(nil), "cosmos.tx.v1beta1.TxEncodeRequest")
+	// proto.RegisterType((*TxEncodeResponse)(nil), "cosmos.tx.v1beta1.TxEncodeResponse")
+	// proto.RegisterType((*TxEncodeAminoRequest)(nil), "cosmos.tx.v1beta1.TxEncodeAminoRequest")
+	// proto.RegisterType((*TxEncodeAminoResponse)(nil), "cosmos.tx.v1beta1.TxEncodeAminoResponse")
+	// proto.RegisterType((*TxDecodeAminoRequest)(nil), "cosmos.tx.v1beta1.TxDecodeAminoRequest")
+	// proto.RegisterType((*TxDecodeAminoResponse)(nil), "cosmos.tx.v1beta1.TxDecodeAminoResponse")
 }
 
-func init() { proto.RegisterFile("cosmos/tx/v1beta1/service.proto", fileDescriptor_e0b00a618705eca7) }
+//func init() { proto.RegisterFile("cosmos/tx/v1beta1/service.proto", fileDescriptor_e0b00a618705eca7) }
 
 var fileDescriptor_e0b00a618705eca7 = []byte{
 	// 1249 bytes of a gzipped FileDescriptorProto

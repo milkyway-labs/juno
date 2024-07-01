@@ -476,17 +476,17 @@ func (m *SnapshotExtensionPayload) GetPayload() []byte {
 }
 
 func init() {
-	proto.RegisterType((*Snapshot)(nil), "cosmos.store.snapshots.v1.Snapshot")
-	proto.RegisterType((*Metadata)(nil), "cosmos.store.snapshots.v1.Metadata")
-	proto.RegisterType((*SnapshotItem)(nil), "cosmos.store.snapshots.v1.SnapshotItem")
-	proto.RegisterType((*SnapshotStoreItem)(nil), "cosmos.store.snapshots.v1.SnapshotStoreItem")
-	proto.RegisterType((*SnapshotIAVLItem)(nil), "cosmos.store.snapshots.v1.SnapshotIAVLItem")
-	proto.RegisterType((*SnapshotExtensionMeta)(nil), "cosmos.store.snapshots.v1.SnapshotExtensionMeta")
-	proto.RegisterType((*SnapshotExtensionPayload)(nil), "cosmos.store.snapshots.v1.SnapshotExtensionPayload")
+	// //	proto.RegisterType((*Snapshot)(nil), "cosmos.store.snapshots.v1.Snapshot")
+	// //	proto.RegisterType((*Metadata)(nil), "cosmos.store.snapshots.v1.Metadata")
+	// //	proto.RegisterType((*SnapshotItem)(nil), "cosmos.store.snapshots.v1.SnapshotItem")
+	// //	proto.RegisterType((*SnapshotStoreItem)(nil), "cosmos.store.snapshots.v1.SnapshotStoreItem")
+	// //	proto.RegisterType((*SnapshotIAVLItem)(nil), "cosmos.store.snapshots.v1.SnapshotIAVLItem")
+	// //	proto.RegisterType((*SnapshotExtensionMeta)(nil), "cosmos.store.snapshots.v1.SnapshotExtensionMeta")
+	// //	proto.RegisterType((*SnapshotExtensionPayload)(nil), "cosmos.store.snapshots.v1.SnapshotExtensionPayload")
 }
 
 func init() {
-	proto.RegisterFile("cosmos/store/snapshots/v1/snapshot.proto", fileDescriptor_3d5cca1aa5b69183)
+	// //	proto.RegisterFile("cosmos/store/snapshots/v1/snapshot.proto", fileDescriptor_3d5cca1aa5b69183)
 }
 
 var fileDescriptor_3d5cca1aa5b69183 = []byte{

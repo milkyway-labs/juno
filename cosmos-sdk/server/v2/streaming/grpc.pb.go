@@ -517,17 +517,17 @@ func (m *ExecTxResult) GetCodespace() string {
 }
 
 func init() {
-	proto.RegisterType((*ListenDeliverBlockRequest)(nil), "cosmos.streaming.v1.ListenDeliverBlockRequest")
-	proto.RegisterType((*ListenDeliverBlockResponse)(nil), "cosmos.streaming.v1.ListenDeliverBlockResponse")
-	proto.RegisterType((*ListenStateChangesRequest)(nil), "cosmos.streaming.v1.ListenStateChangesRequest")
-	proto.RegisterType((*ListenStateChangesResponse)(nil), "cosmos.streaming.v1.ListenStateChangesResponse")
-	proto.RegisterType((*StoreKVPair)(nil), "cosmos.streaming.v1.StoreKVPair")
-	proto.RegisterType((*Event)(nil), "cosmos.streaming.v1.Event")
-	proto.RegisterType((*EventAttribute)(nil), "cosmos.streaming.v1.EventAttribute")
-	proto.RegisterType((*ExecTxResult)(nil), "cosmos.streaming.v1.ExecTxResult")
+	// //	proto.RegisterType((*ListenDeliverBlockRequest)(nil), "cosmos.streaming.v1.ListenDeliverBlockRequest")
+	// //	proto.RegisterType((*ListenDeliverBlockResponse)(nil), "cosmos.streaming.v1.ListenDeliverBlockResponse")
+	// //	proto.RegisterType((*ListenStateChangesRequest)(nil), "cosmos.streaming.v1.ListenStateChangesRequest")
+	// //	proto.RegisterType((*ListenStateChangesResponse)(nil), "cosmos.streaming.v1.ListenStateChangesResponse")
+	// //	proto.RegisterType((*StoreKVPair)(nil), "cosmos.streaming.v1.StoreKVPair")
+	// //	proto.RegisterType((*Event)(nil), "cosmos.streaming.v1.Event")
+	// //	proto.RegisterType((*EventAttribute)(nil), "cosmos.streaming.v1.EventAttribute")
+	// //	proto.RegisterType((*ExecTxResult)(nil), "cosmos.streaming.v1.ExecTxResult")
 }
 
-func init() { proto.RegisterFile("cosmos/streaming/v1/grpc.proto", fileDescriptor_3fc151d30622bb2a) }
+////func init() { proto.RegisterFile("cosmos/streaming/v1/grpc.proto", fileDescriptor_3fc151d30622bb2a) }
 
 var fileDescriptor_3fc151d30622bb2a = []byte{
 	// 622 bytes of a gzipped FileDescriptorProto

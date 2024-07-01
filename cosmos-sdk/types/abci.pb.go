@@ -711,21 +711,21 @@ func (m *SearchBlocksResult) GetBlocks() []*types2.Block {
 }
 
 func init() {
-	proto.RegisterType((*TxResponse)(nil), "cosmos.base.abci.v1beta1.TxResponse")
-	proto.RegisterType((*ABCIMessageLog)(nil), "cosmos.base.abci.v1beta1.ABCIMessageLog")
-	proto.RegisterType((*StringEvent)(nil), "cosmos.base.abci.v1beta1.StringEvent")
-	proto.RegisterType((*Attribute)(nil), "cosmos.base.abci.v1beta1.Attribute")
-	proto.RegisterType((*GasInfo)(nil), "cosmos.base.abci.v1beta1.GasInfo")
-	proto.RegisterType((*Result)(nil), "cosmos.base.abci.v1beta1.Result")
-	proto.RegisterType((*SimulationResponse)(nil), "cosmos.base.abci.v1beta1.SimulationResponse")
-	proto.RegisterType((*MsgData)(nil), "cosmos.base.abci.v1beta1.MsgData")
-	proto.RegisterType((*TxMsgData)(nil), "cosmos.base.abci.v1beta1.TxMsgData")
-	proto.RegisterType((*SearchTxsResult)(nil), "cosmos.base.abci.v1beta1.SearchTxsResult")
-	proto.RegisterType((*SearchBlocksResult)(nil), "cosmos.base.abci.v1beta1.SearchBlocksResult")
+	// proto.RegisterType((*TxResponse)(nil), "cosmos.base.abci.v1beta1.TxResponse")
+	// proto.RegisterType((*ABCIMessageLog)(nil), "cosmos.base.abci.v1beta1.ABCIMessageLog")
+	// proto.RegisterType((*StringEvent)(nil), "cosmos.base.abci.v1beta1.StringEvent")
+	// proto.RegisterType((*Attribute)(nil), "cosmos.base.abci.v1beta1.Attribute")
+	// proto.RegisterType((*GasInfo)(nil), "cosmos.base.abci.v1beta1.GasInfo")
+	// proto.RegisterType((*Result)(nil), "cosmos.base.abci.v1beta1.Result")
+	// proto.RegisterType((*SimulationResponse)(nil), "cosmos.base.abci.v1beta1.SimulationResponse")
+	// proto.RegisterType((*MsgData)(nil), "cosmos.base.abci.v1beta1.MsgData")
+	// proto.RegisterType((*TxMsgData)(nil), "cosmos.base.abci.v1beta1.TxMsgData")
+	// proto.RegisterType((*SearchTxsResult)(nil), "cosmos.base.abci.v1beta1.SearchTxsResult")
+	// proto.RegisterType((*SearchBlocksResult)(nil), "cosmos.base.abci.v1beta1.SearchBlocksResult")
 }
 
 func init() {
-	proto.RegisterFile("cosmos/base/abci/v1beta1/abci.proto", fileDescriptor_4e37629bc7eb0df8)
+	// proto.RegisterFile("cosmos/base/abci/v1beta1/abci.proto", fileDescriptor_4e37629bc7eb0df8)
 }
 
 var fileDescriptor_4e37629bc7eb0df8 = []byte{

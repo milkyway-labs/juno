@@ -410,16 +410,16 @@ func (m *SignatureDescriptor_Data_Multi) GetSignatures() []*SignatureDescriptor_
 }
 
 func init() {
-	proto.RegisterEnum("cosmos.tx.signing.v1beta1.SignMode", SignMode_name, SignMode_value)
-	proto.RegisterType((*SignatureDescriptors)(nil), "cosmos.tx.signing.v1beta1.SignatureDescriptors")
-	proto.RegisterType((*SignatureDescriptor)(nil), "cosmos.tx.signing.v1beta1.SignatureDescriptor")
-	proto.RegisterType((*SignatureDescriptor_Data)(nil), "cosmos.tx.signing.v1beta1.SignatureDescriptor.Data")
-	proto.RegisterType((*SignatureDescriptor_Data_Single)(nil), "cosmos.tx.signing.v1beta1.SignatureDescriptor.Data.Single")
-	proto.RegisterType((*SignatureDescriptor_Data_Multi)(nil), "cosmos.tx.signing.v1beta1.SignatureDescriptor.Data.Multi")
+	// proto.RegisterEnum("cosmos.tx.signing.v1beta1.SignMode", SignMode_name, SignMode_value)
+	// proto.RegisterType((*SignatureDescriptors)(nil), "cosmos.tx.signing.v1beta1.SignatureDescriptors")
+	// proto.RegisterType((*SignatureDescriptor)(nil), "cosmos.tx.signing.v1beta1.SignatureDescriptor")
+	// proto.RegisterType((*SignatureDescriptor_Data)(nil), "cosmos.tx.signing.v1beta1.SignatureDescriptor.Data")
+	// proto.RegisterType((*SignatureDescriptor_Data_Single)(nil), "cosmos.tx.signing.v1beta1.SignatureDescriptor.Data.Single")
+	// proto.RegisterType((*SignatureDescriptor_Data_Multi)(nil), "cosmos.tx.signing.v1beta1.SignatureDescriptor.Data.Multi")
 }
 
 func init() {
-	proto.RegisterFile("cosmos/tx/signing/v1beta1/signing.proto", fileDescriptor_9a54958ff3d0b1b9)
+	// proto.RegisterFile("cosmos/tx/signing/v1beta1/signing.proto", fileDescriptor_9a54958ff3d0b1b9)
 }
 
 var fileDescriptor_9a54958ff3d0b1b9 = []byte{

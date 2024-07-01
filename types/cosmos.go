@@ -158,12 +158,12 @@ type Message struct {
 	TxHash string
 	Index  int
 	Type   string
-	Value  sdk.Msg
+	Value  []byte
 	Height int64
 }
 
 // NewMessage allows to build a new Message instance
-func NewMessage(txHash string, index int, msgType string, value sdk.Msg, height int64) *Message {
+func NewMessage(txHash string, index int, msgType string, value []byte, height int64) *Message {
 	return &Message{
 		TxHash: txHash,
 		Index:  index,
@@ -175,17 +175,11 @@ func NewMessage(txHash string, index int, msgType string, value sdk.Msg, height 
 
 // MapMessage allows to build a new Message instance from the given tx data, index and Cosmos message
 func MapMessage(txHash string, txHeight int64, index int, msg *types.Any, accountParser AccountAddressParser, cdc codec.Codec) (*Message, error) {
-	cachedValue := msg.GetCachedValue()
-	if cachedValue == nil {
-		return nil, fmt.Errorf("cannot map message: %s, index: %d, txHash: %s", msg.TypeUrl, index, txHash)
-	}
-	sdkMsg := cachedValue.(sdk.Msg)
-
 	return NewMessage(
 		txHash,
 		index,
 		msg.GetTypeUrl(),
-		sdkMsg,
+		msg.Value,
 		txHeight,
 	), nil
 }

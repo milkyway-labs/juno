@@ -127,12 +127,12 @@ func (m *CompactBitArray) GetElems() []byte {
 }
 
 func init() {
-	proto.RegisterType((*MultiSignature)(nil), "cosmos.crypto.multisig.v1beta1.MultiSignature")
-	proto.RegisterType((*CompactBitArray)(nil), "cosmos.crypto.multisig.v1beta1.CompactBitArray")
+	// proto.RegisterType((*MultiSignature)(nil), "cosmos.crypto.multisig.v1beta1.MultiSignature")
+	// proto.RegisterType((*CompactBitArray)(nil), "cosmos.crypto.multisig.v1beta1.CompactBitArray")
 }
 
 func init() {
-	proto.RegisterFile("cosmos/crypto/multisig/v1beta1/multisig.proto", fileDescriptor_1177bdf7025769be)
+	// proto.RegisterFile("cosmos/crypto/multisig/v1beta1/multisig.proto", fileDescriptor_1177bdf7025769be)
 }
 
 var fileDescriptor_1177bdf7025769be = []byte{
