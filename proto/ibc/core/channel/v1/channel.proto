@@ -1,0 +1,31 @@
+syntax = "proto3";
+
+package ibc.core.channel.v1;
+
+import "gogoproto/gogo.proto";
+import "ibc/core/client/v1/client.proto";
+
+option go_package = "github.com/forbole/juno/v5/ibc-go/modules/core/04-channel/types";
+
+message Packet {
+  option (gogoproto.goproto_getters) = false;
+
+  // number corresponds to the order of sends and receives, where a Packet
+  // with an earlier sequence number must be sent and received before a Packet
+  // with a later sequence number.
+  uint64 sequence = 1;
+  // identifies the port on the sending chain.
+  string source_port = 2;
+  // identifies the channel end on the sending chain.
+  string source_channel = 3;
+  // identifies the port on the receiving chain.
+  string destination_port = 4;
+  // identifies the channel end on the receiving chain.
+  string destination_channel = 5;
+  // actual opaque bytes transferred directly to the application module
+  bytes data = 6;
+  // block height after which the packet times out
+  ibc.core.client.v1.Height timeout_height = 7 [ (gogoproto.nullable) = false ];
+  // block timestamp (in nanoseconds) after which the packet times out
+  uint64 timeout_timestamp = 8;
+}

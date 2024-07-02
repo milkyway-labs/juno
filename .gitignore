@@ -1,5 +1,5 @@
 .idea/
-build/
+build
 
 # Binaries for programs and plugins
 *.exe
@@ -19,3 +19,7 @@ coverage.txt
 # Configuration
 *.toml
 *.yaml
+
+# Protobuf generation config
+!buf.gen.gogo.yaml
+!buf.yaml

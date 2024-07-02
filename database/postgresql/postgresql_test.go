@@ -29,7 +29,7 @@ type DbTestSuite struct {
 
 func (suite *DbTestSuite) SetupTest() {
 	// Create the codec
-	codec := types.MakeTestEncodingConfig()
+	codec := types.EncodingConfig{}
 
 	// Build the database config
 	dbCfg := databaseconfig.DefaultDatabaseConfig().
@@ -40,7 +40,6 @@ func (suite *DbTestSuite) SetupTest() {
 		dbCfg,
 		codec,
 		logging.DefaultLogger(),
-		types.DefaultAddressParser(),
 		types.DefaultTransactionFilter(),
 		types.DefaultMessageFilter(),
 	)

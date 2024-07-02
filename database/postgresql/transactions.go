@@ -97,12 +97,6 @@ ON CONFLICT (hash, partition_id) DO UPDATE
 		return err
 	}
 
-	// Store the messages
-	err = db.saveMessagesWithTx(dbTx, tx.Messages)
-	if err != nil {
-		return err
-	}
-
 	// Commit the transaction
 	return dbTx.Commit()
 }

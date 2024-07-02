@@ -7,11 +7,11 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/cosmos/cosmos-sdk/codec"
 	"google.golang.org/grpc/credentials"
 	"google.golang.org/grpc/credentials/insecure"
+	"google.golang.org/grpc/encoding"
 
-	grpctypes "github.com/cosmos/cosmos-sdk/types/grpc"
+	grpctypes "github.com/forbole/juno/v5/cosmos-sdk/types/grpc"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/metadata"
 
@@ -32,7 +32,7 @@ func GetHeightRequestContext(context context.Context, height int64) context.Cont
 }
 
 // MustCreateGrpcConnection creates a new gRPC connection using the provided configuration and panics on error
-func MustCreateGrpcConnection(cfg *Details, cdc codec.Codec) grpc.ClientConnInterface {
+func MustCreateGrpcConnection(cfg *Details, cdc encoding.Codec) grpc.ClientConnInterface {
 	grpConnection, err := CreateGrpcConnection(cfg, cdc)
 	if err != nil {
 		panic(err)
@@ -41,7 +41,7 @@ func MustCreateGrpcConnection(cfg *Details, cdc codec.Codec) grpc.ClientConnInte
 }
 
 // CreateGrpcConnection creates a new gRPC client connection from the given configuration
-func CreateGrpcConnection(cfg *Details, cdc codec.Codec) (grpc.ClientConnInterface, error) {
+func CreateGrpcConnection(cfg *Details, cdc encoding.Codec) (grpc.ClientConnInterface, error) {
 	// If the gRPC config is not specified, we can create a gRPC-over-RPC connection
 	if cfg.GRPC == nil {
 		grpcConnection, err := gprc.NewConnection(cfg.RPC.Address, cdc)

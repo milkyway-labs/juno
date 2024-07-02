@@ -3,9 +3,9 @@ package postgresql
 import (
 	"fmt"
 
-	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/jmoiron/sqlx"
 
+	"github.com/forbole/juno/v5/cosmos-sdk/codec"
 	"github.com/forbole/juno/v5/logging"
 	"github.com/forbole/juno/v5/types"
 	"github.com/forbole/juno/v5/utils"
@@ -22,11 +22,10 @@ type Database struct {
 	partitionSize int64
 
 	Cdc   codec.Codec
-	Amino *codec.LegacyAmino
+	Amino codec.LegacyAmino
 
-	SQL                  *sqlx.DB
-	Logger               logging.Logger
-	AccountAddressParser types.AccountAddressParser
+	SQL    *sqlx.DB
+	Logger logging.Logger
 
 	ShouldStoreTransaction types.TransactionFilter
 	ShouldStoreMessage     types.MessageFilter
@@ -49,9 +48,8 @@ func Builder(ctx *database.Context) (database.Database, error) {
 		Cdc:   ctx.EncodingConfig.Codec,
 		Amino: ctx.EncodingConfig.Amino,
 
-		SQL:                  postgresDb,
-		Logger:               ctx.Logger,
-		AccountAddressParser: ctx.AccountAddressParser,
+		SQL:    postgresDb,
+		Logger: ctx.Logger,
 
 		ShouldStoreTransaction: ctx.TransactionFilter,
 		ShouldStoreMessage:     ctx.MessageFilter,

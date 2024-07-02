@@ -1,0 +1,22 @@
+syntax = "proto3";
+
+package ibc.core.channel.v1;
+
+import "gogoproto/gogo.proto";
+import "cosmos/msg/v1/msg.proto";
+import "ibc/core/client/v1/client.proto";
+import "ibc/core/channel/v1/channel.proto";
+
+option go_package = "github.com/forbole/juno/v5/ibc-go/modules/core/04-channel/types";
+
+// MsgRecvPacket receives incoming IBC packet
+message MsgRecvPacket {
+  option (cosmos.msg.v1.signer) = "signer";
+
+  option (gogoproto.goproto_getters) = false;
+
+  Packet packet = 1 [ (gogoproto.nullable) = false ];
+  bytes proof_commitment = 2;
+  ibc.core.client.v1.Height proof_height = 3 [ (gogoproto.nullable) = false ];
+  string signer = 4;
+}

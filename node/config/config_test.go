@@ -8,7 +8,6 @@ import (
 	"gopkg.in/yaml.v3"
 
 	nodeconfig "github.com/forbole/juno/v5/node/config"
-	"github.com/forbole/juno/v5/node/local"
 	"github.com/forbole/juno/v5/node/remote"
 )
 
@@ -30,37 +29,10 @@ config:
 	err := yaml.Unmarshal([]byte(remoteData), &config)
 	require.NoError(t, err)
 	require.IsType(t, &remote.Details{}, config.Details)
-
-	var localData = `
-type: "local"
-config: 
-  home: /home/user/.cosmos
-`
-
-	err = yaml.Unmarshal([]byte(localData), &config)
-	require.NoError(t, err)
-	require.IsType(t, &local.Details{}, config.Details)
 }
 
 func TestConfig_MarshalYAML(t *testing.T) {
 	config := nodeconfig.Config{
-		Type: nodeconfig.TypeLocal,
-		Details: &local.Details{
-			Home: "/home/user/.cosmos",
-		},
-	}
-
-	bz, err := yaml.Marshal(&config)
-	require.NoError(t, err)
-
-	var expected = `
-type: local
-config:
-    home: /home/user/.cosmos
-`
-	require.Equal(t, strings.TrimLeft(expected, "\n"), string(bz))
-
-	config = nodeconfig.Config{
 		Type: nodeconfig.TypeRemote,
 		Details: &remote.Details{
 			RPC: &remote.RPCConfig{
@@ -73,10 +45,10 @@ config:
 			},
 		},
 	}
-	bz, err = yaml.Marshal(&config)
+	bz, err := yaml.Marshal(&config)
 	require.NoError(t, err)
 
-	expected = `
+	expected := `
 type: remote
 config:
     rpc:

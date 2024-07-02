@@ -1,8 +1,6 @@
 package types
 
 import (
-	"github.com/cosmos/cosmos-sdk/std"
-
 	"github.com/forbole/juno/v5/database"
 	"github.com/forbole/juno/v5/database/builder"
 	"github.com/forbole/juno/v5/logging"
@@ -16,7 +14,6 @@ type Config struct {
 	registrar             registrar.Registrar
 	configParser          config.Parser
 	encodingConfigBuilder EncodingConfigBuilder
-	setupCfg              SdkConfigSetup
 	buildDb               database.Builder
 	logger                logging.Logger
 	accountAddressParser  types.AccountAddressParser
@@ -66,31 +63,7 @@ func (cfg *Config) WithEncodingConfigBuilder(b EncodingConfigBuilder) *Config {
 
 // GetEncodingConfigBuilder returns the encoding config builder to be used
 func (cfg *Config) GetEncodingConfigBuilder() EncodingConfigBuilder {
-	if cfg.encodingConfigBuilder == nil {
-		return func() types.EncodingConfig {
-			encodingConfig := types.MakeTestEncodingConfig()
-			std.RegisterLegacyAminoCodec(encodingConfig.Amino)
-			std.RegisterInterfaces(encodingConfig.InterfaceRegistry)
-			ModuleBasics.RegisterLegacyAminoCodec(encodingConfig.Amino)
-			ModuleBasics.RegisterInterfaces(encodingConfig.InterfaceRegistry)
-			return encodingConfig
-		}
-	}
 	return cfg.encodingConfigBuilder
-}
-
-// WithSetupConfig sets the SDK setup configurator to be used
-func (cfg *Config) WithSetupConfig(s SdkConfigSetup) *Config {
-	cfg.setupCfg = s
-	return cfg
-}
-
-// GetSetupConfig returns the SDK configuration builder to use
-func (cfg *Config) GetSetupConfig() SdkConfigSetup {
-	if cfg.setupCfg == nil {
-		return DefaultConfigSetup
-	}
-	return cfg.setupCfg
 }
 
 // WithDBBuilder sets the database builder to be used
@@ -129,9 +102,6 @@ func (cfg *Config) WithAccountAddressParser(parser types.AccountAddressParser) *
 
 // GetAccountAddressParser returns the account address parser to be used
 func (cfg *Config) GetAccountAddressParser() types.AccountAddressParser {
-	if cfg.accountAddressParser == nil {
-		return types.DefaultAddressParser()
-	}
 	return cfg.accountAddressParser
 }
 
