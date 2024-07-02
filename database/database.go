@@ -76,17 +76,15 @@ func NewContext(
 	cfg databaseconfig.Config,
 	encodingConfig types.EncodingConfig,
 	logger logging.Logger,
-	accountAddressParser types.AccountAddressParser,
 	transactionFilter types.TransactionFilter,
 	messageFilter types.MessageFilter,
 ) *Context {
 	return &Context{
-		Cfg:                  cfg,
-		EncodingConfig:       encodingConfig,
-		Logger:               logger,
-		AccountAddressParser: accountAddressParser,
-		TransactionFilter:    transactionFilter,
-		MessageFilter:        messageFilter,
+		Cfg:               cfg,
+		EncodingConfig:    encodingConfig,
+		Logger:            logger,
+		TransactionFilter: transactionFilter,
+		MessageFilter:     messageFilter,
 	}
 }
 

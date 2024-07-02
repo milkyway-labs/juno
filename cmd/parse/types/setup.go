@@ -36,7 +36,6 @@ func GetParserContext(cfg config.Config, parseConfig *Config) (*parser.Context, 
 		cfg.Database,
 		encodingConfig,
 		logger,
-		accountAddressParser,
 		transactionFilter,
 		messageFilter,
 	)

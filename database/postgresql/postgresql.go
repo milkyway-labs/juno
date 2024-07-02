@@ -24,9 +24,8 @@ type Database struct {
 	Cdc   codec.Codec
 	Amino codec.LegacyAmino
 
-	SQL                  *sqlx.DB
-	Logger               logging.Logger
-	AccountAddressParser types.AccountAddressParser
+	SQL    *sqlx.DB
+	Logger logging.Logger
 
 	ShouldStoreTransaction types.TransactionFilter
 	ShouldStoreMessage     types.MessageFilter

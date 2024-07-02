@@ -40,7 +40,6 @@ func (suite *DbTestSuite) SetupTest() {
 		dbCfg,
 		codec,
 		logging.DefaultLogger(),
-		nil,
 		types.DefaultTransactionFilter(),
 		types.DefaultMessageFilter(),
 	)
