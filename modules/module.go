@@ -6,10 +6,9 @@ import (
 
 	tmctypes "github.com/cometbft/cometbft/rpc/core/types"
 	tmtypes "github.com/cometbft/cometbft/types"
-	sdk "github.com/forbole/juno/v5/cosmos-sdk/types"
 	"github.com/go-co-op/gocron"
 
-	"github.com/forbole/juno/v5/cosmos-sdk/x/authz"
+	codectypes "github.com/forbole/juno/v5/cosmos-sdk/codec/types"
 	"github.com/forbole/juno/v5/types"
 )
 
@@ -96,14 +95,5 @@ type MessageModule interface {
 	// are passed as well.
 	// NOTE. The returned error will be logged using the MsgError method. All other modules' handlers
 	// will still be called.
-	HandleMsg(index int, msg sdk.Msg, tx *types.Tx) error
-}
-
-type AuthzMessageModule interface {
-	// HandleMsgExec handles a single message that is contained within an authz.MsgExec instance.
-	// For convenience of use, the index of the message inside the transaction and the transaction itself
-	// are passed as well.
-	// NOTE. The returned error will be logged using the MsgError method. All other modules' handlers
-	// will still be called.
-	HandleMsgExec(index int, msgExec *authz.MsgExec, authzMsgIndex int, executedMsg sdk.Msg, tx *types.Tx) error
+	HandleMsg(index int, msg *codectypes.Any, tx *types.Tx) error
 }
