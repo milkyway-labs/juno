@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/forbole/juno/v5/cosmos-sdk/x/authz"
 	"github.com/forbole/juno/v5/utils"
 
 	"github.com/forbole/juno/v5/database"
@@ -19,6 +18,7 @@ import (
 	tmtypes "github.com/cometbft/cometbft/types"
 	sdk "github.com/forbole/juno/v5/cosmos-sdk/types"
 
+	codectypes "github.com/forbole/juno/v5/cosmos-sdk/codec/types"
 	"github.com/forbole/juno/v5/node"
 	"github.com/forbole/juno/v5/types"
 )
@@ -327,7 +327,7 @@ func (w Worker) handleTx(tx *types.Tx) error {
 
 // handleMessage accepts the transaction and handles messages contained
 // inside the transaction.
-func (w Worker) handleMessage(index int, msg sdk.Msg, tx *types.Tx) error {
+func (w Worker) handleMessage(index int, msg *codectypes.Any, tx *types.Tx) error {
 	// Allow modules to handle the message
 	for _, module := range w.modules {
 		if messageModule, ok := module.(modules.MessageModule); ok {
@@ -335,24 +335,6 @@ func (w Worker) handleMessage(index int, msg sdk.Msg, tx *types.Tx) error {
 			if err != nil {
 				if w.shouldReEnqueueWhenFailed() {
 					w.logger.MsgError(module, tx, msg, err)
-				}
-			}
-		}
-	}
-
-	// If it's a MsgExecute, we need to make sure the included messages are handled as well
-	if msgExec, ok := msg.(*authz.MsgExec); ok {
-		for authzIndex, executedMsg := range msgExec.Msgs {
-			for _, module := range w.modules {
-				if messageModule, ok := module.(modules.AuthzMessageModule); ok {
-					err := messageModule.HandleMsgExec(index, msgExec, authzIndex, executedMsg, tx)
-					if err != nil {
-						if w.shouldReEnqueueWhenFailed() {
-							return err
-						}
-
-						w.logger.MsgError(module, tx, executedMsg, err)
-					}
 				}
 			}
 		}
