@@ -19,6 +19,8 @@ coverage.txt
 # Configuration
 *.toml
 *.yaml
+# Keep golangci config
+!.golangci.yaml
 
 # Protobuf generation config
 !buf.gen.gogo.yaml
