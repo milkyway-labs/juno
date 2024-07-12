@@ -3,7 +3,7 @@ package genesis
 import (
 	"github.com/spf13/cobra"
 
-	parsecmdtypes "github.com/forbole/juno/v5/cmd/parse/types"
+	cmdtypes "github.com/forbole/juno/v5/types/cmd"
 	"github.com/forbole/juno/v5/utils"
 
 	"github.com/forbole/juno/v5/modules"
@@ -15,7 +15,7 @@ const (
 )
 
 // NewGenesisCmd returns the Cobra command allowing to parse the genesis file
-func NewGenesisCmd(parseConfig *parsecmdtypes.Config) *cobra.Command {
+func NewGenesisCmd() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "genesis-file",
 		Short: "Parse the genesis file",
@@ -24,23 +24,23 @@ Parse the genesis file only.
 Note that the modules built will NOT have access to the node as they are only supposed to deal with the genesis
 file itself and not the on-chain data.`,
 		RunE: func(cmd *cobra.Command, args []string) error {
-			// Read the configuration
-			cfg, err := parsecmdtypes.ReadConfig(parseConfig)
+			cmdContext := cmdtypes.GetCmdContext(cmd)
+
+			// Set the node to be of type None so that the node won't be built
+			junoCfg, err := cmdContext.GetJunoConfig()
 			if err != nil {
 				return err
 			}
-
-			// Set the node to be of type None so that the node won't be built
-			cfg.Node.Type = nodeconfig.TypeNone
+			junoCfg.Node.Type = nodeconfig.TypeNone
 
 			// Build the parsing context
-			parseCtx, err := parsecmdtypes.GetParserContext(cfg, parseConfig)
+			parseCtx, err := cmdContext.GetParseContext()
 			if err != nil {
 				return err
 			}
 
 			// Get the file path
-			genesisFilePath := cfg.Parser.GenesisFilePath
+			genesisFilePath := junoCfg.Parser.GenesisFilePath
 			customPath, _ := cmd.Flags().GetString(flagPath)
 			if customPath != "" {
 				genesisFilePath = customPath

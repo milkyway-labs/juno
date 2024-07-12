@@ -83,7 +83,7 @@ func (w Worker) Start() {
 				w.logger.Debug("re-enqueuing failed block", "height", i.Height, "err", err, "count", newBlock.RetryCount)
 
 				// Sleep for the proper time and re-enqueue the block
-				time.Sleep(config.GetAvgBlockTime() * time.Duration(newBlock.RetryCount))
+				time.Sleep(w.cfg.GetAvgBlockTime() * time.Duration(newBlock.RetryCount))
 				w.queue <- newBlock
 			}()
 		}
@@ -118,7 +118,7 @@ func (w Worker) ProcessIfNotExists(height int64) error {
 // It returns an error if any export process fails.
 func (w Worker) Process(height int64) error {
 	if height == 0 {
-		cfg := config.Cfg.Parser
+		cfg := w.cfg.Parser
 
 		genesisDoc, genesisState, err := nodeutils.GetGenesisDocAndState(cfg.GenesisFilePath, w.node)
 		if err != nil {
