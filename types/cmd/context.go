@@ -244,6 +244,7 @@ func (ctx *Context) GetAllModules() ([]modules.Module, error) {
 		}
 
 		context := modsregistrar.NewContext(
+			ctx.Home(),
 			*junoConfig,
 			ctx.GetEncodingConfig(),
 			db,
