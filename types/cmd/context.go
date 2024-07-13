@@ -52,6 +52,8 @@ func GetContext(cmd *cobra.Command) *Context {
 	if ctx == nil {
 		panic("no juno context found, please inject it with the InjectCmdContext function")
 	}
+
+	// Set the context home path from the cmd flag
 	homePath, err := cmd.Flags().GetString(FlagHome)
 	if err != nil {
 		panic(fmt.Sprintf("can't get context from cmd, cmd don't have the %s flag", FlagHome))
