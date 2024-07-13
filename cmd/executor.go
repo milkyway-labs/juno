@@ -57,6 +57,11 @@ downstream clients to answer queries such as "What is the average gas cost of a 
 them to compose more aggregate and complex queries.`, name),
 	}
 
+	// Set the default home path
+	home, _ := os.UserHomeDir()
+	defaultConfigPath := path.Join(home, fmt.Sprintf(".%s", config.GetName()))
+	rootCmd.PersistentFlags().String(cmdtypes.FlagHome, defaultConfigPath, "Set the home folder of the application, where all files will be stored")
+
 	// Inject the juno context into the cmd context
 	cmdtypes.InjectCmdContext(rootCmd, cmdtypes.NewCmdContextFromConfig(config))
 
@@ -65,10 +70,5 @@ them to compose more aggregate and complex queries.`, name),
 
 // PrepareRootCmd is meant to prepare the given command binding all the viper flags
 func PrepareRootCmd(cmd *cobra.Command) cli.Executor {
-	context := cmdtypes.GetCmdContext(cmd)
-	home, _ := os.UserHomeDir()
-	defaultConfigPath := path.Join(home, fmt.Sprintf(".%s", context.GetConfig().GetName()))
-	cmd.PersistentFlags().String(cmdtypes.FlagHome, defaultConfigPath, "Set the home folder of the application, where all files will be stored")
-
 	return cli.Executor{Command: cmd, Exit: os.Exit}
 }

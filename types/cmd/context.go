@@ -40,7 +40,11 @@ func NewCmdContextFromConfig(cfg *Config) *Context {
 }
 
 func InjectCmdContext(cmd *cobra.Command, ctx *Context) {
-	cmd.SetContext(context.WithValue(cmd.Context(), ContextKey, ctx))
+	cmdContext := cmd.Context()
+	if cmdContext == nil {
+		cmdContext = context.TODO()
+	}
+	cmd.SetContext(context.WithValue(cmdContext, ContextKey, ctx))
 }
 
 func GetCmdContext(cmd *cobra.Command) *Context {
@@ -50,7 +54,7 @@ func GetCmdContext(cmd *cobra.Command) *Context {
 	}
 	homePath, err := cmd.Flags().GetString(FlagHome)
 	if err != nil {
-		panic("missing home path")
+		panic(fmt.Sprintf("can't get context from cmd, cmd don't have the %s flag", FlagHome))
 	}
 	ctx.SetHome(homePath)
 
