@@ -13,6 +13,7 @@ import (
 
 // Context represents the context of the modules registrar
 type Context struct {
+	ConfigPath           string
 	JunoConfig           config.Config
 	EncodingConfig       types.EncodingConfig
 	Database             database.Database
@@ -23,6 +24,7 @@ type Context struct {
 
 // NewContext allows to build a new Context instance
 func NewContext(
+	ConfigPath string,
 	parsingConfig config.Config,
 	encodingConfig types.EncodingConfig,
 	database database.Database,
@@ -31,6 +33,7 @@ func NewContext(
 	accountAddressParser types.AccountAddressParser,
 ) Context {
 	return Context{
+		ConfigPath:           ConfigPath,
 		JunoConfig:           parsingConfig,
 		EncodingConfig:       encodingConfig,
 		Database:             database,
