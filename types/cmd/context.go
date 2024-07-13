@@ -42,7 +42,12 @@ func InjectCmdContext(cmd *cobra.Command, ctx *CmdContext) {
 }
 
 func GetCmdContext(cmd *cobra.Command) *CmdContext {
-	return cmd.Context().Value(ContextKey).(*CmdContext)
+	ctx := cmd.Context().Value(ContextKey).(*CmdContext)
+	if ctx == nil {
+		panic("no juno context found, please inject it with the InjectCmdContext function")
+	}
+
+	return ctx
 }
 
 // GetConfig returns the juno's config
