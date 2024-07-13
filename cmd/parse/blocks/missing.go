@@ -18,7 +18,7 @@ func newMissingCmd() *cobra.Command {
 		Short: "Refetch all the missing heights in the database starting from the given start height",
 		Args:  cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
-			cmdContext := cmdtypes.GetCmdContext(cmd)
+			cmdContext := cmdtypes.GetContext(cmd)
 			startHeight, err := strconv.ParseInt(args[0], 10, 64)
 			if err != nil {
 				return fmt.Errorf("make sure the given start height is a positive integer")

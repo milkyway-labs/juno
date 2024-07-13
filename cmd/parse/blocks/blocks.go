@@ -29,7 +29,7 @@ You can override this behaviour using the %s flag. If this is set, even the bloc
 will be replaced with the data downloaded from the node.
 `, flagStart, flagEnd, flagForce),
 		RunE: func(cmd *cobra.Command, args []string) error {
-			ctx := cmdtypes.GetCmdContext(cmd)
+			ctx := cmdtypes.GetContext(cmd)
 			junoCfg, err := ctx.GetJunoConfig()
 			if err != nil {
 				return err

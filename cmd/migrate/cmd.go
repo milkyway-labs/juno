@@ -35,7 +35,7 @@ Note that migrations must be performed in order: to migrate from vX to vX+2 you 
 		Example: fmt.Sprintf("%s migrate v3", appName),
 		Args:    cobra.RangeArgs(0, 1),
 		RunE: func(cmd *cobra.Command, args []string) error {
-			ctx := cmdtypes.GetCmdContext(cmd)
+			ctx := cmdtypes.GetContext(cmd)
 
 			cmd.SetOut(os.Stdout)
 			if len(args) == 0 {

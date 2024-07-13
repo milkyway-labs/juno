@@ -24,7 +24,7 @@ func newTransactionsCmd() *cobra.Command {
 You can specify a custom height range by using the %s and %s flags. 
 `, flagStart, flagEnd),
 		RunE: func(cmd *cobra.Command, args []string) error {
-			ctx := cmdtypes.GetCmdContext(cmd)
+			ctx := cmdtypes.GetContext(cmd)
 			junoCfg, err := ctx.GetJunoConfig()
 			if err != nil {
 				return err

@@ -21,7 +21,7 @@ func NewInitCmd() *cobra.Command {
 		Short: "Initializes the configuration files",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			// Get the cmd context
-			cmdContext := cmdtypes.GetCmdContext(cmd)
+			cmdContext := cmdtypes.GetContext(cmd)
 
 			// Create the config path if not present
 			if _, err := os.Stat(cmdContext.Home()); os.IsNotExist(err) {

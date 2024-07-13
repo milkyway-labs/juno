@@ -28,7 +28,7 @@ func NewStartCmd() *cobra.Command {
 		Use:   "start",
 		Short: "Start parsing the blockchain data",
 		RunE: func(cmd *cobra.Command, args []string) error {
-			cmdCtx := cmdtypes.GetCmdContext(cmd)
+			cmdCtx := cmdtypes.GetContext(cmd)
 			context, err := cmdCtx.GetParseContext()
 			if err != nil {
 				return err

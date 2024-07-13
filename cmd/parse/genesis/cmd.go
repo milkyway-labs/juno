@@ -24,7 +24,7 @@ Parse the genesis file only.
 Note that the modules built will NOT have access to the node as they are only supposed to deal with the genesis
 file itself and not the on-chain data.`,
 		RunE: func(cmd *cobra.Command, args []string) error {
-			cmdContext := cmdtypes.GetCmdContext(cmd)
+			cmdContext := cmdtypes.GetContext(cmd)
 
 			// Set the node to be of type None so that the node won't be built
 			junoCfg, err := cmdContext.GetJunoConfig()

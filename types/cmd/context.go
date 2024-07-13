@@ -30,7 +30,7 @@ type Context struct {
 	home              string
 }
 
-func NewCmdContextFromConfig(cfg *Config) *Context {
+func NewContextFromConfig(cfg *Config) *Context {
 	return &Context{
 		cfg:               cfg,
 		junoCfg:           nil,
@@ -39,7 +39,7 @@ func NewCmdContextFromConfig(cfg *Config) *Context {
 	}
 }
 
-func InjectCmdContext(cmd *cobra.Command, ctx *Context) {
+func InjectContext(cmd *cobra.Command, ctx *Context) {
 	cmdContext := cmd.Context()
 	if cmdContext == nil {
 		cmdContext = context.TODO()
@@ -47,7 +47,7 @@ func InjectCmdContext(cmd *cobra.Command, ctx *Context) {
 	cmd.SetContext(context.WithValue(cmdContext, ContextKey, ctx))
 }
 
-func GetCmdContext(cmd *cobra.Command) *Context {
+func GetContext(cmd *cobra.Command) *Context {
 	ctx := cmd.Context().Value(ContextKey).(*Context)
 	if ctx == nil {
 		panic("no juno context found, please inject it with the InjectCmdContext function")

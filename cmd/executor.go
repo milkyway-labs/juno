@@ -63,7 +63,7 @@ them to compose more aggregate and complex queries.`, name),
 	rootCmd.PersistentFlags().String(cmdtypes.FlagHome, defaultConfigPath, "Set the home folder of the application, where all files will be stored")
 
 	// Inject the juno context into the cmd context
-	cmdtypes.InjectCmdContext(rootCmd, cmdtypes.NewCmdContextFromConfig(config))
+	cmdtypes.InjectContext(rootCmd, cmdtypes.NewContextFromConfig(config))
 
 	return rootCmd
 }
