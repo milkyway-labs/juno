@@ -24,7 +24,7 @@ type Context struct {
 
 // NewContext allows to build a new Context instance
 func NewContext(
-	ConfigPath string,
+	configPath string,
 	parsingConfig config.Config,
 	encodingConfig types.EncodingConfig,
 	database database.Database,
@@ -33,7 +33,7 @@ func NewContext(
 	accountAddressParser types.AccountAddressParser,
 ) Context {
 	return Context{
-		ConfigPath:           ConfigPath,
+		ConfigPath:           configPath,
 		JunoConfig:           parsingConfig,
 		EncodingConfig:       encodingConfig,
 		Database:             database,
