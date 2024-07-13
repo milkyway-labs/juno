@@ -5,21 +5,14 @@ import (
 	"os"
 	"path"
 
-	"github.com/forbole/juno/v5/types/config"
-
 	initcmd "github.com/forbole/juno/v5/cmd/init"
 	migratecmd "github.com/forbole/juno/v5/cmd/migrate"
 	parsecmd "github.com/forbole/juno/v5/cmd/parse"
 	startcmd "github.com/forbole/juno/v5/cmd/start"
-	"github.com/forbole/juno/v5/types"
 	cmdtypes "github.com/forbole/juno/v5/types/cmd"
 
 	"github.com/cometbft/cometbft/libs/cli"
 	"github.com/spf13/cobra"
-)
-
-var (
-	FlagHome = "home"
 )
 
 // BuildDefaultExecutor allows to build an Executor containing a root command that
@@ -72,22 +65,10 @@ them to compose more aggregate and complex queries.`, name),
 
 // PrepareRootCmd is meant to prepare the given command binding all the viper flags
 func PrepareRootCmd(cmd *cobra.Command) cli.Executor {
-	cmd.PersistentPreRunE = types.ConcatCobraCmdFuncs(
-		types.BindFlagsLoadViper,
-		setupHome,
-		cmd.PersistentPreRunE,
-	)
-
 	context := cmdtypes.GetCmdContext(cmd)
 	home, _ := os.UserHomeDir()
 	defaultConfigPath := path.Join(home, fmt.Sprintf(".%s", context.GetConfig().GetName()))
-	cmd.PersistentFlags().String(FlagHome, defaultConfigPath, "Set the home folder of the application, where all files will be stored")
+	cmd.PersistentFlags().String(cmdtypes.FlagHome, defaultConfigPath, "Set the home folder of the application, where all files will be stored")
 
 	return cli.Executor{Command: cmd, Exit: os.Exit}
-}
-
-// setupHome setups the home directory of the root command
-func setupHome(cmd *cobra.Command, _ []string) error {
-	config.HomePath, _ = cmd.Flags().GetString(FlagHome)
-	return nil
 }

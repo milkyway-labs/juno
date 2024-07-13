@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"os"
+	"path"
 
 	"github.com/spf13/cobra"
 
@@ -26,6 +27,7 @@ type CmdContext struct {
 	junoCfg           *configtypes.Config
 	moduleInitialized bool
 	modules           map[string]modules.Module
+	home              string
 }
 
 func NewCmdContextFromConfig(cfg *Config) *CmdContext {
@@ -46,8 +48,21 @@ func GetCmdContext(cmd *cobra.Command) *CmdContext {
 	if ctx == nil {
 		panic("no juno context found, please inject it with the InjectCmdContext function")
 	}
+	homePath, err := cmd.Flags().GetString(FlagHome)
+	if err != nil {
+		panic("missing home path")
+	}
+	ctx.SetHome(homePath)
 
 	return ctx
+}
+
+func (ctx *CmdContext) GetConfigFilePath() string {
+	if ctx.home == "" {
+		panic("Can't get config file path, home path is not set")
+	}
+
+	return path.Join(ctx.home, "config.yaml")
 }
 
 // GetConfig returns the juno's config
@@ -61,15 +76,15 @@ func (ctx *CmdContext) GetModule(name string) modules.Module {
 
 func (ctx *CmdContext) GetJunoConfig() (*configtypes.Config, error) {
 	if ctx.junoCfg == nil {
-		file := configtypes.GetConfigFilePath()
+		configFilePath := ctx.GetConfigFilePath()
 
 		// Make sure the path exists
-		if _, err := os.Stat(file); os.IsNotExist(err) {
-			return nil, fmt.Errorf("config file does not exist (%s). Make sure you have run the init command", file)
+		if _, err := os.Stat(configFilePath); os.IsNotExist(err) {
+			return nil, fmt.Errorf("config file does not exist (%s). Make sure you have run the init command", configFilePath)
 		}
 
 		// Read the config
-		junoConfig, err := configtypes.Read(file, ctx.cfg.GetParseConfig().GetConfigParser())
+		junoConfig, err := configtypes.Read(configFilePath, ctx.cfg.GetParseConfig().GetConfigParser())
 		if err != nil {
 			return nil, err
 		}
@@ -139,4 +154,12 @@ func (ctx *CmdContext) GetParseContext() (*parser.Context, error) {
 	registeredModules := modsregistrar.GetModules(mods, cfg.Chain.Modules, logger)
 
 	return parser.NewContext(*cfg, encodingConfig, node, db, logger, registeredModules), nil
+}
+
+func (ctx *CmdContext) Home() string {
+	return ctx.home
+}
+
+func (ctx *CmdContext) SetHome(home string) {
+	ctx.home = home
 }

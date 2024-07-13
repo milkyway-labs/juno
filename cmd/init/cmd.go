@@ -6,7 +6,6 @@ import (
 
 	cmdtypes "github.com/forbole/juno/v5/types/cmd"
 	initcmdtypes "github.com/forbole/juno/v5/types/cmd/init"
-	"github.com/forbole/juno/v5/types/config"
 
 	"github.com/spf13/cobra"
 )
@@ -25,8 +24,8 @@ func NewInitCmd() *cobra.Command {
 			cmdContext := cmdtypes.GetCmdContext(cmd)
 
 			// Create the config path if not present
-			if _, err := os.Stat(config.HomePath); os.IsNotExist(err) {
-				err = os.MkdirAll(config.HomePath, os.ModePerm)
+			if _, err := os.Stat(cmdContext.Home()); os.IsNotExist(err) {
+				err = os.MkdirAll(cmdContext.Home(), os.ModePerm)
 				if err != nil {
 					return err
 				}
@@ -38,7 +37,7 @@ func NewInitCmd() *cobra.Command {
 			}
 
 			// Get the config file
-			configFilePath := config.GetConfigFilePath()
+			configFilePath := cmdContext.GetConfigFilePath()
 			file, _ := os.Stat(configFilePath)
 
 			// Check if the file exists and replace is false
