@@ -54,7 +54,21 @@ func InjectContext(cmd *cobra.Command, ctx *Context) {
 }
 
 func GetContext(cmd *cobra.Command) *Context {
-	ctx := cmd.Context().Value(ContextKey).(*Context)
+	var ctx *Context
+	currCmd := cmd
+	for {
+		ctxValue, ok := currCmd.Context().Value(ContextKey).(*Context)
+		if !ok {
+			currCmd = currCmd.Parent()
+			// No more parents
+			if currCmd == nil {
+				break
+			}
+		} else {
+			ctx = ctxValue
+			break
+		}
+	}
 	if ctx == nil {
 		panic("no juno context found, please inject it with the InjectCmdContext function")
 	}
