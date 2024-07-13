@@ -20,9 +20,9 @@ type JunoContextKey string
 
 const ContextKey = JunoContextKey("juno.context")
 
-// CmdContext represents the context that will be
+// Context represents the context that will be
 // inject the cobra command use to run juno
-type CmdContext struct {
+type Context struct {
 	cfg               *Config
 	junoCfg           *configtypes.Config
 	moduleInitialized bool
@@ -30,8 +30,8 @@ type CmdContext struct {
 	home              string
 }
 
-func NewCmdContextFromConfig(cfg *Config) *CmdContext {
-	return &CmdContext{
+func NewCmdContextFromConfig(cfg *Config) *Context {
+	return &Context{
 		cfg:               cfg,
 		junoCfg:           nil,
 		moduleInitialized: false,
@@ -39,12 +39,12 @@ func NewCmdContextFromConfig(cfg *Config) *CmdContext {
 	}
 }
 
-func InjectCmdContext(cmd *cobra.Command, ctx *CmdContext) {
+func InjectCmdContext(cmd *cobra.Command, ctx *Context) {
 	cmd.SetContext(context.WithValue(cmd.Context(), ContextKey, ctx))
 }
 
-func GetCmdContext(cmd *cobra.Command) *CmdContext {
-	ctx := cmd.Context().Value(ContextKey).(*CmdContext)
+func GetCmdContext(cmd *cobra.Command) *Context {
+	ctx := cmd.Context().Value(ContextKey).(*Context)
 	if ctx == nil {
 		panic("no juno context found, please inject it with the InjectCmdContext function")
 	}
@@ -57,7 +57,7 @@ func GetCmdContext(cmd *cobra.Command) *CmdContext {
 	return ctx
 }
 
-func (ctx *CmdContext) GetConfigFilePath() string {
+func (ctx *Context) GetConfigFilePath() string {
 	if ctx.home == "" {
 		panic("Can't get config file path, home path is not set")
 	}
@@ -66,15 +66,15 @@ func (ctx *CmdContext) GetConfigFilePath() string {
 }
 
 // GetConfig returns the juno's config
-func (ctx *CmdContext) GetConfig() *Config {
+func (ctx *Context) GetConfig() *Config {
 	return ctx.cfg
 }
 
-func (ctx *CmdContext) GetModule(name string) modules.Module {
+func (ctx *Context) GetModule(name string) modules.Module {
 	return ctx.modules[name]
 }
 
-func (ctx *CmdContext) GetJunoConfig() (*configtypes.Config, error) {
+func (ctx *Context) GetJunoConfig() (*configtypes.Config, error) {
 	if ctx.junoCfg == nil {
 		configFilePath := ctx.GetConfigFilePath()
 
@@ -95,7 +95,7 @@ func (ctx *CmdContext) GetJunoConfig() (*configtypes.Config, error) {
 }
 
 // GetParserContext setups all the things that can be used to later parse the chain state
-func (ctx *CmdContext) GetParseContext() (*parser.Context, error) {
+func (ctx *Context) GetParseContext() (*parser.Context, error) {
 	parseConfig := ctx.cfg.GetParseConfig()
 	cfg, err := ctx.GetJunoConfig()
 	if err != nil {
@@ -156,10 +156,10 @@ func (ctx *CmdContext) GetParseContext() (*parser.Context, error) {
 	return parser.NewContext(*cfg, encodingConfig, node, db, logger, registeredModules), nil
 }
 
-func (ctx *CmdContext) Home() string {
+func (ctx *Context) Home() string {
 	return ctx.home
 }
 
-func (ctx *CmdContext) SetHome(home string) {
+func (ctx *Context) SetHome(home string) {
 	ctx.home = home
 }
