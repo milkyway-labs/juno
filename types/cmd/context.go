@@ -35,7 +35,6 @@ func NewContextFromConfig(cfg *Config) *Context {
 		cfg:               cfg,
 		junoCfg:           nil,
 		moduleInitialized: false,
-		modules:           make(map[string]modules.Module),
 	}
 }
 
@@ -74,10 +73,6 @@ func (ctx *Context) GetConfigFilePath() string {
 // GetConfig returns the juno's config
 func (ctx *Context) GetConfig() *Config {
 	return ctx.cfg
-}
-
-func (ctx *Context) GetModule(name string) modules.Module {
-	return ctx.modules[name]
 }
 
 func (ctx *Context) GetJunoConfig() (*configtypes.Config, error) {
