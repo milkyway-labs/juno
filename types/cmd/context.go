@@ -289,7 +289,7 @@ func (ctx *Context) GetModule(module string) (modules.Module, error) {
 	return nil, fmt.Errorf("module %s not found", module)
 }
 
-// GetParserContext setups all the things that can be used to later parse the chain state
+// GetParseContext setups all the things that can be used to later parse the chain state
 func (ctx *Context) GetParseContext() (*parser.Context, error) {
 	cfg, err := ctx.GetJunoConfig()
 	if err != nil {
