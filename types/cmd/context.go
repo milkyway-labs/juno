@@ -304,6 +304,8 @@ func (ctx *Context) GetParseContext() (*parser.Context, error) {
 
 	// Get the encoding config
 	encodingConfig := ctx.GetEncodingConfig()
+
+        // Get database
 	db, err := ctx.GetDatabase()
 	if err != nil {
 		return nil, err
