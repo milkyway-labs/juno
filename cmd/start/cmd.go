@@ -7,20 +7,15 @@ import (
 	"syscall"
 	"time"
 
-	parsecmdtypes "github.com/forbole/juno/v5/cmd/parse/types"
-	"github.com/forbole/juno/v5/modules"
-	"github.com/forbole/juno/v5/utils"
+	"github.com/go-co-op/gocron"
+	"github.com/spf13/cobra"
 
 	"github.com/forbole/juno/v5/logging"
-
-	"github.com/forbole/juno/v5/types/config"
-
-	"github.com/go-co-op/gocron"
-
+	"github.com/forbole/juno/v5/modules"
 	"github.com/forbole/juno/v5/parser"
 	"github.com/forbole/juno/v5/types"
-
-	"github.com/spf13/cobra"
+	cmdtypes "github.com/forbole/juno/v5/types/cmd"
+	"github.com/forbole/juno/v5/utils"
 )
 
 var (
@@ -28,13 +23,13 @@ var (
 )
 
 // NewStartCmd returns the command that should be run when we want to start parsing a chain state.
-func NewStartCmd(cmdCfg *parsecmdtypes.Config) *cobra.Command {
+func NewStartCmd() *cobra.Command {
 	return &cobra.Command{
-		Use:     "start",
-		Short:   "Start parsing the blockchain data",
-		PreRunE: parsecmdtypes.ReadConfigPreRunE(cmdCfg),
+		Use:   "start",
+		Short: "Start parsing the blockchain data",
 		RunE: func(cmd *cobra.Command, args []string) error {
-			context, err := parsecmdtypes.GetParserContext(config.Cfg, cmdCfg)
+			cmdCtx := cmdtypes.GetContext(cmd)
+			context, err := cmdCtx.GetParseContext()
 			if err != nil {
 				return err
 			}
@@ -57,7 +52,7 @@ func NewStartCmd(cmdCfg *parsecmdtypes.Config) *cobra.Command {
 // startParsing represents the function that should be called when the parse command is executed
 func startParsing(ctx *parser.Context) error {
 	// Get the config
-	cfg := config.Cfg.Parser
+	cfg := ctx.Config.Parser
 	logging.StartHeight.Add(float64(cfg.StartHeight))
 
 	// Start periodic operations
@@ -122,7 +117,7 @@ func startParsing(ctx *parser.Context) error {
 // at the startHeight up until the latest known height.
 func enqueueMissingBlocks(exportQueue types.HeightQueue, ctx *parser.Context) {
 	// Get the config
-	cfg := config.Cfg.Parser
+	cfg := ctx.Config.Parser
 
 	// Get the latest height
 	latestBlockHeight := mustGetLatestHeight(ctx)
@@ -187,7 +182,7 @@ func enqueueNewBlocks(exportQueue types.HeightQueue, ctx *parser.Context) {
 		}
 
 		// Wait for a new block to be produced
-		time.Sleep(config.GetAvgBlockTime())
+		time.Sleep(ctx.Config.GetAvgBlockTime())
 	}
 }
 
@@ -203,7 +198,7 @@ func mustGetLatestHeight(ctx *parser.Context) int64 {
 
 		ctx.Logger.Error("failed to get last block from rpc client", "err", err, "retry count", retryCount)
 
-		time.Sleep(config.GetAvgBlockTime() * time.Duration(retryCount))
+		time.Sleep(ctx.Config.GetAvgBlockTime() * time.Duration(retryCount))
 	}
 
 	return 0

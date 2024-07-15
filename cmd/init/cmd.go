@@ -4,7 +4,8 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/forbole/juno/v5/types/config"
+	cmdtypes "github.com/forbole/juno/v5/types/cmd"
+	initcmdtypes "github.com/forbole/juno/v5/types/cmd/init"
 
 	"github.com/spf13/cobra"
 )
@@ -14,14 +15,17 @@ const (
 )
 
 // NewInitCmd returns the command that should be run in order to properly initialize Juno
-func NewInitCmd(cfg *Config) *cobra.Command {
+func NewInitCmd() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "init",
 		Short: "Initializes the configuration files",
 		RunE: func(cmd *cobra.Command, args []string) error {
+			// Get the cmd context
+			cmdContext := cmdtypes.GetContext(cmd)
+
 			// Create the config path if not present
-			if _, err := os.Stat(config.HomePath); os.IsNotExist(err) {
-				err = os.MkdirAll(config.HomePath, os.ModePerm)
+			if _, err := os.Stat(cmdContext.Home()); os.IsNotExist(err) {
+				err = os.MkdirAll(cmdContext.Home(), os.ModePerm)
 				if err != nil {
 					return err
 				}
@@ -33,7 +37,7 @@ func NewInitCmd(cfg *Config) *cobra.Command {
 			}
 
 			// Get the config file
-			configFilePath := config.GetConfigFilePath()
+			configFilePath := cmdContext.GetConfigFilePath()
 			file, _ := os.Stat(configFilePath)
 
 			// Check if the file exists and replace is false
@@ -44,7 +48,7 @@ func NewInitCmd(cfg *Config) *cobra.Command {
 			}
 
 			// Get the config from the flags
-			yamlCfg := cfg.GetConfigCreator()(cmd)
+			yamlCfg := cmdContext.GetConfig().GetInitConfig().GetConfigCreator()(cmd)
 			return writeConfig(yamlCfg, configFilePath)
 		},
 	}
@@ -55,7 +59,7 @@ func NewInitCmd(cfg *Config) *cobra.Command {
 }
 
 // writeConfig allows to write the given configuration into the file present at the given path
-func writeConfig(cfg WritableConfig, path string) error {
+func writeConfig(cfg initcmdtypes.WritableConfig, path string) error {
 	bz, err := cfg.GetBytes()
 	if err != nil {
 		return err

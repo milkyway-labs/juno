@@ -3,12 +3,11 @@ package transactions
 import (
 	"fmt"
 
-	parsecmdtypes "github.com/forbole/juno/v5/cmd/parse/types"
+	cmdtypes "github.com/forbole/juno/v5/types/cmd"
 
 	"github.com/spf13/cobra"
 
 	"github.com/forbole/juno/v5/parser"
-	"github.com/forbole/juno/v5/types/config"
 )
 
 const (
@@ -17,7 +16,7 @@ const (
 )
 
 // newTransactionsCmd returns a Cobra command that allows to fix missing or incomplete transactions in database
-func newTransactionsCmd(parseConfig *parsecmdtypes.Config) *cobra.Command {
+func newTransactionsCmd() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "all",
 		Short: "Parse missing or incomplete transactions",
@@ -25,7 +24,13 @@ func newTransactionsCmd(parseConfig *parsecmdtypes.Config) *cobra.Command {
 You can specify a custom height range by using the %s and %s flags. 
 `, flagStart, flagEnd),
 		RunE: func(cmd *cobra.Command, args []string) error {
-			parseCtx, err := parsecmdtypes.GetParserContext(config.Cfg, parseConfig)
+			ctx := cmdtypes.GetContext(cmd)
+			junoCfg, err := ctx.GetJunoConfig()
+			if err != nil {
+				return err
+			}
+
+			parseCtx, err := ctx.GetParseContext()
 			if err != nil {
 				return err
 			}
@@ -37,7 +42,7 @@ You can specify a custom height range by using the %s and %s flags.
 			end, _ := cmd.Flags().GetInt64(flagEnd)
 
 			// Get the start height, default to the config's height; use flagStart if set
-			startHeight := config.Cfg.Parser.StartHeight
+			startHeight := junoCfg.Parser.StartHeight
 			if start > 0 {
 				startHeight = start
 			}

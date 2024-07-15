@@ -4,14 +4,15 @@ import (
 	"os"
 
 	"github.com/forbole/juno/v5/cmd"
-	"github.com/forbole/juno/v5/cmd/parse/types"
 	"github.com/forbole/juno/v5/modules/registrar"
+	cmdtypes "github.com/forbole/juno/v5/types/cmd"
+	parsecmdtypes "github.com/forbole/juno/v5/types/cmd/parse"
 )
 
 func main() {
 	// JunoConfig the runner
-	config := cmd.NewConfig("juno").
-		WithParseConfig(types.NewConfig().
+	config := cmdtypes.NewConfig("juno").
+		WithParseConfig(parsecmdtypes.NewConfig().
 			WithRegistrar(registrar.NewDefaultRegistrar()),
 		)
 

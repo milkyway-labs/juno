@@ -4,9 +4,10 @@ import (
 	"fmt"
 	"os"
 
-	parsecmdtypes "github.com/forbole/juno/v5/cmd/parse/types"
-
 	"github.com/spf13/cobra"
+
+	cmdtypes "github.com/forbole/juno/v5/types/cmd"
+	parsecmdtypes "github.com/forbole/juno/v5/types/cmd/parse"
 )
 
 type Migrator func(parseCfg *parsecmdtypes.Config) error
@@ -24,7 +25,7 @@ func getVersions() []string {
 }
 
 // NewMigrateCmd returns the Cobra command allowing to migrate config and tables to v3 version
-func NewMigrateCmd(appName string, parseConfig *parsecmdtypes.Config) *cobra.Command {
+func NewMigrateCmd(appName string) *cobra.Command {
 	return &cobra.Command{
 		Use:   "migrate [to-version]",
 		Short: "Perform the migrations from the current version to the specified one",
@@ -34,6 +35,8 @@ Note that migrations must be performed in order: to migrate from vX to vX+2 you 
 		Example: fmt.Sprintf("%s migrate v3", appName),
 		Args:    cobra.RangeArgs(0, 1),
 		RunE: func(cmd *cobra.Command, args []string) error {
+			ctx := cmdtypes.GetContext(cmd)
+
 			cmd.SetOut(os.Stdout)
 			if len(args) == 0 {
 				cmd.Println("Please specify a version to migrate to. Available versions:")
@@ -49,7 +52,7 @@ Note that migrations must be performed in order: to migrate from vX to vX+2 you 
 				return fmt.Errorf("migration for version %s not found", version)
 			}
 
-			return migrator(parseConfig)
+			return migrator(ctx.GetConfig().GetParseConfig())
 		},
 	}
 }

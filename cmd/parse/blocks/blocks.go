@@ -3,13 +3,12 @@ package blocks
 import (
 	"fmt"
 
-	parsecmdtypes "github.com/forbole/juno/v5/cmd/parse/types"
+	cmdtypes "github.com/forbole/juno/v5/types/cmd"
 	"github.com/forbole/juno/v5/utils"
 
 	"github.com/spf13/cobra"
 
 	"github.com/forbole/juno/v5/parser"
-	"github.com/forbole/juno/v5/types/config"
 )
 
 const (
@@ -19,7 +18,7 @@ const (
 )
 
 // newAllCmd returns a Cobra command that allows to fix missing blocks in database
-func newAllCmd(parseConfig *parsecmdtypes.Config) *cobra.Command {
+func newAllCmd() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "all",
 		Short: "Reparse blocks and transactions ranged from the given start height to the given end height",
@@ -30,7 +29,13 @@ You can override this behaviour using the %s flag. If this is set, even the bloc
 will be replaced with the data downloaded from the node.
 `, flagStart, flagEnd, flagForce),
 		RunE: func(cmd *cobra.Command, args []string) error {
-			parseCtx, err := parsecmdtypes.GetParserContext(config.Cfg, parseConfig)
+			ctx := cmdtypes.GetContext(cmd)
+			junoCfg, err := ctx.GetJunoConfig()
+			if err != nil {
+				return err
+			}
+
+			parseCtx, err := ctx.GetParseContext()
 			if err != nil {
 				return err
 			}
@@ -49,7 +54,7 @@ will be replaced with the data downloaded from the node.
 
 			// Compare start height from config file and last block height in database
 			// and set higher block as start height
-			startHeight := utils.MaxInt64(config.Cfg.Parser.StartHeight, lastDbBlockHeight)
+			startHeight := utils.MaxInt64(junoCfg.Parser.StartHeight, lastDbBlockHeight)
 
 			if start > 0 {
 				startHeight = start

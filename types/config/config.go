@@ -11,11 +11,6 @@ import (
 	parserconfig "github.com/forbole/juno/v5/parser/config"
 )
 
-var (
-	// Cfg represents the configuration to be used during the execution
-	Cfg Config
-)
-
 // Config defines all necessary juno configuration parameters.
 type Config struct {
 	bytes []byte
