@@ -1,6 +1,8 @@
 package logging
 
 import (
+	"fmt"
+
 	"github.com/prometheus/client_golang/prometheus"
 )
 
@@ -45,6 +47,31 @@ var DbBlockCount = prometheus.NewGaugeVec(
 	[]string{"total_blocks_in_db"},
 )
 
+// RPC Liveness
+var RpcRequestErrors = prometheus.NewCounter(
+	prometheus.CounterOpts{
+		Name: "juno_rpc_errors_total",
+		Help: "Total number of errors occurred during RPC requests",
+	},
+)
+
+// Database Liveness
+var DbOperationErrors = prometheus.NewCounter(
+	prometheus.CounterOpts{
+		Name: "juno_db_errors_total",
+		Help: "Total number of errors occurred during database operations",
+	},
+)
+
+// Block parsing
+var FetchBlockErrorCount = prometheus.NewCounterVec(
+	prometheus.CounterOpts{
+		Name: "juno_block_errors_total",
+		Help: "Total number of errors per block",
+	},
+	[]string{"block"},
+)
+
 // DbLatestHeight represents the Telemetry counter used to track the last indexed height in the database
 var DbLatestHeight = prometheus.NewGaugeVec(
 	prometheus.GaugeOpts{
@@ -54,34 +81,32 @@ var DbLatestHeight = prometheus.NewGaugeVec(
 	[]string{"db_latest_height"},
 )
 
+// SignalRPCRequestError signal that a new rpc request error occurred
+func SignalRPCRequestError() {
+	RpcRequestErrors.Inc()
+}
+
+// SignalDBOperationError signal that a new error occurred while interacting
+// with the database
+func SignalDBOperationError() {
+	DbOperationErrors.Inc()
+}
+
+// SignalBlockError increments the error counter for the given block
+func SignalBlockError(blockHeight int64) {
+	blockStr := fmt.Sprintf("%d", blockHeight)
+	FetchBlockErrorCount.WithLabelValues(blockStr).Inc()
+	prometheus.MustRegister()
+}
+
 func init() {
-	err := prometheus.Register(StartHeight)
-	if err != nil {
-		panic(err)
-	}
-
-	err = prometheus.Register(WorkerCount)
-	if err != nil {
-		panic(err)
-	}
-
-	err = prometheus.Register(WorkerHeight)
-	if err != nil {
-		panic(err)
-	}
-
-	err = prometheus.Register(ErrorCount)
-	if err != nil {
-		panic(err)
-	}
-
-	err = prometheus.Register(DbBlockCount)
-	if err != nil {
-		panic(err)
-	}
-
-	err = prometheus.Register(DbLatestHeight)
-	if err != nil {
-		panic(err)
-	}
+	prometheus.MustRegister(StartHeight)
+	prometheus.MustRegister(WorkerCount)
+	prometheus.MustRegister(WorkerHeight)
+	prometheus.MustRegister(ErrorCount)
+	prometheus.MustRegister(DbBlockCount)
+	prometheus.MustRegister(DbLatestHeight)
+	prometheus.MustRegister(RpcRequestErrors)
+	prometheus.MustRegister(DbOperationErrors)
+	prometheus.MustRegister(FetchBlockErrorCount)
 }

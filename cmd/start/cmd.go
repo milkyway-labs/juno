@@ -135,6 +135,7 @@ func enqueueMissingBlocks(exportQueue types.HeightQueue, ctx *parser.Context) {
 	lastDbBlockHeight, err := ctx.Database.GetLastBlockHeight()
 	if err != nil {
 		ctx.Logger.Error("failed to get last block height from database", "error", err)
+		logging.SignalDBOperationError()
 	}
 
 	// Get the start height, default to the config's height
@@ -207,6 +208,7 @@ func mustGetLatestHeight(ctx *parser.Context) int64 {
 		}
 
 		ctx.Logger.Error("failed to get last block from rpc client", "err", err, "retry count", retryCount)
+		logging.SignalRPCRequestError()
 
 		time.Sleep(ctx.Config.GetAvgBlockTime() * time.Duration(retryCount))
 	}
