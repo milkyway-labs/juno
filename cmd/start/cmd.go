@@ -1,6 +1,8 @@
 package start
 
 import (
+	"fmt"
+	"net/http"
 	"os"
 	"os/signal"
 	"sync"
@@ -16,6 +18,7 @@ import (
 	"github.com/forbole/juno/v5/types"
 	cmdtypes "github.com/forbole/juno/v5/types/cmd"
 	"github.com/forbole/juno/v5/utils"
+	"github.com/prometheus/client_golang/prometheus/promhttp"
 )
 
 var (
@@ -54,6 +57,13 @@ func startParsing(ctx *parser.Context) error {
 	// Get the config
 	cfg := ctx.Config.Parser
 	logging.StartHeight.Add(float64(cfg.StartHeight))
+
+	// Start the prometheus monitoring
+	monitoringCfg := ctx.Config.Monitoring
+	if monitoringCfg.Enabled {
+		http.Handle("/metrics", promhttp.Handler())
+		go http.ListenAndServe(fmt.Sprintf(":%d", monitoringCfg.Port), nil)
+	}
 
 	// Start periodic operations
 	scheduler := gocron.NewScheduler(time.UTC)

@@ -15,11 +15,12 @@ import (
 type Config struct {
 	bytes []byte
 
-	Chain    ChainConfig           `yaml:"chain"`
-	Node     nodeconfig.Config     `yaml:"node"`
-	Parser   parserconfig.Config   `yaml:"parsing"`
-	Database databaseconfig.Config `yaml:"database"`
-	Logging  loggingconfig.Config  `yaml:"logging"`
+	Chain      ChainConfig           `yaml:"chain"`
+	Node       nodeconfig.Config     `yaml:"node"`
+	Parser     parserconfig.Config   `yaml:"parsing"`
+	Database   databaseconfig.Config `yaml:"database"`
+	Logging    loggingconfig.Config  `yaml:"logging"`
+	Monitoring MonitoringConfig      `yaml:"monitoring"`
 }
 
 // NewConfig builds a new Config instance
@@ -27,13 +28,15 @@ func NewConfig(
 	nodeCfg nodeconfig.Config,
 	chainCfg ChainConfig, dbConfig databaseconfig.Config,
 	parserConfig parserconfig.Config, loggingConfig loggingconfig.Config,
+	monitoringConfig MonitoringConfig,
 ) Config {
 	return Config{
-		Node:     nodeCfg,
-		Chain:    chainCfg,
-		Database: dbConfig,
-		Parser:   parserConfig,
-		Logging:  loggingConfig,
+		Node:       nodeCfg,
+		Chain:      chainCfg,
+		Database:   dbConfig,
+		Parser:     parserConfig,
+		Logging:    loggingConfig,
+		Monitoring: monitoringConfig,
 	}
 }
 
@@ -42,6 +45,7 @@ func DefaultConfig() Config {
 		nodeconfig.DefaultConfig(),
 		DefaultChainConfig(), databaseconfig.DefaultDatabaseConfig(),
 		parserconfig.DefaultParsingConfig(), loggingconfig.DefaultLoggingConfig(),
+		DefaultMonitoringConfig(),
 	)
 
 	bz, err := yaml.Marshal(cfg)
@@ -85,4 +89,27 @@ func (cfg ChainConfig) IsModuleEnabled(moduleName string) bool {
 	}
 
 	return false
+}
+
+// ---------------------------------------------------------------------------------------------------------------------
+
+type MonitoringConfig struct {
+	Enabled bool  `yaml:"enabled"`
+	Port    int16 `yaml:"port"`
+}
+
+// DefaultMonitoringConfig returns the default instance of MonitoringConfig
+func DefaultMonitoringConfig() MonitoringConfig {
+	return MonitoringConfig{
+		Enabled: true,
+		Port:    2112,
+	}
+}
+
+// NewMonitoringConfig returns a new instance of MonitoringConfig
+func NewMonitoringConfig(enabled bool, port int16) MonitoringConfig {
+	return MonitoringConfig{
+		Enabled: enabled,
+		Port:    port,
+	}
 }
