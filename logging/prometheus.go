@@ -47,15 +47,13 @@ var DbBlockCount = prometheus.NewGaugeVec(
 	[]string{"total_blocks_in_db"},
 )
 
-// RPC Liveness
-var RpcRequestErrors = prometheus.NewCounter(
+var RPCRequestErrors = prometheus.NewCounter(
 	prometheus.CounterOpts{
 		Name: "juno_rpc_errors_total",
 		Help: "Total number of errors occurred during RPC requests",
 	},
 )
 
-// Database Liveness
 var DbOperationErrors = prometheus.NewCounter(
 	prometheus.CounterOpts{
 		Name: "juno_db_errors_total",
@@ -63,8 +61,7 @@ var DbOperationErrors = prometheus.NewCounter(
 	},
 )
 
-// Block parsing
-var FetchBlockErrorCount = prometheus.NewCounterVec(
+var ProcessBlockErrorCount = prometheus.NewCounterVec(
 	prometheus.CounterOpts{
 		Name: "juno_block_errors_total",
 		Help: "Total number of errors per block",
@@ -83,7 +80,7 @@ var DbLatestHeight = prometheus.NewGaugeVec(
 
 // SignalRPCRequestError signal that a new rpc request error occurred
 func SignalRPCRequestError() {
-	RpcRequestErrors.Inc()
+	RPCRequestErrors.Inc()
 }
 
 // SignalDBOperationError signal that a new error occurred while interacting
@@ -95,7 +92,7 @@ func SignalDBOperationError() {
 // SignalBlockError increments the error counter for the given block
 func SignalBlockError(blockHeight int64) {
 	blockStr := fmt.Sprintf("%d", blockHeight)
-	FetchBlockErrorCount.WithLabelValues(blockStr).Inc()
+	ProcessBlockErrorCount.WithLabelValues(blockStr).Inc()
 	prometheus.MustRegister()
 }
 
@@ -106,7 +103,7 @@ func init() {
 	prometheus.MustRegister(ErrorCount)
 	prometheus.MustRegister(DbBlockCount)
 	prometheus.MustRegister(DbLatestHeight)
-	prometheus.MustRegister(RpcRequestErrors)
+	prometheus.MustRegister(RPCRequestErrors)
 	prometheus.MustRegister(DbOperationErrors)
-	prometheus.MustRegister(FetchBlockErrorCount)
+	prometheus.MustRegister(ProcessBlockErrorCount)
 }

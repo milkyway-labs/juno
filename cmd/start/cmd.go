@@ -62,7 +62,11 @@ func startParsing(ctx *parser.Context) error {
 	monitoringCfg := ctx.Config.Monitoring
 	if monitoringCfg.Enabled {
 		http.Handle("/metrics", promhttp.Handler())
-		go http.ListenAndServe(fmt.Sprintf(":%d", monitoringCfg.Port), nil)
+		server := &http.Server{
+			Addr:              fmt.Sprintf(":%d", monitoringCfg.Port),
+			ReadHeaderTimeout: 3 * time.Second,
+		}
+		go server.ListenAndServe()
 	}
 
 	// Start periodic operations
