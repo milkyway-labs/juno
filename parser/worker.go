@@ -78,6 +78,9 @@ func (w Worker) Start() {
 		err = w.ProcessIfNotExists(i.Height)
 		if err != nil {
 			go func() {
+				// Signal that an error occurred while processing this block
+				logging.SignalBlockError(i.Height)
+
 				// Build the block with the updated retry count and log the error
 				newBlock := i.IncrementRetryCount()
 				w.logger.Debug("re-enqueuing failed block", "height", i.Height, "err", err, "count", newBlock.RetryCount)

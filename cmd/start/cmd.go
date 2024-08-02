@@ -55,6 +55,11 @@ func startParsing(ctx *parser.Context) error {
 	cfg := ctx.Config.Parser
 	logging.StartHeight.Add(float64(cfg.StartHeight))
 
+	// Start the prometheus monitoring
+	if ctx.Prometheus != nil {
+		ctx.Prometheus.Start()
+	}
+
 	// Start periodic operations
 	scheduler := gocron.NewScheduler(time.UTC)
 	for _, module := range ctx.Modules {
@@ -125,6 +130,7 @@ func enqueueMissingBlocks(exportQueue types.HeightQueue, ctx *parser.Context) {
 	lastDbBlockHeight, err := ctx.Database.GetLastBlockHeight()
 	if err != nil {
 		ctx.Logger.Error("failed to get last block height from database", "error", err)
+		logging.SignalDBOperationError()
 	}
 
 	// Get the start height, default to the config's height
@@ -197,6 +203,7 @@ func mustGetLatestHeight(ctx *parser.Context) int64 {
 		}
 
 		ctx.Logger.Error("failed to get last block from rpc client", "err", err, "retry count", retryCount)
+		logging.SignalRPCRequestError()
 
 		time.Sleep(ctx.Config.GetAvgBlockTime() * time.Duration(retryCount))
 	}
@@ -218,5 +225,8 @@ func trapSignal(ctx *parser.Context) {
 		defer ctx.Node.Stop()
 		defer ctx.Database.Close()
 		defer waitGroup.Done()
+		if ctx.Prometheus != nil {
+			defer ctx.Prometheus.Stop()
+		}
 	}()
 }
