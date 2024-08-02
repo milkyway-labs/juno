@@ -37,6 +37,6 @@ func NewContext(
 		Database:       db,
 		Modules:        modules,
 		Logger:         logger,
-		Prometheus:     prometheus.NewServer(config.Monitoring.Port),
+		Prometheus:     prometheus.NewServer(config.Monitoring),
 	}
 }

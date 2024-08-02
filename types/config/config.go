@@ -20,7 +20,7 @@ type Config struct {
 	Parser     parserconfig.Config   `yaml:"parsing"`
 	Database   databaseconfig.Config `yaml:"database"`
 	Logging    loggingconfig.Config  `yaml:"logging"`
-	Monitoring MonitoringConfig      `yaml:"monitoring"`
+	Monitoring *MonitoringConfig     `yaml:"monitoring"`
 }
 
 // NewConfig builds a new Config instance
@@ -28,7 +28,7 @@ func NewConfig(
 	nodeCfg nodeconfig.Config,
 	chainCfg ChainConfig, dbConfig databaseconfig.Config,
 	parserConfig parserconfig.Config, loggingConfig loggingconfig.Config,
-	monitoringConfig MonitoringConfig,
+	monitoringConfig *MonitoringConfig,
 ) Config {
 	return Config{
 		Node:       nodeCfg,
@@ -99,8 +99,8 @@ type MonitoringConfig struct {
 }
 
 // DefaultMonitoringConfig returns the default instance of MonitoringConfig
-func DefaultMonitoringConfig() MonitoringConfig {
-	return MonitoringConfig{
+func DefaultMonitoringConfig() *MonitoringConfig {
+	return &MonitoringConfig{
 		Enabled: true,
 		Port:    2112,
 	}

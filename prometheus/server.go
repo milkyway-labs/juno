@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/forbole/juno/v5/types/config"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 )
 
@@ -14,9 +15,13 @@ type Server struct {
 }
 
 // NewServer returns a new prometheus server instance
-func NewServer(port int16) *Server {
+func NewServer(monitoringConfig *config.MonitoringConfig) *Server {
+	if monitoringConfig == nil || !monitoringConfig.Enabled {
+		return nil
+	}
+
 	return &Server{
-		port: port,
+		port: monitoringConfig.Port,
 	}
 }
 

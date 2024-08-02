@@ -56,8 +56,7 @@ func startParsing(ctx *parser.Context) error {
 	logging.StartHeight.Add(float64(cfg.StartHeight))
 
 	// Start the prometheus monitoring
-	monitoringCfg := ctx.Config.Monitoring
-	if monitoringCfg.Enabled {
+	if ctx.Prometheus != nil {
 		ctx.Prometheus.Start()
 	}
 
@@ -226,6 +225,8 @@ func trapSignal(ctx *parser.Context) {
 		defer ctx.Node.Stop()
 		defer ctx.Database.Close()
 		defer waitGroup.Done()
-		defer ctx.Prometheus.Stop()
+		if ctx.Prometheus != nil {
+			defer ctx.Prometheus.Stop()
+		}
 	}()
 }
