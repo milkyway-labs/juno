@@ -1,8 +1,6 @@
 package start
 
 import (
-	"fmt"
-	"net/http"
 	"os"
 	"os/signal"
 	"sync"
@@ -18,7 +16,6 @@ import (
 	"github.com/forbole/juno/v5/types"
 	cmdtypes "github.com/forbole/juno/v5/types/cmd"
 	"github.com/forbole/juno/v5/utils"
-	"github.com/prometheus/client_golang/prometheus/promhttp"
 )
 
 var (
@@ -61,12 +58,7 @@ func startParsing(ctx *parser.Context) error {
 	// Start the prometheus monitoring
 	monitoringCfg := ctx.Config.Monitoring
 	if monitoringCfg.Enabled {
-		http.Handle("/metrics", promhttp.Handler())
-		server := &http.Server{
-			Addr:              fmt.Sprintf(":%d", monitoringCfg.Port),
-			ReadHeaderTimeout: 3 * time.Second,
-		}
-		go server.ListenAndServe()
+		ctx.Prometheus.Start()
 	}
 
 	// Start periodic operations
@@ -234,5 +226,6 @@ func trapSignal(ctx *parser.Context) {
 		defer ctx.Node.Stop()
 		defer ctx.Database.Close()
 		defer waitGroup.Done()
+		defer ctx.Prometheus.Stop()
 	}()
 }
