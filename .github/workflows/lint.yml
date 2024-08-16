@@ -9,6 +9,15 @@ on:
       - cosmos/*
 
 jobs:
+  Cleanup-runs:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Cleanup 🧹
+        uses: rokroskar/workflow-run-cleanup-action@master
+        env:
+          GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
+    if: "!startsWith(github.ref, 'refs/tags/') && github.ref != 'refs/heads/main'"
+
   GolangCI:
     name: golangci-lint
     runs-on: ubuntu-latest
@@ -20,10 +29,10 @@ jobs:
       - name: Compute diff 📜
         uses: technote-space/get-diff-action@v6.1.2
         with:
-          SUFFIX_FILTER: |
-            .go
-            .mod
-            .sum
+          PATTERNS: |
+            **/**.go
+            go.mod
+            go.sum
 
       - name: Setup Go 🧰
         if: "env.GIT_DIFF != ''"
