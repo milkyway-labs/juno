@@ -5,13 +5,13 @@ import (
 	"github.com/forbole/juno/v5/utils"
 )
 
-type validatorDbRow struct {
+type validatorDBRow struct {
 	ConsensusAddress string `db:"consensus_address"`
 	ConsensusPubKey  string `db:"consensus_pubkey"`
 }
 
-func convertValidatorToRow(validator *types.Validator) *validatorDbRow {
-	return &validatorDbRow{
+func convertValidatorToRow(validator *types.Validator) *validatorDBRow {
+	return &validatorDBRow{
 		ConsensusAddress: validator.ConsAddr,
 		ConsensusPubKey:  validator.ConsPubKey,
 	}

@@ -18,13 +18,13 @@ func (m *Module) HandleBlock(
 		return nil
 	}
 
-	pruningDb, ok := m.db.(database.PruningDb)
+	pruningDB, ok := m.db.(database.PruningDB)
 	if !ok {
-		return fmt.Errorf("pruning is enabled, but your database does not implement PruningDb")
+		return fmt.Errorf("pruning is enabled, but your database does not implement PruningDB")
 	}
 
 	// Get last pruned height
-	var height, err = pruningDb.GetLastPruned()
+	var height, err = pruningDB.GetLastPruned()
 	if err != nil {
 		return err
 	}
@@ -40,11 +40,11 @@ func (m *Module) HandleBlock(
 
 		// Prune the height
 		m.logger.Debug("pruning", "module", "pruning", "height", height)
-		err = pruningDb.Prune(height)
+		err = pruningDB.Prune(height)
 		if err != nil {
 			return fmt.Errorf("error while pruning height %d: %s", height, err.Error())
 		}
 	}
 
-	return pruningDb.StoreLastPruned(height)
+	return pruningDB.StoreLastPruned(height)
 }

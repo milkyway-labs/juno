@@ -47,14 +47,14 @@ will be replaced with the data downloaded from the node.
 			end, _ := cmd.Flags().GetInt64(flagEnd)
 			force, _ := cmd.Flags().GetBool(flagForce)
 
-			lastDbBlockHeight, err := parseCtx.Database.GetLastBlockHeight()
+			lastDBBlockHeight, err := parseCtx.Database.GetLastBlockHeight()
 			if err != nil {
 				return err
 			}
 
 			// Compare start height from config file and last block height in database
 			// and set higher block as start height
-			startHeight := utils.MaxInt64(junoCfg.Parser.StartHeight, lastDbBlockHeight)
+			startHeight := utils.MaxInt64(junoCfg.Parser.StartHeight, lastDBBlockHeight)
 
 			if start > 0 {
 				startHeight = start

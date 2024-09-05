@@ -49,8 +49,8 @@ type Database interface {
 	Close()
 }
 
-// PruningDb represents a database that supports pruning properly
-type PruningDb interface {
+// PruningDB represents a database that supports pruning properly
+type PruningDB interface {
 	// Prune prunes the data for the given height, returning any error
 	Prune(height int64) error
 

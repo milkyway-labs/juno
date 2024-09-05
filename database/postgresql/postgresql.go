@@ -37,7 +37,7 @@ type Database struct {
 func Builder(ctx *database.Context) (database.Database, error) {
 	dbURI := utils.GetEnvOr(types.DatabaseURI, ctx.Cfg.URL)
 
-	postgresDb, err := sqlx.Open("postgres", dbURI)
+	postgresDB, err := sqlx.Open("postgres", dbURI)
 	if err != nil {
 		return nil, err
 	}
@@ -48,7 +48,7 @@ func Builder(ctx *database.Context) (database.Database, error) {
 		Cdc:   ctx.EncodingConfig.Codec,
 		Amino: ctx.EncodingConfig.Amino,
 
-		SQL:    postgresDb,
+		SQL:    postgresDB,
 		Logger: ctx.Logger,
 
 		ShouldStoreTransaction: ctx.TransactionFilter,

@@ -14,7 +14,7 @@ type Config struct {
 	registrar             registrar.Registrar
 	configParser          config.Parser
 	encodingConfigBuilder EncodingConfigBuilder
-	buildDb               database.Builder
+	buildDB               database.Builder
 	logger                logging.Logger
 
 	txHashCalculator types.TxHashCalculator
@@ -69,16 +69,16 @@ func (cfg *Config) GetEncodingConfigBuilder() EncodingConfigBuilder {
 
 // WithDBBuilder sets the database builder to be used
 func (cfg *Config) WithDBBuilder(b database.Builder) *Config {
-	cfg.buildDb = b
+	cfg.buildDB = b
 	return cfg
 }
 
 // GetDBBuilder returns the database builder to be used
 func (cfg *Config) GetDBBuilder() database.Builder {
-	if cfg.buildDb == nil {
+	if cfg.buildDB == nil {
 		return builder.Builder
 	}
-	return cfg.buildDb
+	return cfg.buildDB
 }
 
 // WithLogger sets the logger to be used while parsing the data

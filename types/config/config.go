@@ -57,8 +57,8 @@ func DefaultConfig() Config {
 	return cfg
 }
 
-func (c Config) GetBytes() ([]byte, error) {
-	return c.bytes, nil
+func (cfg Config) GetBytes() ([]byte, error) {
+	return cfg.bytes, nil
 }
 
 // ---------------------------------------------------------------------------------------------------------------------

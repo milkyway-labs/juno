@@ -127,7 +127,7 @@ func enqueueMissingBlocks(exportQueue types.HeightQueue, ctx *parser.Context) {
 	// Get the latest height
 	latestBlockHeight := mustGetLatestHeight(ctx)
 
-	lastDbBlockHeight, err := ctx.Database.GetLastBlockHeight()
+	lastDBBlockHeight, err := ctx.Database.GetLastBlockHeight()
 	if err != nil {
 		ctx.Logger.Error("failed to get last block height from database", "error", err)
 		logging.SignalDBOperationError()
@@ -139,7 +139,7 @@ func enqueueMissingBlocks(exportQueue types.HeightQueue, ctx *parser.Context) {
 	// Set startHeight to the latest height in database
 	// if is not set inside config.yaml file
 	if startHeight == 0 {
-		startHeight = utils.MaxInt64(1, lastDbBlockHeight)
+		startHeight = utils.MaxInt64(1, lastDBBlockHeight)
 	}
 
 	if cfg.FastSync {

@@ -39,7 +39,7 @@ var ErrorCount = prometheus.NewCounter(
 	},
 )
 
-var DbBlockCount = prometheus.NewGaugeVec(
+var DBBlockCount = prometheus.NewGaugeVec(
 	prometheus.GaugeOpts{
 		Name: "juno_db_total_blocks",
 		Help: "Total number of blocks in database.",
@@ -54,7 +54,7 @@ var RPCRequestErrors = prometheus.NewCounter(
 	},
 )
 
-var DbOperationErrors = prometheus.NewCounter(
+var DBOperationErrors = prometheus.NewCounter(
 	prometheus.CounterOpts{
 		Name: "juno_db_errors_total",
 		Help: "Total number of errors occurred during database operations",
@@ -69,8 +69,8 @@ var ProcessBlockErrorCount = prometheus.NewCounterVec(
 	[]string{"block"},
 )
 
-// DbLatestHeight represents the Telemetry counter used to track the last indexed height in the database
-var DbLatestHeight = prometheus.NewGaugeVec(
+// DBLatestHeight represents the Telemetry counter used to track the last indexed height in the database
+var DBLatestHeight = prometheus.NewGaugeVec(
 	prometheus.GaugeOpts{
 		Name: "juno_db_latest_height",
 		Help: "Latest block height in the database.",
@@ -86,7 +86,7 @@ func SignalRPCRequestError() {
 // SignalDBOperationError signal that a new error occurred while interacting
 // with the database
 func SignalDBOperationError() {
-	DbOperationErrors.Inc()
+	DBOperationErrors.Inc()
 }
 
 // SignalBlockError increments the error counter for the given block
@@ -101,9 +101,9 @@ func init() {
 	prometheus.MustRegister(WorkerCount)
 	prometheus.MustRegister(WorkerHeight)
 	prometheus.MustRegister(ErrorCount)
-	prometheus.MustRegister(DbBlockCount)
-	prometheus.MustRegister(DbLatestHeight)
+	prometheus.MustRegister(DBBlockCount)
+	prometheus.MustRegister(DBLatestHeight)
 	prometheus.MustRegister(RPCRequestErrors)
-	prometheus.MustRegister(DbOperationErrors)
+	prometheus.MustRegister(DBOperationErrors)
 	prometheus.MustRegister(ProcessBlockErrorCount)
 }
