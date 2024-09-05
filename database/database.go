@@ -63,12 +63,11 @@ type PruningDb interface {
 
 // Context contains the data that might be used to build a Database instance
 type Context struct {
-	Cfg                  databaseconfig.Config
-	EncodingConfig       types.EncodingConfig
-	Logger               logging.Logger
-	AccountAddressParser types.AccountAddressParser
-	TransactionFilter    types.TransactionFilter
-	MessageFilter        types.MessageFilter
+	Cfg               databaseconfig.Config
+	EncodingConfig    types.EncodingConfig
+	Logger            logging.Logger
+	TransactionFilter types.TransactionFilter
+	MessageFilter     types.MessageFilter
 }
 
 // NewContext allows to build a new Context instance

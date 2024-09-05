@@ -3,6 +3,7 @@ package parser
 import (
 	tmctypes "github.com/cometbft/cometbft/rpc/core/types"
 	tmtypes "github.com/cometbft/cometbft/types"
+
 	sdk "github.com/forbole/juno/v5/cosmos-sdk/types"
 	"github.com/forbole/juno/v5/types"
 )

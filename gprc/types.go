@@ -7,6 +7,7 @@ import (
 
 	abcitypes "github.com/cometbft/cometbft/abci/types"
 	"github.com/cometbft/cometbft/libs/bytes"
+
 	sdk "github.com/forbole/juno/v5/cosmos-sdk/types"
 )
 

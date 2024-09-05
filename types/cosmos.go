@@ -5,7 +5,7 @@ import (
 	"time"
 
 	tmctypes "github.com/cometbft/cometbft/rpc/core/types"
-	"github.com/forbole/juno/v5/cosmos-sdk/codec"
+
 	"github.com/forbole/juno/v5/cosmos-sdk/codec/types"
 	sdk "github.com/forbole/juno/v5/cosmos-sdk/types"
 	"github.com/forbole/juno/v5/cosmos-sdk/types/tx"
@@ -106,10 +106,10 @@ func NewTx(txResponse *sdk.TxResponse, tx *tx.Tx, messages []*Message) (*Tx, err
 }
 
 // MapTransaction allows to build a new Tx instance from the given txResponse and Cosmos transaction
-func MapTransaction(txResponse *sdk.TxResponse, tx *tx.Tx, accountParser AccountAddressParser, cdc codec.Codec) (*Tx, error) {
+func MapTransaction(txResponse *sdk.TxResponse, tx *tx.Tx) (*Tx, error) {
 	var messages []*Message
 	for i, msg := range tx.Body.Messages {
-		message, err := MapMessage(txResponse.TxHash, txResponse.Height, i, msg, accountParser, cdc)
+		message, err := MapMessage(txResponse.TxHash, txResponse.Height, i, msg)
 		if err != nil {
 			return nil, err
 		}
@@ -158,7 +158,7 @@ type Message struct {
 	Index  int
 	// Message type url
 	Type string
-	// Value that can be used to create a Any object to
+	// Value that can be used to create an Any object to
 	// unmarshal the message
 	Value  []byte
 	Height int64
@@ -176,7 +176,7 @@ func NewMessage(txHash string, index int, msgType string, value []byte, height i
 }
 
 // MapMessage allows to build a new Message instance from the given tx data, index and Cosmos message
-func MapMessage(txHash string, txHeight int64, index int, msg *types.Any, accountParser AccountAddressParser, cdc codec.Codec) (*Message, error) {
+func MapMessage(txHash string, txHeight int64, index int, msg *types.Any) (*Message, error) {
 	return NewMessage(
 		txHash,
 		index,

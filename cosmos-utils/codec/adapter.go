@@ -4,9 +4,10 @@ import (
 	"github.com/cosmos/cosmos-sdk/codec"
 	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
 	"github.com/cosmos/gogoproto/proto"
+	"google.golang.org/grpc/encoding"
+
 	junocodec "github.com/forbole/juno/v5/cosmos-sdk/codec"
 	junocodectypes "github.com/forbole/juno/v5/cosmos-sdk/codec/types"
-	"google.golang.org/grpc/encoding"
 )
 
 type JunoCodecAdapater struct {

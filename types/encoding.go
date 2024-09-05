@@ -1,8 +1,9 @@
 package types
 
 import (
-	junocodec "github.com/forbole/juno/v5/cosmos-sdk/codec"
 	"google.golang.org/grpc/encoding"
+
+	junocodec "github.com/forbole/juno/v5/cosmos-sdk/codec"
 )
 
 // EncodingConfig specifies the concrete encoding types to use for a given app.

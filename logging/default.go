@@ -5,9 +5,10 @@ import (
 	"os"
 
 	tmctypes "github.com/cometbft/cometbft/rpc/core/types"
-	sdk "github.com/forbole/juno/v5/cosmos-sdk/types"
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
+
+	sdk "github.com/forbole/juno/v5/cosmos-sdk/types"
 
 	"github.com/forbole/juno/v5/modules"
 	"github.com/forbole/juno/v5/types"

@@ -16,6 +16,7 @@ import (
 
 	tmctypes "github.com/cometbft/cometbft/rpc/core/types"
 	tmtypes "github.com/cometbft/cometbft/types"
+
 	sdk "github.com/forbole/juno/v5/cosmos-sdk/types"
 
 	codectypes "github.com/forbole/juno/v5/cosmos-sdk/codec/types"

@@ -7,6 +7,7 @@ import (
 	abci "github.com/cometbft/cometbft/abci/types"
 	tmcrypto "github.com/cometbft/cometbft/crypto"
 	cometbfttypes "github.com/cometbft/cometbft/types"
+
 	sdk "github.com/forbole/juno/v5/cosmos-sdk/types"
 	"github.com/forbole/juno/v5/cosmos-sdk/types/bech32"
 )

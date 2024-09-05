@@ -10,21 +10,28 @@ import (
 )
 
 type Context struct {
-	EncodingConfig       types.EncodingConfig
-	AccountAddressParser types.AccountAddressParser
+	EncodingConfig   types.EncodingConfig
+	TxHashCalculator types.TxHashCalculator
 }
 
-func NewContext(encodingConfig types.EncodingConfig, accountAddressParser types.AccountAddressParser) Context {
+func NewContext(
+	encodingConfig types.EncodingConfig,
+	txHashCalculator types.TxHashCalculator,
+) Context {
 	return Context{
-		EncodingConfig:       encodingConfig,
-		AccountAddressParser: accountAddressParser,
+		EncodingConfig:   encodingConfig,
+		TxHashCalculator: txHashCalculator,
 	}
 }
 
 func BuildNode(cfg nodeconfig.Config, ctx Context) (node.Node, error) {
 	switch cfg.Type {
 	case nodeconfig.TypeRemote:
-		return remote.NewNode(cfg.Details.(*remote.Details), ctx.AccountAddressParser, ctx.EncodingConfig.Codec, ctx.EncodingConfig.GRPCodec)
+		return remote.NewNode(
+			cfg.Details.(*remote.Details),
+			ctx.TxHashCalculator,
+			ctx.EncodingConfig.GRPCodec,
+		)
 	case nodeconfig.TypeNone:
 		return nil, nil
 

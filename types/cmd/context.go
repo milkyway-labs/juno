@@ -150,9 +150,9 @@ func (ctx *Context) GetLogger() (logging.Logger, error) {
 	return *ctx.logger, nil
 }
 
-// GetAccountAddressParser returns the account address parser to be used
-func (ctx *Context) GetAccountAddressParser() types.AccountAddressParser {
-	return ctx.cfg.GetParseConfig().GetAccountAddressParser()
+// GetTxHashCalculator returns the transaction hash calculator to be used
+func (ctx *Context) GetTxHashCalculator() types.TxHashCalculator {
+	return ctx.cfg.GetParseConfig().GetTxHashCalculator()
 }
 
 // GetTransactionFilter returns the transaction filter configured in the
@@ -223,7 +223,7 @@ func (ctx *Context) GetNode() (node.Node, error) {
 		}
 
 		// Create the node
-		nodeCtx := nodebuilder.NewContext(ctx.GetEncodingConfig(), ctx.GetAccountAddressParser())
+		nodeCtx := nodebuilder.NewContext(ctx.GetEncodingConfig(), ctx.GetTxHashCalculator())
 		node, err := nodebuilder.BuildNode(junoCfg.Node, nodeCtx)
 		if err != nil {
 			return nil, fmt.Errorf("failed to start client: %s", err)
@@ -252,21 +252,19 @@ func (ctx *Context) GetAllModules() ([]modules.Module, error) {
 			return nil, err
 		}
 
-		node, err := ctx.GetNode()
+		chainNode, err := ctx.GetNode()
 		if err != nil {
 			return nil, err
 		}
 
-		context := modsregistrar.NewContext(
+		ctx.modules = ctx.cfg.GetParseConfig().GetRegistrar().BuildModules(modsregistrar.NewContext(
 			ctx.Home(),
 			*junoConfig,
 			ctx.GetEncodingConfig(),
 			db,
-			node,
+			chainNode,
 			logger,
-			ctx.GetAccountAddressParser(),
-		)
-		ctx.modules = ctx.cfg.GetParseConfig().GetRegistrar().BuildModules(context)
+		))
 		ctx.modulesInitialized = true
 	}
 

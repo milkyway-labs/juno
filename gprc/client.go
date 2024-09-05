@@ -7,12 +7,13 @@ import (
 	"strconv"
 	"time"
 
-	grpctypes "github.com/forbole/juno/v5/cosmos-sdk/types/grpc"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/encoding"
 	"google.golang.org/grpc/metadata"
 	"google.golang.org/grpc/status"
+
+	grpctypes "github.com/forbole/juno/v5/cosmos-sdk/types/grpc"
 
 	"github.com/forbole/juno/v5/jsonrpc2"
 )

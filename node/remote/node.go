@@ -15,7 +15,6 @@ import (
 	constypes "github.com/cometbft/cometbft/consensus/types"
 	tmjson "github.com/cometbft/cometbft/libs/json"
 
-	"github.com/forbole/juno/v5/cosmos-sdk/codec"
 	"github.com/forbole/juno/v5/cosmos-sdk/types/tx"
 	"github.com/forbole/juno/v5/node"
 	"github.com/forbole/juno/v5/types"
@@ -32,17 +31,21 @@ var (
 // Node implements a wrapper around both a Tendermint RPCConfig client and a
 // chain SDK REST client that allows for essential data queries.
 type Node struct {
-	ctx                  context.Context
-	codec                codec.Codec
-	grpcCodec            encoding.Codec
-	accountAddressParser types.AccountAddressParser
+	ctx       context.Context
+	grpcCodec encoding.Codec
+
+	computeTxHash types.TxHashCalculator
 
 	client          *httpclient.HTTP
 	txServiceClient tx.ServiceClient
 }
 
 // NewNode allows to build a new Node instance
-func NewNode(cfg *Details, accountAddressParser types.AccountAddressParser, codec codec.Codec, grpcCodec encoding.Codec) (*Node, error) {
+func NewNode(
+	cfg *Details,
+	txHashCalculator types.TxHashCalculator,
+	grpcCodec encoding.Codec,
+) (*Node, error) {
 	httpClient, err := jsonrpcclient.DefaultHTTPClient(cfg.RPC.Address)
 	if err != nil {
 		return nil, err
@@ -66,10 +69,10 @@ func NewNode(cfg *Details, accountAddressParser types.AccountAddressParser, code
 	}
 
 	return &Node{
-		ctx:                  context.Background(),
-		codec:                codec,
-		grpcCodec:            grpcCodec,
-		accountAddressParser: accountAddressParser,
+		ctx:       context.Background(),
+		grpcCodec: grpcCodec,
+
+		computeTxHash: txHashCalculator,
 
 		client:          rpcClient,
 		txServiceClient: tx.NewServiceClient(grpcConnection),
@@ -257,7 +260,7 @@ func (cp *Node) Tx(hash string) (*types.Tx, error) {
 		return nil, err
 	}
 
-	convTx, err := types.MapTransaction(res.TxResponse, res.Tx, cp.accountAddressParser, cp.codec)
+	convTx, err := types.MapTransaction(res.TxResponse, res.Tx)
 	if err != nil {
 		return nil, fmt.Errorf("error converting transaction: %s", err.Error())
 	}
@@ -269,7 +272,7 @@ func (cp *Node) Tx(hash string) (*types.Tx, error) {
 func (cp *Node) Txs(block *tmctypes.ResultBlock) ([]*types.Tx, error) {
 	txResponses := make([]*types.Tx, len(block.Block.Txs))
 	for i, tmTx := range block.Block.Txs {
-		txResponse, err := cp.Tx(fmt.Sprintf("%X", tmTx.Hash()))
+		txResponse, err := cp.Tx(fmt.Sprintf("%X", cp.computeTxHash(tmTx)))
 		if err != nil {
 			return nil, err
 		}

@@ -5,8 +5,9 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/forbole/juno/v5/types/config"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
+
+	"github.com/forbole/juno/v5/types/config"
 )
 
 type Server struct {

@@ -16,7 +16,8 @@ type Config struct {
 	encodingConfigBuilder EncodingConfigBuilder
 	buildDb               database.Builder
 	logger                logging.Logger
-	accountAddressParser  types.AccountAddressParser
+
+	txHashCalculator types.TxHashCalculator
 
 	transactionFilter    types.TransactionFilter
 	messageFilterBuilder MessageFilterBuilder
@@ -94,15 +95,18 @@ func (cfg *Config) GetLogger() logging.Logger {
 	return cfg.logger
 }
 
-// WithAccountAddressParser sets the account address parser to be used
-func (cfg *Config) WithAccountAddressParser(parser types.AccountAddressParser) *Config {
-	cfg.accountAddressParser = parser
+// WithTxHashCalculator sets the transaction hash calculator to be used
+func (cfg *Config) WithTxHashCalculator(calculator types.TxHashCalculator) *Config {
+	cfg.txHashCalculator = calculator
 	return cfg
 }
 
-// GetAccountAddressParser returns the account address parser to be used
-func (cfg *Config) GetAccountAddressParser() types.AccountAddressParser {
-	return cfg.accountAddressParser
+// GetTxHashCalculator returns the transaction hash calculator to be used
+func (cfg *Config) GetTxHashCalculator() types.TxHashCalculator {
+	if cfg.txHashCalculator == nil {
+		return types.DefaultTxHashCalculator
+	}
+	return cfg.txHashCalculator
 }
 
 // MessageFilterBuilder represents a function that takes as input the configuration and returns a message filter

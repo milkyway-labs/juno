@@ -13,13 +13,12 @@ import (
 
 // Context represents the context of the modules registrar
 type Context struct {
-	ConfigPath           string
-	JunoConfig           config.Config
-	EncodingConfig       types.EncodingConfig
-	Database             database.Database
-	Proxy                node.Node
-	Logger               logging.Logger
-	AccountAddressParser types.AccountAddressParser
+	ConfigPath     string
+	JunoConfig     config.Config
+	EncodingConfig types.EncodingConfig
+	Database       database.Database
+	Proxy          node.Node
+	Logger         logging.Logger
 }
 
 // NewContext allows to build a new Context instance
@@ -30,16 +29,14 @@ func NewContext(
 	database database.Database,
 	proxy node.Node,
 	logger logging.Logger,
-	accountAddressParser types.AccountAddressParser,
 ) Context {
 	return Context{
-		ConfigPath:           configPath,
-		JunoConfig:           parsingConfig,
-		EncodingConfig:       encodingConfig,
-		Database:             database,
-		Proxy:                proxy,
-		Logger:               logger,
-		AccountAddressParser: accountAddressParser,
+		ConfigPath:     configPath,
+		JunoConfig:     parsingConfig,
+		EncodingConfig: encodingConfig,
+		Database:       database,
+		Proxy:          proxy,
+		Logger:         logger,
 	}
 }
 
