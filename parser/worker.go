@@ -372,11 +372,13 @@ func (w Worker) ExportTxs(txs []*types.Tx) error {
 		}
 	}
 
-	dbLatestHeight, err := w.db.GetLastBlockHeight()
-	if err != nil {
-		return err
+	if w.cfg.Monitoring.Enabled {
+		dbLatestHeight, err := w.db.GetLastBlockHeight()
+		if err != nil {
+			return err
+		}
+		logging.DBLatestHeight.WithLabelValues("db_latest_height").Set(float64(dbLatestHeight))
 	}
-	logging.DBLatestHeight.WithLabelValues("db_latest_height").Set(float64(dbLatestHeight))
 
 	return nil
 }
