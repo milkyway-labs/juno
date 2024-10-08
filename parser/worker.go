@@ -197,7 +197,7 @@ func (w Worker) HandleGenesis(genesisDoc *tmtypes.GenesisDoc, appState map[strin
 // consensus public key. An error is returned if the public key cannot be Bech32
 // encoded or if the DB write fails.
 func (w Worker) SaveValidators(vals []*tmtypes.Validator) error {
-	var validators = make([]*types.Validator, len(vals))
+	validators := make([]*types.Validator, len(vals))
 	for index, val := range vals {
 		consAddr := sdk.NewConsAddress(val.Address).String()
 
@@ -371,9 +371,6 @@ func (w Worker) ExportTxs(txs []*types.Tx) error {
 			}
 		}
 	}
-
-	totalBlocks := w.db.GetTotalBlocks()
-	logging.DBBlockCount.WithLabelValues("total_blocks_in_db").Set(float64(totalBlocks))
 
 	dbLatestHeight, err := w.db.GetLastBlockHeight()
 	if err != nil {

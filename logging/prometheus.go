@@ -39,14 +39,6 @@ var ErrorCount = prometheus.NewCounter(
 	},
 )
 
-var DBBlockCount = prometheus.NewGaugeVec(
-	prometheus.GaugeOpts{
-		Name: "juno_db_total_blocks",
-		Help: "Total number of blocks in database.",
-	},
-	[]string{"total_blocks_in_db"},
-)
-
 var RPCRequestErrors = prometheus.NewCounter(
 	prometheus.CounterOpts{
 		Name: "juno_rpc_errors_total",
@@ -101,7 +93,6 @@ func init() {
 	prometheus.MustRegister(WorkerCount)
 	prometheus.MustRegister(WorkerHeight)
 	prometheus.MustRegister(ErrorCount)
-	prometheus.MustRegister(DBBlockCount)
 	prometheus.MustRegister(DBLatestHeight)
 	prometheus.MustRegister(RPCRequestErrors)
 	prometheus.MustRegister(DBOperationErrors)
