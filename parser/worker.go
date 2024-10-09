@@ -372,7 +372,7 @@ func (w Worker) ExportTxs(txs []*types.Tx) error {
 		}
 	}
 
-	if w.cfg.Monitoring.Enabled {
+	if w.cfg.Monitoring != nil && w.cfg.Monitoring.Enabled {
 		dbLatestHeight, err := w.db.GetLastBlockHeight()
 		if err != nil {
 			return err
