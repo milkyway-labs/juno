@@ -2,8 +2,9 @@ package types
 
 // BlockData contains the data of a block that is used to be stored in the queue.
 type BlockData struct {
-	Height     int64
-	RetryCount int64
+	Height      int64
+	RetryCount  int64
+	LatestError error
 }
 
 func NewBlockData(height int64) BlockData {
@@ -16,10 +17,11 @@ func (b BlockData) HasReachedMaxRetries(maxRetries int64) bool {
 	return maxRetries != -1 && b.RetryCount >= maxRetries
 }
 
-func (b BlockData) IncrementRetryCount() BlockData {
+func (b BlockData) IncrementRetryCount(err error) BlockData {
 	return BlockData{
-		Height:     b.Height,
-		RetryCount: b.RetryCount + 1,
+		Height:      b.Height,
+		RetryCount:  b.RetryCount + 1,
+		LatestError: b.LatestError,
 	}
 }
 

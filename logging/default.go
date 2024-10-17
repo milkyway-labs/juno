@@ -9,6 +9,7 @@ import (
 	"github.com/rs/zerolog/log"
 
 	sdk "github.com/forbole/juno/v5/cosmos-sdk/types"
+	"github.com/forbole/juno/v5/prometheus"
 
 	"github.com/forbole/juno/v5/modules"
 	"github.com/forbole/juno/v5/types"
@@ -74,7 +75,7 @@ func (d *defaultLogger) Info(msg string, keyVals ...interface{}) {
 
 // Error implements Logger
 func (d *defaultLogger) Error(msg string, keyVals ...interface{}) {
-	ErrorCount.Inc()
+	prometheus.ErrorsCount.Inc()
 	d.Logger.Error().Fields(getLogFields(keyVals...)).Msg(msg)
 }
 

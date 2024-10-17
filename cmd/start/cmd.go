@@ -10,9 +10,9 @@ import (
 	"github.com/go-co-op/gocron"
 	"github.com/spf13/cobra"
 
-	"github.com/forbole/juno/v5/logging"
 	"github.com/forbole/juno/v5/modules"
 	"github.com/forbole/juno/v5/parser"
+	"github.com/forbole/juno/v5/prometheus"
 	"github.com/forbole/juno/v5/types"
 	cmdtypes "github.com/forbole/juno/v5/types/cmd"
 	"github.com/forbole/juno/v5/utils"
@@ -53,7 +53,7 @@ func NewStartCmd() *cobra.Command {
 func startParsing(ctx *parser.Context) error {
 	// Get the config
 	cfg := ctx.Config.Parser
-	logging.StartHeight.Add(float64(cfg.StartHeight))
+	prometheus.StartHeight.Add(float64(cfg.StartHeight))
 
 	// Start the prometheus monitoring
 	if ctx.Prometheus != nil {
@@ -130,7 +130,7 @@ func enqueueMissingBlocks(exportQueue types.HeightQueue, ctx *parser.Context) {
 	lastDBBlockHeight, err := ctx.Database.GetLastBlockHeight()
 	if err != nil {
 		ctx.Logger.Error("failed to get last block height from database", "error", err)
-		logging.SignalDBOperationError()
+		prometheus.SignalDBOperationError()
 	}
 
 	// Get the start height, default to the config's height
@@ -203,7 +203,7 @@ func mustGetLatestHeight(ctx *parser.Context) int64 {
 		}
 
 		ctx.Logger.Error("failed to get last block from rpc client", "err", err, "retry count", retryCount)
-		logging.SignalRPCRequestError()
+		prometheus.SignalRPCRequestError()
 
 		time.Sleep(ctx.Config.GetAvgBlockTime() * time.Duration(retryCount))
 	}

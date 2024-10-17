@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/forbole/juno/v5/prometheus"
 	"github.com/forbole/juno/v5/utils"
 
 	"github.com/forbole/juno/v5/database"
@@ -62,28 +63,24 @@ func (w Worker) shouldReEnqueueWhenFailed() bool {
 // Start starts a worker by listening for new jobs (block heights) from the
 // given worker queue. Any failed job is logged and re-enqueued.
 func (w Worker) Start() {
-	logging.WorkerCount.Inc()
-	chainID, err := w.node.ChainID()
-	if err != nil {
-		w.logger.Error("error while getting chain ID from the node ", "err", err)
-	}
+	prometheus.WorkersCount.Inc()
 
 	for i := range w.queue {
 		// Make sure we did not reach the max retries yet
 		if i.HasReachedMaxRetries(w.cfg.Parser.GetMaxRetries()) {
-			w.logger.Error("failed to process block", "height", i, "err", err)
+			w.logger.Error("failed to process block", "height", i, "err", i.LatestError)
 			continue
 		}
 
 		// Process the block
-		err = w.ProcessIfNotExists(i.Height)
+		err := w.ProcessIfNotExists(i.Height)
 		if err != nil {
 			go func() {
 				// Signal that an error occurred while processing this block
-				logging.SignalBlockError(i.Height)
+				prometheus.SignalBlockError(i.Height)
 
 				// Build the block with the updated retry count and log the error
-				newBlock := i.IncrementRetryCount()
+				newBlock := i.IncrementRetryCount(err)
 				w.logger.Debug("re-enqueuing failed block", "height", i.Height, "err", err, "count", newBlock.RetryCount)
 
 				// Sleep for the proper time and re-enqueue the block
@@ -92,7 +89,7 @@ func (w Worker) Start() {
 			}()
 		}
 
-		logging.WorkerHeight.WithLabelValues(fmt.Sprintf("%d", w.index), chainID).Set(float64(i.Height))
+		prometheus.LatestIndexedHeightByWorker.WithLabelValues(fmt.Sprintf("%d", w.index)).Set(float64(i.Height))
 	}
 }
 
@@ -370,14 +367,6 @@ func (w Worker) ExportTxs(txs []*types.Tx) error {
 				return err
 			}
 		}
-	}
-
-	if w.cfg.Monitoring != nil && w.cfg.Monitoring.Enabled {
-		dbLatestHeight, err := w.db.GetLastBlockHeight()
-		if err != nil {
-			return err
-		}
-		logging.DBLatestHeight.WithLabelValues("db_latest_height").Set(float64(dbLatestHeight))
 	}
 
 	return nil
