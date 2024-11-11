@@ -49,6 +49,7 @@ Let's see what each section refers to:
 - [`database`](#database)
 - [`pruning`](#pruning)
 - [`logging`](#logging)
+- [`telemetry`](#telemetry)
 
 ## `chain`
 This section contains the details of the chain configuration regarding the Cosmos SDK.
@@ -62,6 +63,7 @@ This section contains the details of the chain configuration regarding the Cosmo
 Currently, we support the following modules:
 
 - `pruning` to periodically prune the old database data
+- `telemetry` to support a telemetry service
 
 ## `node`
 This section contains the details of the node to which Juno will connect.
@@ -143,3 +145,15 @@ if you add the `"pruning"` entry to the `modules` field of the [`chain` config](
 |  `interval`   | `integer` | Number of blocks that should pass between one pruning and the other (default: prune every `10` blocks) | `100`   | 
 | `keep_every`  | `integer` | Keep the state every `nth` block, even if it should have been pruned                                   | `500`   | 
 | `keep_recent` | `integer` | Do not prune this amount of recent states                                                              | `100`   |
+
+## `telemetry`
+This section allows to configure the telemetry details of Juno. Note that this will have effect only if you add
+the `"telemetry"` entry to the `modules` field of the [`chain` config](#chain).
+
+| Attribute |  Type  | Description                                    | Example |
+|:---------:|:------:|:-----------------------------------------------|:--------| 
+|  `port`   | `uint` | Port on which the telemetry server will listen | `8000`  | 
+
+**Note**  
+If the telemetry server is enabled, a new endpoint at the provided port and path `/metrics` will
+expose [Prometheus](https://prometheus.io/) data.
