@@ -5,7 +5,6 @@ import (
 	"github.com/forbole/juno/v5/logging"
 	"github.com/forbole/juno/v5/modules"
 	"github.com/forbole/juno/v5/modules/pruning"
-	"github.com/forbole/juno/v5/modules/telemetry"
 	"github.com/forbole/juno/v5/node"
 	"github.com/forbole/juno/v5/types"
 	"github.com/forbole/juno/v5/types/config"
@@ -79,7 +78,6 @@ func NewDefaultRegistrar() *DefaultRegistrar {
 func (r *DefaultRegistrar) BuildModules(ctx Context) modules.Modules {
 	return modules.Modules{
 		pruning.NewModule(ctx.JunoConfig, ctx.Database, ctx.Logger),
-		telemetry.NewModule(ctx.JunoConfig),
 	}
 }
 

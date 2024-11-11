@@ -5,7 +5,6 @@ import (
 	"github.com/forbole/juno/v5/logging"
 	"github.com/forbole/juno/v5/modules"
 	"github.com/forbole/juno/v5/node"
-	"github.com/forbole/juno/v5/prometheus"
 	"github.com/forbole/juno/v5/types"
 	"github.com/forbole/juno/v5/types/config"
 )
@@ -18,7 +17,6 @@ type Context struct {
 	Database       database.Database
 	Logger         logging.Logger
 	Modules        []modules.Module
-	Prometheus     *prometheus.Server
 }
 
 // NewContext builds a new Context instance
@@ -37,6 +35,5 @@ func NewContext(
 		Database:       db,
 		Modules:        modules,
 		Logger:         logger,
-		Prometheus:     prometheus.NewServer(config.Monitoring),
 	}
 }

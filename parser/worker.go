@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/forbole/juno/v5/prometheus"
 	"github.com/forbole/juno/v5/utils"
 
 	"github.com/forbole/juno/v5/database"
@@ -63,8 +62,6 @@ func (w Worker) shouldReEnqueueWhenFailed() bool {
 // Start starts a worker by listening for new jobs (block heights) from the
 // given worker queue. Any failed job is logged and re-enqueued.
 func (w Worker) Start() {
-	prometheus.WorkersCount.Inc()
-
 	for i := range w.queue {
 		// Make sure we did not reach the max retries yet
 		if i.HasReachedMaxRetries(w.cfg.Parser.GetMaxRetries()) {
@@ -76,9 +73,6 @@ func (w Worker) Start() {
 		err := w.ProcessIfNotExists(i.Height)
 		if err != nil {
 			go func() {
-				// Signal that an error occurred while processing this block
-				prometheus.SignalBlockError(i.Height)
-
 				// Build the block with the updated retry count and log the error
 				newBlock := i.IncrementRetryCount(err)
 				w.logger.Debug("re-enqueuing failed block", "height", i.Height, "err", err, "count", newBlock.RetryCount)
@@ -88,8 +82,6 @@ func (w Worker) Start() {
 				w.queue <- newBlock
 			}()
 		}
-
-		prometheus.LatestIndexedHeightByWorker.WithLabelValues(fmt.Sprintf("%d", w.index)).Set(float64(i.Height))
 	}
 }
 
