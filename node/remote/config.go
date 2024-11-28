@@ -6,21 +6,23 @@ import (
 
 // Details represents a node details for a remote node
 type Details struct {
-	RPC  *RPCConfig  `yaml:"rpc"`
-	GRPC *GRPCConfig `yaml:"grpc"`
-	API  *APIConfig  `yaml:"api"`
+	RPC                          *RPCConfig  `yaml:"rpc"`
+	GRPC                         *GRPCConfig `yaml:"grpc"`
+	API                          *APIConfig  `yaml:"api"`
+	IgnoreConnectVoteExtensionTx bool        `yaml:"ignore_connect_vote_extension_tx"` // ignore tx[0] for the chains that are using Skip Oracle
 }
 
-func NewDetails(rpc *RPCConfig, grpc *GRPCConfig, api *APIConfig) *Details {
+func NewDetails(rpc *RPCConfig, grpc *GRPCConfig, api *APIConfig, ignoreConnectVoteExtensionTx bool) *Details {
 	return &Details{
-		RPC:  rpc,
-		GRPC: grpc,
-		API:  api,
+		RPC:                          rpc,
+		GRPC:                         grpc,
+		API:                          api,
+		IgnoreConnectVoteExtensionTx: ignoreConnectVoteExtensionTx,
 	}
 }
 
 func DefaultDetails() *Details {
-	return NewDetails(DefaultRPCConfig(), DefaultGrpcConfig(), DefaultAPIConfig())
+	return NewDetails(DefaultRPCConfig(), DefaultGrpcConfig(), DefaultAPIConfig(), false)
 }
 
 // Validate implements node.Details

@@ -31,9 +31,10 @@ var (
 // Node implements a wrapper around both a Tendermint RPCConfig client and a
 // chain SDK REST client that allows for essential data queries.
 type Node struct {
-	ctx          context.Context
-	client       *httpclient.HTTP
-	txServiceAPI string
+	ctx                          context.Context
+	client                       *httpclient.HTTP
+	txServiceAPI                 string
+	ignoreConnectVoteExtensionTx bool
 }
 
 // NewNode allows to build a new Node instance
@@ -63,8 +64,9 @@ func NewNode(cfg *Details) (*Node, error) {
 	return &Node{
 		ctx: context.Background(),
 
-		client:       rpcClient,
-		txServiceAPI: cfg.API.Address,
+		client:                       rpcClient,
+		txServiceAPI:                 cfg.API.Address,
+		ignoreConnectVoteExtensionTx: cfg.IgnoreConnectVoteExtensionTx,
 	}, nil
 }
 
@@ -216,8 +218,12 @@ func (cp *Node) Tx(hash string) (*types.Transaction, error) {
 
 // Txs implements node.Node
 func (cp *Node) Txs(block *tmctypes.ResultBlock) ([]*types.Transaction, error) {
-	txResponses := make([]*types.Transaction, len(block.Block.Txs))
-	for i, tmTx := range block.Block.Txs {
+	txs := block.Block.Txs
+	if cp.ignoreConnectVoteExtensionTx && len(block.Block.Txs) > 0 {
+		txs = block.Block.Txs[1:]
+	}
+	txResponses := make([]*types.Transaction, len(txs))
+	for i, tmTx := range txs {
 		txResponse, err := cp.Tx(fmt.Sprintf("%X", tmTx.Hash()))
 		if err != nil {
 			return nil, err
