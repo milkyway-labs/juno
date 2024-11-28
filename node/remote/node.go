@@ -259,6 +259,12 @@ func (cp *Node) Tx(hash string) (*types.Tx, error) {
 
 	res, err := cp.txServiceClient.GetTx(context.Background(), &tx.GetTxRequest{Hash: hash}, grpc.MaxCallRecvMsgSize(13107200))
 	if err != nil {
+		if cp.ignoreConnectVoteExtensionTx {
+			// ignore the oracle vote extension tx
+			if strings.Contains(err.Error(), "expected 2 wire type, got 0") {
+				return nil, nil
+			}
+		}
 		return nil, err
 	}
 
@@ -273,18 +279,17 @@ func (cp *Node) Tx(hash string) (*types.Tx, error) {
 // Txs implements node.Node
 
 func (cp *Node) Txs(block *tmctypes.ResultBlock) ([]*types.Tx, error) {
-	txs := block.Block.Txs
-	if cp.ignoreConnectVoteExtensionTx && len(block.Block.Txs) > 0 {
-		txs = block.Block.Txs[1:]
-	}
-	txResponses := make([]*types.Tx, len(txs))
-	for i, tmTx := range txs {
+	var txResponses []*types.Tx
+	for _, tmTx := range block.Block.Txs {
 		txResponse, err := cp.Tx(fmt.Sprintf("%X", cp.computeTxHash(tmTx)))
 		if err != nil {
 			return nil, err
 		}
+		if txResponse == nil {
+			continue
+		}
 
-		txResponses[i] = txResponse
+		txResponses = append(txResponses, txResponse)
 	}
 
 	return txResponses, nil
