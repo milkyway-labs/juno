@@ -23,6 +23,8 @@ config:
   grpc:
     insecure: true
     address: "http://localhost:9090"
+  
+  ignore_connect_vote_extension_tx: false
 `
 
 	var config nodeconfig.Config
@@ -57,6 +59,7 @@ config:
         max_connections: 10
     grpc:
         address: http://localhost:9090
+    ignore_connect_vote_extension_tx: false
 `
 	require.Equal(t, strings.TrimLeft(expected, "\n"), string(bz))
 }
