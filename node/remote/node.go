@@ -36,8 +36,9 @@ type Node struct {
 
 	computeTxHash types.TxHashCalculator
 
-	client          *httpclient.HTTP
-	txServiceClient tx.ServiceClient
+	client                       *httpclient.HTTP
+	txServiceClient              tx.ServiceClient
+	ignoreConnectVoteExtensionTx bool
 }
 
 // NewNode allows to build a new Node instance
@@ -74,8 +75,9 @@ func NewNode(
 
 		computeTxHash: txHashCalculator,
 
-		client:          rpcClient,
-		txServiceClient: tx.NewServiceClient(grpcConnection),
+		client:                       rpcClient,
+		txServiceClient:              tx.NewServiceClient(grpcConnection),
+		ignoreConnectVoteExtensionTx: cfg.IgnoreConnectVoteExtensionTx,
 	}, nil
 }
 
@@ -257,6 +259,12 @@ func (cp *Node) Tx(hash string) (*types.Tx, error) {
 
 	res, err := cp.txServiceClient.GetTx(context.Background(), &tx.GetTxRequest{Hash: hash}, grpc.MaxCallRecvMsgSize(13107200))
 	if err != nil {
+		if cp.ignoreConnectVoteExtensionTx {
+			// ignore the oracle vote extension tx
+			if strings.Contains(err.Error(), "expected 2 wire type, got 0") {
+				return nil, nil
+			}
+		}
 		return nil, err
 	}
 
@@ -269,15 +277,19 @@ func (cp *Node) Tx(hash string) (*types.Tx, error) {
 }
 
 // Txs implements node.Node
+
 func (cp *Node) Txs(block *tmctypes.ResultBlock) ([]*types.Tx, error) {
-	txResponses := make([]*types.Tx, len(block.Block.Txs))
-	for i, tmTx := range block.Block.Txs {
+	var txResponses []*types.Tx
+	for _, tmTx := range block.Block.Txs {
 		txResponse, err := cp.Tx(fmt.Sprintf("%X", cp.computeTxHash(tmTx)))
 		if err != nil {
 			return nil, err
 		}
+		if txResponse == nil {
+			continue
+		}
 
-		txResponses[i] = txResponse
+		txResponses = append(txResponses, txResponse)
 	}
 
 	return txResponses, nil

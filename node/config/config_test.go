@@ -23,6 +23,8 @@ config:
   grpc:
     insecure: true
     address: "http://localhost:9090"
+  
+  ignore_connect_vote_extension_tx: true
 `
 
 	var config nodeconfig.Config
@@ -43,6 +45,7 @@ func TestConfig_MarshalYAML(t *testing.T) {
 			GRPC: &remote.GRPCConfig{
 				Address: "http://localhost:9090",
 			},
+			IgnoreConnectVoteExtensionTx: true,
 		},
 	}
 	bz, err := yaml.Marshal(&config)
@@ -57,6 +60,7 @@ config:
         max_connections: 10
     grpc:
         address: http://localhost:9090
+    ignore_connect_vote_extension_tx: true
 `
 	require.Equal(t, strings.TrimLeft(expected, "\n"), string(bz))
 }
