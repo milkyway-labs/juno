@@ -237,9 +237,11 @@ func (w Worker) ExportBlock(
 	}
 
 	// Save the commits
-	err = w.ExportCommit(b.Block.LastCommit, vals)
-	if err != nil {
-		return err
+	if !w.cfg.Parser.DoNotStoreCommits {
+		err = w.ExportCommit(b.Block.LastCommit, vals)
+		if err != nil {
+			return err
+		}
 	}
 
 	// Call the block handlers

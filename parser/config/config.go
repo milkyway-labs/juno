@@ -18,6 +18,7 @@ type Config struct {
 	ReEnqueueWhenFailed bool               `yaml:"re_enqueue_when_failed,omitempty"`
 	MaxRetries          *int64             `yaml:"max_retries"`
 	ReparseRange        *types.HeightRange `yaml:"reparse_range,omitempty"`
+	DoNotStoreCommits   bool               `yaml:"do_not_store_commits,omitempty"`
 }
 
 // NewParsingConfig allows to build a new Config instance
